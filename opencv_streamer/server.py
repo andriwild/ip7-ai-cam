@@ -2,12 +2,11 @@
 
 from cv2.typing import MatLike
 from flask import Response, Flask, render_template
-from imutils.video import VideoStream
+from ultralytics import YOLO
 
 import threading
 import argparse
 import datetime
-import imutils
 import time
 import cv2
 import glob
@@ -16,11 +15,14 @@ outputFrame = None
 lock = threading.Lock()
 
 app = Flask(__name__)
-vs = None
+camera = None
+model = YOLO("yolov8n.onnx")
 
-def start_camera():
-    global vs
-    vs = VideoStream(src=0).start()
+def start_camera(camera_id=4):
+    global camera
+    camera = cv2.VideoCapture(camera_id)
+    #camera = VideoStream(src=0).start()
+
     time.sleep(2.0)
 
 
@@ -35,22 +37,16 @@ def find_available_cameras():
 
 
 def generate():
-    print("generate")
-	# grab global references to the output frame and lock variables
     global outputFrame, lock
-	# loop over frames from the output stream
     while True:
-        # wait until the lock is acquired
         with lock:
-            # check if the output frame is available, otherwise skip
-            # the iteration of the loop
             if outputFrame is None:
                 print("outputFrame is None")
-                continue
+                exit(1)
             # encode the frame in JPEG format
-            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+            (success, encodedImage) = cv2.imencode(".jpg", outputFrame)
             # ensure the frame was successfully encoded
-            if not flag:
+            if not success:
                 continue
         # yield the output frame in the byte format
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
@@ -70,15 +66,18 @@ def video_feed():
 
 
 def get_frame():
-    global vs, outputFrame, lock
+    global camera, outputFrame, lock
     while True:
-        frame = vs.read()
-        if frame is None:
+        success, frame = camera.read()
+        if not success or frame is None:
             break
-        frame = imutils.resize(frame, width=400)
+
+        results = model(frame, verbose=False)
+        annotated_frame = results[0].plot()
+
         timestamp = datetime.datetime.now()
         cv2.putText(
-                frame, 
+                annotated_frame, 
                 timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), 
                 (10, frame.shape[0] - 10), 
                 cv2.FONT_HERSHEY_SIMPLEX, 
@@ -87,7 +86,7 @@ def get_frame():
                 1)
 
         with lock:
-            outputFrame = frame.copy()
+            outputFrame = annotated_frame.copy()
 
 if __name__ == '__main__':
     cams = find_available_cameras()
@@ -110,5 +109,3 @@ if __name__ == '__main__':
     # start the flask app
     app.run(host=args["ip"], port=args["port"], debug=True,
             threaded=True, use_reloader=False)
-# release the video stream pointer
-vs.stop()
