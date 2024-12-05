@@ -1,7 +1,10 @@
 # https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
 
+# https://onnxruntime.ai/docs/tutorials/iot-edge/rasp-pi-cv.html
+
 from cv2.typing import MatLike
 from flask import Response, Flask, render_template
+from flask_cors import CORS
 from ultralytics import YOLO
 
 import threading
@@ -15,6 +18,9 @@ outputFrame = None
 lock = threading.Lock()
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 camera = None
 model = YOLO("yolov8n.onnx")
 
