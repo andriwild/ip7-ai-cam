@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="de">
+    <meta charset="utf-8">
     <head>
         <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bootstrap demo</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <title>Edge Device Control Panel</title>
         <style>
         body {
@@ -42,16 +47,49 @@
         </style>
     </head>
     <body>
-        <h1>Edge Device Control Panel</h1>
+ <header class="mb-4">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Edge Device Control Panel</a>
 
-        <div id="coords">
-            <p>Start: (<span id="startX">--</span>, <span id="startY">--</span>)</p>
-            <p>End: (<span id="endX">--</span>, <span id="endY">--</span>)</p>
-            <p>ROI: x=<span id="roiX">--</span>, y=<span id="roiY">--</span>, width=<span id="roiW">--</span>, height=<span id="roiH">--</span></p>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Menü umschalten">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarToggler">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch">
+                            <label class="form-check-label" for="themeSwitch">Dark Mode</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+        <h1></h1>
+
+        <div id="coords" class="container text-center">
+            <div class="row align-items-start">
+                <div class="col">
+                    <p>Start: (<span id="startX">--</span>, <span id="startY">--</span>)</p>
+                </div>
+                <div class="col">
+                    <p>End: (<span id="endX">--</span>, <span id="endY">--</span>)</p>
+                </div>
+                <div class="col">
+                    <p>ROI: x=<span id="roiX">--</span>, y=<span id="roiY">--</span>, width=<span id="roiW">--</span>, height=<span id="roiH">--</span></p>
+                </div>
+            </div>
         </div>
-        <button id="roiSaveBtn">Ok</button>
+
+        <button class="btn btn-primary" id="roiSaveBtn">Ok</button>
         <br>
-        <button id="roiResetBtn">Reset</button>
+        <button class="btn btn-primary" id="roiResetBtn">Reset</button>
 
         <div class="image-container" id="imgContainer">
             <img id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
@@ -61,25 +99,25 @@
         <fieldset>
             <legend>Video Frame</legend>
             <label for="cameraSelect">Choose Camera:</label>
-            <select id="cameraSelect" name="camera">
+            <select class="form-select" id="cameraSelect" name="camera">
             </select>
-            <button id="cameraSelectBtn">Ok</button>
+            <button class="btn btn-primary" id="cameraSelectBtn">Ok</button>
 
             <label for="resolutionSelect">Camera Resolution (might not be available):</label>
-            <select id="resolutionSelect" name="resolution">
+            <select class="form-select" id="resolutionSelect" name="resolution">
                 <option value="640x640">640x640</option>
                 <option value="1280x720">1280x720</option>
                 <option value="1920x1080">1920x1080</option>
             </select>
-            <button id="resolutionSelectBtn">Ok</button>
+            <button class="btn btn-primary" id="resolutionSelectBtn">Ok</button>
 
             <label for="modelSelect">Choose Model (ONNX):</label>
-            <select id="modelSelect" name="model">
+            <select class="form-select" id="modelSelect" name="model">
                 <option value="yolo11n.onnx">Yolo11 Object Detection</option>
                 <option value="yolo11n-pose.onnx">Yolo11 Pose</option>
                 <option value="yolo11n-seg.onnx">Yolo11 Segmentation</option>
             </select>
-            <button id="modelSelectBtn">Ok</button>
+            <button class="btn btn-primary" id="modelSelectBtn">Ok</button>
 
             <label>Device Meta Data:</label>
             <div id="metadata">
@@ -87,31 +125,55 @@
                 <p>CPU Load Avg (1, 5, 15 min): <span id="cpu">--</span> %</p>
                 <p>Storage: <span id="storage">--</span> GB</p>
             </div>
-            <button id="metadataBtn">Update</button>
+            <button class="btn btn-primary" id="metadataBtn">Update</button>
 
             <label for="outputDestination">Output Destination:</label>
-            <select id="outputDestination" name="output_destination">
+            <select class="form-select" id="outputDestination" name="output_destination">
                 <option value="web-interface">Web Interface</option>
                 <option value="console">Console</option>
                 <option value="db">Database</option>
             </select>
 
             <label for="rate">ML Inference Rate (Hz):</label>
-            <input type="number" id="rate" name="rate" min="1" step="1" value="30">
+            <input class="form-control" type="number" id="rate" name="rate" min="1" step="1" value="30">
 
             <label for="confidenceInput">Confidence:</label>
-            <input type="number" id="confidenceInput" name="confidence" min="0" max="1" step="0.01" value="0.5">
-            <button id="confidenceInputBtn">Ok</button>
+            <input class="form-control" type="number" id="confidenceInput" name="confidence" min="0" max="1" step="0.01" value="0.5">
+            <button class="btn btn-primary" id="confidenceInputBtn">Ok</button>
 
-            <label for="showResults">Show Results/Statistics:</label>
-            <input type="checkbox" id="showResults" name="show_results" checked>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="showResults" name="show_results">
+                <label class="form-check-label" for="showResults">
+                    Show Results/Statistics:
+                </label>
+            </div>
 
             <br><br>
         </fieldset>
+    <footer class="bg-body-tertiary py-3 mt-auto">
+        <div class="container">
+            <p class="m-0 text-center">© 2024 Meine Firma</p>
+        </div>
+    </footer>
     </body>
     <script>
-        window.SERVER_URL = "{{ server_url }}";
+    window.SERVER_URL = "{{ server_url }}";
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script src="/static/script.js"></script>
     <script src="/static/roi.js"></script>
+    <script>
+        const themeSwitch = document.getElementById('themeSwitch');
+        const htmlEl = document.documentElement;
+        
+        themeSwitch.addEventListener('change', () => {
+            if (themeSwitch.checked) {
+                htmlEl.setAttribute('data-bs-theme', 'dark');
+            } else {
+                htmlEl.setAttribute('data-bs-theme', 'light');
+            }
+        });
+    </script>
 </html>
