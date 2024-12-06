@@ -1,6 +1,7 @@
 console.log('script.js loaded');
+console.log("Server runs on:" ,window.SERVER_URL);
 
-const BASE_URL = "http://0.0.0.0:8000";
+const BASE_URL = window.SERVER_URL;
 
 const cameraElement     = document.getElementById("cameraSelect");
 const resolutionElement = document.getElementById("resolutionSelect");
@@ -11,7 +12,7 @@ const cpuElement        = document.getElementById("cpu");
 const storageElement    = document.getElementById("storage");
 
 const sendSetting = (json, endpoint) => {
-    fetch(`${BASE_URL}/${endpoint}`, {
+    fetch(`${BASE_URL}${endpoint}`, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
@@ -22,7 +23,7 @@ const sendSetting = (json, endpoint) => {
 };
 
 const fetchSetting = (endpoint, applyFn) => {
-    fetch(`${BASE_URL}/${endpoint}`)
+    fetch(`${BASE_URL}${endpoint}`)
         .then(response => response.json())
         .then(data => {
             applyFn(data);

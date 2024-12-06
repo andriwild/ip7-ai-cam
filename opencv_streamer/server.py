@@ -76,7 +76,7 @@ def generate():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", server_url=request.host_url)
 
 
 @app.route("/cameras", methods=['GET'])
@@ -209,15 +209,13 @@ def get_frame():
             outputFrame = frame.copy()
 
 if __name__ == '__main__':
-    # construct the argument parser and parse command line arguments
+
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--ip", type=str, default="0.0.0.0",
-                    help="ip address of the device")
+                    help="ip address of the server")
     ap.add_argument("-o", "--port", type=int, default=8000,
                     help="ephemeral port number of the server")
 
-    ap.add_argument("-f", "--fps", type=int, default=8000,
-                    help="ephemeral port number of the server")
     args = vars(ap.parse_args())
 
     available_cameras = find_available_cameras()
