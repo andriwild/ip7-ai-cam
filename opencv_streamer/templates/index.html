@@ -1,9 +1,114 @@
-<html>
-  <head>
-    <title>IP7 AI Camera Live Stream</title>
-  </head>
-  <body>
-    <h1>IP7 AI Camera Live Stream</h1>
-    <img src="{{ url_for('video_feed') }}">
-  </body>
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>Edge Device Control Panel</title>
+        <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        fieldset {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 8px;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 200px;
+        }
+        textarea {
+            width: 300px;
+            height: 80px;
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #roiOverlay {
+            position: absolute;
+            border: 2px dashed red;
+            pointer-events: none; /* Mausereignisse sollen durch das Overlay hindurch auf das Image fallen */
+        }
+
+        #coords {
+            margin-top: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+        </style>
+    </head>
+    <body>
+        <h1>Edge Device Control Panel</h1>
+
+        <div id="coords">
+            <p>Start: (<span id="startX">--</span>, <span id="startY">--</span>)</p>
+            <p>End: (<span id="endX">--</span>, <span id="endY">--</span>)</p>
+            <p>ROI: x=<span id="roiX">--</span>, y=<span id="roiY">--</span>, width=<span id="roiW">--</span>, height=<span id="roiH">--</span></p>
+        </div>
+        <button id="roiSaveBtn">Ok</button>
+        <br>
+        <button id="roiResetBtn">Reset</button>
+
+        <div class="image-container" id="imgContainer">
+            <img id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+            <div id="roiOverlay"></div>
+        </div>
+
+        <fieldset>
+            <legend>Video Frame</legend>
+            <label for="cameraSelect">Choose Camera:</label>
+            <select id="cameraSelect" name="camera">
+            </select>
+            <button id="cameraSelectBtn">Ok</button>
+
+            <label for="resolutionSelect">Camera Resolution (might not be available):</label>
+            <select id="resolutionSelect" name="resolution">
+                <option value="640x640">640x640</option>
+                <option value="1280x720">1280x720</option>
+                <option value="1920x1080">1920x1080</option>
+            </select>
+            <button id="resolutionSelectBtn">Ok</button>
+
+            <label for="modelSelect">Choose Model (ONNX):</label>
+            <select id="modelSelect" name="model">
+                <option value="yolo11n.onnx">Yolo11 Object Detection</option>
+                <option value="yolo11n-pose.onnx">Yolo11 Pose</option>
+                <option value="yolo11n-seg.onnx">Yolo11 Segmentation</option>
+            </select>
+            <button id="modelSelectBtn">Ok</button>
+
+            <label>Device Meta Data:</label>
+            <div id="metadata">
+                <p>Temp (°C): <span id="temp">--</span> °C</p>
+                <p>CPU Load Avg (1, 5, 15 min): <span id="cpu">--</span> %</p>
+                <p>Storage: <span id="storage">--</span> GB</p>
+            </div>
+            <button id="metadataBtn">Update</button>
+
+            <label for="outputDestination">Output Destination:</label>
+            <select id="outputDestination" name="output_destination">
+                <option value="web-interface">Web Interface</option>
+                <option value="console">Console</option>
+                <option value="db">Database</option>
+            </select>
+
+            <label for="rate">ML Inference Rate (Hz):</label>
+            <input type="number" id="rate" name="rate" min="1" step="1" value="30">
+
+            <label for="confidenceInput">Confidence:</label>
+            <input type="number" id="confidenceInput" name="confidence" min="0" max="1" step="0.01" value="0.5">
+            <button id="confidenceInputBtn">Ok</button>
+
+            <label for="showResults">Show Results/Statistics:</label>
+            <input type="checkbox" id="showResults" name="show_results" checked>
+
+            <br><br>
+        </fieldset>
+    </body>
+    <script src="/static/script.js"></script>
+    <script src="/static/roi.js"></script>
 </html>
