@@ -1,7 +1,9 @@
-# https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
+# based on: https://pyimagesearch.com/2020/09/02/opencv-stream-video-to-web-browser-html-page/
+# onnx runtime info: https://onnxruntime.ai/docs/tutorials/iot-edge/rasp-pi-cv.html
 
-# https://onnxruntime.ai/docs/tutorials/iot-edge/rasp-pi-cv.html
 
+
+# TODO: was kann ein ultralytics model alles verarbeiten? Schnittstelle für model outputs (bounding boxen, ...)
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 from ultralytics import YOLO
@@ -14,6 +16,7 @@ import time
 import cv2
 import glob
 import json as JSON
+from pprint import pprint
 
 outputFrame = None
 lock = threading.Lock()
@@ -24,23 +27,23 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 camera = None
 available_cameras = []
-model = YOLO("yolo11n.onnx")
+model = YOLO("ml_models/yolo11n.onnx")
 confidence = 0.5
 roi = None
 
 def start_camera(camera_id=0):
     global camera
     camera = cv2.VideoCapture("/dev/video0")
-    r = camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    print(r)
-    r = camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-    print(r)
-    r = camera.set(cv2.CAP_PROP_FPS, 60)
-    print(r)
-    r = camera.set(cv2.CAP_PROP_ZOOM, 1)
-    print(r)
-    r = camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
-    print(r)
+    result = camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    print(result)
+    result = camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    print(result)
+    result = camera.set(cv2.CAP_PROP_FPS, 60)
+    print(result)
+    result = camera.set(cv2.CAP_PROP_ZOOM, 1)
+    print(result)
+    result = camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+    print(result)
     #camera = VideoStream(src=0).start()
 
     time.sleep(2.0)
@@ -57,7 +60,7 @@ def find_available_cameras():
     return available_cameras
 
 
-def generate():
+def generate_frame():
     global outputFrame, lock
     while True:
         with lock:
@@ -108,7 +111,7 @@ def set_model():
     print("New Model: ",data['model'])
     with lock:
         global model
-        model = YOLO(data['model'])
+        model = YOLO(f"ml_models/{data['model']}")
         return "OK", 200
 
 
@@ -168,11 +171,12 @@ def get_meta():
         "storage": get_storage_usage()
     })
 
+
 @app.route("/video_feed")
 def video_feed():
 	# return the response generated along with the specific media
 	# type (mime type)
-	return Response(generate(),
+	return Response(generate_frame(),
 		mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
@@ -193,6 +197,7 @@ def get_frame():
             frame = frame[y:h, x:w]
 
         results = model(frame, verbose=False, conf=confidence)
+        pprint(results)
         frame = results[0].plot()
 
         timestamp = datetime.datetime.now()
@@ -210,13 +215,13 @@ def get_frame():
 
 if __name__ == '__main__':
 
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--ip", type=str, default="0.0.0.0",
-                    help="ip address of the server")
-    ap.add_argument("-o", "--port", type=int, default=8000,
-                    help="ephemeral port number of the server")
+    parser = argparse.ArgumentParser()
 
-    args = vars(ap.parse_args())
+    parser.add_argument("-i", "--ip", type=str, default="0.0.0.0", help="ip address of the server")
+    parser.add_argument("-o", "--port", type=int, default=8000, help="ephemeral port number of the server")
+
+    args = vars(parser.parse_args())
+    print(args)
 
     available_cameras = find_available_cameras()
     start_camera(available_cameras[0])
