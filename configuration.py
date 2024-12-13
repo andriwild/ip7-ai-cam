@@ -1,5 +1,4 @@
 from observer.Subject import Subject
-from observer.Observer import Observer
 
 class Configuration(Subject):
     def __init__(self):
