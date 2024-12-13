@@ -115,7 +115,7 @@ def on_update():
 
     stop_producer_event.set()  # Stop the current producer
     if frame_producer_thread and frame_producer_thread.is_alive():
-        print("waiting on thread")
+        print("waiting on thread", frame_producer_thread, frame_producer_thread.is_alive())
         frame_producer_thread.join()
     else:
         print("frame_producer_thread is None")
