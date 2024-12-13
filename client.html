@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>WebRTC + Data Fetch Example</title>
+</head>
+<body>
+<video id="video" autoplay playsinline style="width:640px; height:480px; background:#000;"></video>
+<br>
+<button id="start">Start WebRTC</button>
+<button id="checkStatus">Check Server Status</button>
+<pre id="statusOutput"></pre>
+
+<script>
+const startButton = document.getElementById('start');
+const checkStatusButton = document.getElementById('checkStatus');
+const statusOutput = document.getElementById('statusOutput');
+const video = document.getElementById('video');
+
+let pc;
+
+startButton.onclick = async () => {
+  pc = new RTCPeerConnection();
+
+  // Create a data channel just as an example (not required)
+  pc.createDataChannel('chat');
+
+  pc.ontrack = (event) => {
+    console.log('Received remote track');
+    video.srcObject = event.streams[0];
+  };
+
+  const offer = await pc.createOffer({offerToReceiveVideo: true});
+  await pc.setLocalDescription(offer);
+
+  const response = await fetch('http://localhost:8080/offer', {
+    method: 'POST',
+    body: JSON.stringify(pc.localDescription),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const answer = await response.json();
+  await pc.setRemoteDescription(answer);
+  console.log("WebRTC connection established");
+};
+
+checkStatusButton.onclick = async () => {
+  const response = await fetch('http://localhost:8080/status');
+  const data = await response.json();
+  statusOutput.textContent = JSON.stringify(data, null, 2);
+};
+</script>
+</body>
+</html>

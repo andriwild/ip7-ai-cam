@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 # Load your pre-trained model
-model = YOLO('yolo11n.pt')
+model = YOLO('models/yolo11n.onnx')
 
 # Export the model
 model.export(format='onnx', 
