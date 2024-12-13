@@ -8,7 +8,8 @@ from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 from ultralytics import YOLO
 from camera_adapter.ICamera import ICamera
-from metadata import get_cpu_usage, get_temperature, get_storage_usage
+from configuration import Configuration
+from utilities.metadata import get_cpu_usage, get_temperature, get_storage_usage
 
 import threading
 import argparse
@@ -214,6 +215,23 @@ def get_frame():
         with lock:
             outputFrame = frame.copy()
 
+config = Configuration()
+
+def repl():
+    print("REPL started. Type 'cv' or 'pi' to change camera. Type 'q' to quit the REPL.")
+    while True:
+        command = input(">>> ").strip().lower()
+        if command == 'q':
+            print("Exiting REPL.")
+            break
+        elif command == 'cv':
+            config.set_camera("cv")
+        elif command == 'pi':
+            config.set_camera("pi")
+        else:
+            print("Unknown command. Type 'cv', 'pi', or 'q'.")
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -224,7 +242,9 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     print(args)
 
-    camera_factory = CameraFactory(device="/dev/video0", width=640, height=480)
+    camera_factory = CameraFactory()
+    config.attach(camera_factory)
+    config.set_camera("cv")
     camera = camera_factory.get_camera() 
 
     # available_cameras = find_available_cameras()
@@ -233,6 +253,9 @@ if __name__ == '__main__':
     t = threading.Thread(target=get_frame)
     t.daemon = True
     t.start()
+
+    repl_thread = threading.Thread(target=repl, daemon=True)
+    repl_thread.start()
 
     app.run(
             host=args["ip"], 
