@@ -4,6 +4,7 @@ from camera_adapter.ICamera import ICamera
 
 class PiCamera(ICamera):
     def __init__(self, width=640, height=480):
+        print("PiCamera init")
         from picamera2 import Picamera2
         self._camera = Picamera2()
         self._camera.configure(

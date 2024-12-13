@@ -9,6 +9,7 @@ class Configuration(Subject):
         return self._camera
 
     def set_camera(self, value):
+        print("Configuration: set_camera")
         self._camera = value
         self.notify()
 
@@ -19,6 +20,7 @@ class Configuration(Subject):
         self._observers.remove(observer)
 
     def notify(self) -> None:
+        print("Configuration: notify")
         for observer in self._observers:
             observer.update(self)
 

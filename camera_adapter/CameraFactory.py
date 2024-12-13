@@ -6,6 +6,10 @@ from observer.Subject import Observer
 
 class CameraFactory(Observer):
 
+    def __init__(self, on_update):
+        self._on_udpate = on_update
+        self._camera = None
+
     def _create_camera(self, name, device, width, height):
         print("create camera: ", name)
 
@@ -24,6 +28,7 @@ class CameraFactory(Observer):
 
             case "cv":
                 if self._is_module_available("cv2"):
+                    print("set opencv camera")
                     from camera_adapter.impl.OpenCVCamera import OpenCVCamera
                     camera = OpenCVCamera(device=device, width=width, height=height)
                     # We can check if the camera works by trying to get one frame
@@ -39,7 +44,11 @@ class CameraFactory(Observer):
                 return None
 
     def update(self, subject: Configuration):
+        if self._camera is not None:
+            self._camera.release()
+            self._camera = None
         self._camera = self._create_camera(subject.get_camera(), "/dev/video0", 640, 480)
+        self._on_udpate()
 
 
     def _is_module_available(self, module_name):
@@ -47,6 +56,7 @@ class CameraFactory(Observer):
         return spec is not None
 
     def get_camera(self) -> ICamera:
+        print("CameraFactory get_camera")
         if self._camera is not None:
             return self._camera
         else:
