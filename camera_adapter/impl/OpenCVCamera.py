@@ -12,6 +12,7 @@ class OpenCVCamera(ICamera):
         time.sleep(1)
 
     def get_frame(self):
+        print("opencv get_frame")
         ret, frame = self._capture.read()
         if not ret:
             return None

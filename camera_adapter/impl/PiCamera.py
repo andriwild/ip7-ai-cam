@@ -16,6 +16,7 @@ class PiCamera(ICamera):
         time.sleep(1)
 
     def get_frame(self):
+        print("pi get_frame")
         return self._camera.capture_array()
 
     def release(self):
