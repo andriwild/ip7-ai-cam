@@ -115,7 +115,10 @@ def on_update():
 
     stop_producer_event.set()  # Stop the current producer
     if frame_producer_thread and frame_producer_thread.is_alive():
+        print("waiting on thread")
         frame_producer_thread.join()
+    else:
+        print("frame_producer_thread is None")
         
     # Reset the stop event for the new producer
     stop_producer_event = threading.Event()
@@ -125,14 +128,18 @@ def on_update():
     if new_camera is None:
         print("No camera available after update.")
         return
+    else:
+        print("new camera is not None")
 
     # Start a new producer thread with the updated camera
     start_frame_producer(new_camera)
 
 def start_frame_producer(camera: ICamera):
     global frame_producer_thread
+    print("start_frame_producer")
     frame_producer_thread = FrameProducer(camera, frame_queue, stop_producer_event)
     frame_producer_thread.start()
+    print("started new thread")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
