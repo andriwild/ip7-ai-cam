@@ -1,6 +1,6 @@
 import time
 
-from ICamera import ICamera
+from camera_adapter.ICamera import ICamera
 
 class OpenCVCamera(ICamera):
     def __init__(self, device="/dev/video0", width=640, height=480):
@@ -15,7 +15,7 @@ class OpenCVCamera(ICamera):
         ret, frame = self._capture.read()
         if not ret:
             return None
-        return self.cv2.cvtColor(frame, self.cv2.COLOR_BGR2RGB)
+        return frame
 
     def release(self):
         if self._capture is not None:

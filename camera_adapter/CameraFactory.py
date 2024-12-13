@@ -1,5 +1,5 @@
 import importlib.util
-from ICamera import ICamera
+from camera_adapter.ICamera import ICamera
 
 class CameraFactory:
     def __init__(self, device="/dev/video0", width=640, height=480):
@@ -21,7 +21,7 @@ class CameraFactory:
             print("picamera2 no available")
 
         if self._is_module_available("cv2"):
-            from OpenCVCamera import OpenCVCamera
+            from camera_adapter.OpenCVCamera import OpenCVCamera
             camera = OpenCVCamera(device=device, width=width, height=height)
             # We can check if the camera works by trying to get one frame
             test_frame = camera.get_frame()
