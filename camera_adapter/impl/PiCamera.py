@@ -21,4 +21,6 @@ class PiCamera(ICamera):
     def release(self):
         if self._camera is not None:
             self._camera.stop()
+            self._camera.close()
+            self._camera = None
 
