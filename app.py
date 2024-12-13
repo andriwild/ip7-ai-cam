@@ -42,6 +42,7 @@ class FrameProducer(threading.Thread):
 
     def run(self):
         while not self.stop_event.is_set():
+            print("producer get_frame")
             frame = self.camera.get_frame()
             if frame is None:
                 # If the camera ends or fails, we could break or wait a moment
