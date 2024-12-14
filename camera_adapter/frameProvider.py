@@ -5,8 +5,8 @@ import logging
 
 from camera_adapter.cameraFactory import CameraFactory
 from configuration import Configuration
-from observer.Subject import Subject
-from observer.Observer import Observer
+from observer.subject import Subject
+from observer.observer import Observer
 from queue import Queue, Empty
 
 logger = logging.getLogger(__name__)

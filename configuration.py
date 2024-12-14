@@ -1,6 +1,6 @@
 import logging
-from observer.Subject import Subject
-from observer.Observer import Observer
+from observer.subject import Subject
+from observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .Subject import Subject  # Import only for type checking
+    from .subject import Subject  # Import only for type checking
 
 class Observer(ABC):
     """
