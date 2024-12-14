@@ -7,15 +7,16 @@ from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 
 from configuration import Configuration
+from controller import Controller
 
 logger = logging.getLogger(__name__)
 
 class WebServer:
-    def __init__(self, frame_queue: Queue, config: Configuration):
+    def __init__(self, controller: Controller, config: Configuration):
         self.app = Flask(__name__)
         CORS(self.app)
         self.app.config['CORS_HEADERS'] = 'Content-Type'
-        self.frame_queue = frame_queue
+        self._controller = controller
         self.config = config
 
         self.setup_routes()
@@ -45,7 +46,7 @@ class WebServer:
     def generate_frame(self):
         while True:
             try:
-                frame = self.frame_queue.get(timeout=1.0)  # Wait up to 1 second for a frame
+                frame = self._controller.get(timeout=1.0)  # Wait up to 1 second for a frame
                 logger.debug(f"fetched frame: None={frame is None}")
             except Empty:
                 logger.warning("No frames available in queue")

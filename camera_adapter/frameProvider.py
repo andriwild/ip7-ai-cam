@@ -1,20 +1,18 @@
 import threading
-import cv2
-import datetime
 import logging
 
 from camera_adapter.cameraFactory import CameraFactory
 from configuration import Configuration
+from controller import Controller
 from observer.subject import Subject
 from observer.observer import Observer
-from queue import Queue, Empty
 
 logger = logging.getLogger(__name__)
 
 class FrameProvider(Observer):
 
-    def __init__(self, frame_queue: Queue):
-        self.frame_queue = frame_queue
+    def __init__(self, controller: Controller):
+        self._controller = controller
         self._stop_event = threading.Event()
         self._frame_factory = CameraFactory()
         self._camera = self._frame_factory.default_camera()
@@ -31,24 +29,7 @@ class FrameProvider(Observer):
             if frame is None:
                 break
 
-            timestamp = datetime.datetime.now()
-            cv2.putText(
-                frame,
-                timestamp.strftime("%A %d %B %Y %I:%M:%S%p"),
-                (10, frame.shape[0] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.35,
-                (0, 0, 255),
-                1
-            )
-
-            if self.frame_queue.full():
-                logger.info("frame queue is full")
-                try:
-                    self.frame_queue.get_nowait()  # discard oldest frame
-                except Empty:
-                    pass
-            self.frame_queue.put(frame)
+            self._controller.put(frame)
 
         logger.info("FrameProvider run method stopped")
 

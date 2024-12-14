@@ -6,25 +6,15 @@
 # TODO: was kann ein ultralytics model alles verarbeiten? Schnittstelle für model outputs (bounding boxen, ...)
 import argparse
 import logging
-from queue import Queue
 
-from flask import Flask
-from flask_cors import CORS
 from ultralytics import YOLO
 
 from api.server import WebServer
 from camera_adapter.frameProvider import FrameProvider
 from configuration import Configuration
+from controller import Controller
 
-app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-# Shared Resources
-frame_queue = Queue(maxsize=5)  # Store up to 5 frames in memory
 model = YOLO("resources/ml_models/yolo11n.onnx")
-confidence = 0.5
-roi = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,14 +23,16 @@ logging.basicConfig(
 
 
 def main(host: str, port: int)-> None:
+    controller = Controller()
+
     config = Configuration()
 
-    frame_provider = FrameProvider(frame_queue)
+    frame_provider = FrameProvider(controller)
     frame_provider.start()
 
     config.attach(frame_provider)
 
-    server = WebServer(frame_queue, config)
+    server = WebServer(controller, config)
     server.run(host, port)
 
 
