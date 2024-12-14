@@ -3,9 +3,10 @@ import cv2
 import datetime
 import logging
 
-from camera_adapter.CameraFactory import CameraFactory
+from camera_adapter.cameraFactory import CameraFactory
 from configuration import Configuration
-from observer.Subject import Observer, Subject
+from observer.Subject import Subject
+from observer.Observer import Observer
 from queue import Queue, Empty
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ class FrameProvider(Observer):
         self._camera = self._frame_factory.default_camera()
         self._thread = None
         logger.info("FrameProvider initialized with default camera")
+
 
     def _run(self):
         logger.info("FrameProvider run method started")
@@ -50,6 +52,7 @@ class FrameProvider(Observer):
 
         logger.info("FrameProvider run method stopped")
 
+
     def start(self):
         if self._thread and self._thread.is_alive():
             logger.warning("FrameProvider thread is already running")
@@ -60,12 +63,14 @@ class FrameProvider(Observer):
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
+
     def stop(self):
         logger.info("Stopping FrameProvider thread")
         self._stop_event.set()
         if self._thread:
             self._thread.join()
             self._thread = None
+
 
     def update(self, subject: Subject) -> None:
         if not isinstance(subject, Configuration):

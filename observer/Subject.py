@@ -1,5 +1,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .Observer import Observer  # Import only for type checking
 
 class Subject(ABC):
     """
@@ -27,15 +31,3 @@ class Subject(ABC):
         """
         pass
 
-
-class Observer(ABC):
-    """
-    The Observer interface declares the update method, used by subjects.
-    """
-
-    @abstractmethod
-    def update(self, subject: Subject) -> None:
-        """
-        Receive update from subject.
-        """
-        pass
