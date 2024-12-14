@@ -20,7 +20,7 @@ class Controller:
                 pass
 
         if self._annotate:
-           frame = self.annotate(frame)
+           frame = self._annotate_frame(frame)
 
         self._frame_queue.put(frame)
 
@@ -29,7 +29,7 @@ class Controller:
         return self._frame_queue.get(block=block, timeout=timeout)
 
 
-    def annotate(self, frame):
+    def _annotate_frame(self, frame):
         timestamp = datetime.datetime.now()
         cv2.putText(
               frame,

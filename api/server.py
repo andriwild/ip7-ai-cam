@@ -19,9 +19,9 @@ class WebServer:
         self._controller = controller
         self.config = config
 
-        self.setup_routes()
+        self._setup_routes()
 
-    def setup_routes(self):
+    def _setup_routes(self):
         @self.app.route("/cameras", methods=['GET'])
         def get_cameras():
             return ["cv", "pi"]
@@ -40,10 +40,10 @@ class WebServer:
 
         @self.app.route("/video_feed")
         def video_feed():
-            return Response(self.generate_frame(),
+            return Response(self._generate_frame(),
                             mimetype="multipart/x-mixed-replace; boundary=frame")
 
-    def generate_frame(self):
+    def _generate_frame(self):
         while True:
             try:
                 frame = self._controller.get(timeout=1.0)  # Wait up to 1 second for a frame

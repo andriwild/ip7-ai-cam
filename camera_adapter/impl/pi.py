@@ -21,9 +21,11 @@ class PiCamera(Camera):
         self._camera.start()
         time.sleep(1)  # Ensure the camera initializes properly
 
+
     def get_frame(self):
         logger.debug("Getting frame from PiCamera")
         return self._camera.capture_array()
+
 
     def release(self):
         if self._camera is not None:
@@ -31,6 +33,7 @@ class PiCamera(Camera):
             self._camera.stop()
             self._camera.close()
             self._camera = None
+
 
     def get_name(self) -> str:
         logger.debug("Getting camera name for PiCamera")

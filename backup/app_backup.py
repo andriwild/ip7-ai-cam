@@ -16,7 +16,7 @@ import argparse
 import datetime
 import cv2
 import json as JSON
-from camera_adapter.cameraFactory import CameraFactory
+from camera_adapter.cameraFactory import FrameFactory
 
 
 outputFrame = None
@@ -249,7 +249,7 @@ if __name__ == '__main__':
             camera = camera_factory.get_camera() 
 
 
-    camera_factory = CameraFactory(lock, on_update)
+    camera_factory = FrameFactory(lock, on_update)
     config.attach(camera_factory)
     config.set_camera("cv")
 

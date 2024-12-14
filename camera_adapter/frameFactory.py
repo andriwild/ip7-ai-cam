@@ -6,7 +6,7 @@ from camera_adapter.impl.static import StaticFrameGenerator
 
 logger = logging.getLogger(__name__)
 
-class CameraFactory:
+class FrameFactory:
 
     def __init__(self):
         self._camera = StaticFrameGenerator()

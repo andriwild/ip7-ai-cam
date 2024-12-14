@@ -18,6 +18,7 @@ class OpenCVCamera(Camera):
         self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, height)
         time.sleep(1)  # Ensure the camera initializes properly
 
+
     def get_frame(self):
         logger.debug("Getting frame from OpenCVCamera")
         ret, frame = self._capture.read()
@@ -26,11 +27,13 @@ class OpenCVCamera(Camera):
             return None
         return self.cv2.cvtColor(frame, self.cv2.COLOR_BGR2RGB)
 
+
     def release(self):
         if self._capture is not None:
             logger.info("Releasing OpenCVCamera")
             self._capture.release()
             self._capture = None
+
 
     def get_name(self) -> str:
         logger.debug("Getting camera name for OpenCVCamera")

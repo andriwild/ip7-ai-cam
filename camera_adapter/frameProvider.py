@@ -1,7 +1,7 @@
 import threading
 import logging
 
-from camera_adapter.cameraFactory import CameraFactory
+from camera_adapter.frameFactory import FrameFactory
 from configuration import Configuration
 from controller import Controller
 from observer.subject import Subject
@@ -14,7 +14,7 @@ class FrameProvider(Observer):
     def __init__(self, controller: Controller):
         self._controller = controller
         self._stop_event = threading.Event()
-        self._frame_factory = CameraFactory()
+        self._frame_factory = FrameFactory()
         self._camera = self._frame_factory.default_camera()
         self._thread = None
         logger.info("FrameProvider initialized with default camera")
