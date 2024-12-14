@@ -3,6 +3,9 @@ import time
 from camera_adapter.ICamera import ICamera
 
 class PiCamera(ICamera):
+
+    NAME = "pi"
+
     def __init__(self, width=640, height=480):
         print("PiCamera init")
         from picamera2 import Picamera2
@@ -25,3 +28,5 @@ class PiCamera(ICamera):
             self._camera.close()
             self._camera = None
 
+    def get_name(self) -> str:
+        return self.NAME

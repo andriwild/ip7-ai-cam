@@ -3,6 +3,9 @@ import time
 from camera_adapter.ICamera import ICamera
 
 class OpenCVCamera(ICamera):
+
+    NAME = "cv"
+
     def __init__(self, device="/dev/video0", width=640, height=480):
         print("opencv init")
         import cv2
@@ -24,6 +27,6 @@ class OpenCVCamera(ICamera):
             self._capture.release()
             self._capture = None
 
-    
-
+    def get_name(self) -> str:
+        return self.NAME
 

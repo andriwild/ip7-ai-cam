@@ -8,3 +8,7 @@ class ICamera(ABC):
     @abstractmethod
     def release(self):
         pass
+
+    @abstractmethod
+    def get_name(self) -> str:
+        pass
