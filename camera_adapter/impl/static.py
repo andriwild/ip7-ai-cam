@@ -52,7 +52,6 @@ class StaticFrameGenerator(Camera):
 
     def release(self):
         logger.info("Releasing StaticFrameGenerator")
-        pass
 
     def get_name(self) -> str:
         logger.debug("Getting camera name for StaticFrameGenerator")

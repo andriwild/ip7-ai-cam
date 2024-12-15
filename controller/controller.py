@@ -16,6 +16,8 @@ class Controller:
     def add_operation(self, operation: Operation) -> None:
         self.operations.append(operation)
 
+    def add_operations(self, operations: list[Operation]) -> None:
+        self.operations.extend(operations)
 
     def remove_operation(self, operation: Operation) -> None:
         self.operations.remove(operation)

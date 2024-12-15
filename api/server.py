@@ -24,7 +24,7 @@ class WebServer:
     def _setup_routes(self):
         @self.app.route("/cameras", methods=['GET'])
         def get_cameras():
-            return ["cv", "pi"]
+            return ["static", "image", "cv", "pi"]
 
         @self.app.route('/camera', methods=['POST'])
         def set_camera():

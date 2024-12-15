@@ -26,8 +26,10 @@ logging.basicConfig(
 
 def main(host: str, port: int)-> None:
     controller = Controller()
-    controller.add_operation(Annotator())
-    controller.add_operation(UltralyticsInference())
+    controller.add_operations([
+        Annotator(),
+        UltralyticsInference()
+    ])
 
     config = Configuration()
 

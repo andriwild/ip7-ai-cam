@@ -46,6 +46,10 @@ class FrameFactory:
                 else:
                     logger.warning("cv2 not available")
 
+            case "image":
+                logger.info("Setting image camera")
+                from camera_adapter.impl.image import ImageGenerator
+                camera = ImageGenerator(width=width, height=height)
             case _:
                 logger.info("Setting to static frame camera")
 
