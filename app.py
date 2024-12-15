@@ -2,8 +2,8 @@
 # onnx runtime info: https://onnxruntime.ai/docs/tutorials/iot-edge/rasp-pi-cv.html
 
 
-
 # TODO: was kann ein ultralytics model alles verarbeiten? Schnittstelle für model outputs (bounding boxen, ...)
+
 import argparse
 import logging
 
@@ -12,7 +12,9 @@ from ultralytics import YOLO
 from api.server import WebServer
 from camera_adapter.frameProvider import FrameProvider
 from configuration import Configuration
-from controller import Controller
+from controller.controller import Controller
+from controller.impl.annotator import Annotator
+from controller.impl.ultralytics import UltralyticsInference
 
 model = YOLO("resources/ml_models/yolo11n.onnx")
 
@@ -24,6 +26,8 @@ logging.basicConfig(
 
 def main(host: str, port: int)-> None:
     controller = Controller()
+    controller.add_operation(Annotator())
+    controller.add_operation(UltralyticsInference())
 
     config = Configuration()
 

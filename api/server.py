@@ -7,7 +7,7 @@ from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 
 from configuration import Configuration
-from controller import Controller
+from controller.controller import Controller
 
 logger = logging.getLogger(__name__)
 

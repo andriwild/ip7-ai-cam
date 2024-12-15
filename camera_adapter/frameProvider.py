@@ -3,7 +3,7 @@ import logging
 
 from camera_adapter.frameFactory import FrameFactory
 from configuration import Configuration
-from controller import Controller
+from controller.controller import Controller
 from observer.subject import Subject
 from observer.observer import Observer
 
