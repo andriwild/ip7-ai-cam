@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import time
 
-from camera_adapter.interface.camera import Camera
+from frame_adapter.interface.camera import Camera
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class ImageGenerator(Camera):
         logger.info("Initializing ImageGenerator")
         self._width = width
         self._height = height
-        self._frame = cv2.imread("image.png")
+        self._frame = cv2.imread("image.jpg")
         self._frame = cv2.resize(self._frame, (width, height))
 
 

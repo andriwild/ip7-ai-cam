@@ -16,12 +16,13 @@ class Controller:
     def add_operation(self, operation: Operation) -> None:
         self.operations.append(operation)
 
+
     def add_operations(self, operations: list[Operation]) -> None:
         self.operations.extend(operations)
 
+
     def remove_operation(self, operation: Operation) -> None:
         self.operations.remove(operation)
-
 
 
     def put(self, frame):
@@ -32,15 +33,14 @@ class Controller:
             except Empty:
                 pass
 
-        for operation in self.operations:
-            frame = operation.process(frame)
-
-        # if self._annotate:
-        #    frame = self._annotate_frame(frame)
-
         self._frame_queue.put(frame)
 
 
     def get(self, block=True, timeout=None):
-        return self._frame_queue.get(block=block, timeout=timeout)
+        frame = self._frame_queue.get(block=block, timeout=timeout)
+
+        for operation in self.operations:
+            frame = operation.process(frame)
+
+        return frame
 

@@ -1,7 +1,7 @@
 import threading
 import logging
 
-from camera_adapter.frameFactory import FrameFactory
+from frame_adapter.frameFactory import FrameFactory
 from configuration import Configuration
 from controller.controller import Controller
 from observer.subject import Subject

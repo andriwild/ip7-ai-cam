@@ -1,7 +1,7 @@
 import time
 import logging
 
-from camera_adapter.interface.camera import Camera
+from frame_adapter.interface.camera import Camera
 
 logger = logging.getLogger(__name__)
 

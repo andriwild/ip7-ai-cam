@@ -10,11 +10,11 @@ import logging
 from ultralytics import YOLO
 
 from api.server import WebServer
-from camera_adapter.frameProvider import FrameProvider
+from frame_adapter.frameProvider import FrameProvider
 from configuration import Configuration
 from controller.controller import Controller
-from controller.impl.annotator import Annotator
-from controller.impl.ultralytics import UltralyticsInference
+from controller.impl.text_annotator import TextAnnotator
+from ml.impl.ultralytics import UltralyticsInference
 
 model = YOLO("resources/ml_models/yolo11n.onnx")
 
@@ -27,7 +27,7 @@ logging.basicConfig(
 def main(host: str, port: int)-> None:
     controller = Controller()
     controller.add_operations([
-        Annotator(),
+        TextAnnotator(),
         UltralyticsInference()
     ])
 

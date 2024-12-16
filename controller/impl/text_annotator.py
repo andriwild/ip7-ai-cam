@@ -4,7 +4,7 @@ import datetime
 from controller.interfaces.operation import Operation
 
 
-class Annotator(Operation):
+class TextAnnotator(Operation):
 
     def process(self, frame):
         timestamp = datetime.datetime.now()

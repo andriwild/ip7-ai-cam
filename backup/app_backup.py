@@ -7,7 +7,7 @@
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 from ultralytics import YOLO
-from camera_adapter.interface.camera import Camera
+from frame_adapter.interface.camera import Camera
 from configuration import Configuration
 from utilities.metadata import get_cpu_usage, get_temperature, get_storage_usage
 
@@ -16,7 +16,7 @@ import argparse
 import datetime
 import cv2
 import json as JSON
-from camera_adapter.cameraFactory import FrameFactory
+from frame_adapter.cameraFactory import FrameFactory
 
 
 outputFrame = None

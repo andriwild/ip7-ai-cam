@@ -1,8 +1,8 @@
 import importlib.util
 import logging
 
-from camera_adapter.interface.camera import Camera
-from camera_adapter.impl.static import StaticFrameGenerator
+from frame_adapter.interface.camera import Camera
+from frame_adapter.impl.static import StaticFrameGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class FrameFactory:
         match name:
             case "pi":
                 if self._is_module_available("picamera2"):
-                    from camera_adapter.impl.pi import PiCamera
+                    from frame_adapter.impl.pi import PiCamera
                     camera = PiCamera(width=width, height=height)
                     test_frame = camera.get_frame()
                     if test_frame is not None:
@@ -35,7 +35,7 @@ class FrameFactory:
             case "cv":
                 if self._is_module_available("cv2"):
                     logger.info("Setting OpenCV camera")
-                    from camera_adapter.impl.opencv import OpenCVCamera
+                    from frame_adapter.impl.opencv import OpenCVCamera
                     camera = OpenCVCamera(device=device, width=width, height=height)
                     test_frame = camera.get_frame()
                     if test_frame is not None:
@@ -48,7 +48,7 @@ class FrameFactory:
 
             case "image":
                 logger.info("Setting image camera")
-                from camera_adapter.impl.image import ImageGenerator
+                from frame_adapter.impl.image import ImageGenerator
                 camera = ImageGenerator(width=width, height=height)
             case _:
                 logger.info("Setting to static frame camera")

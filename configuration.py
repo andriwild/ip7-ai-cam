@@ -8,21 +8,12 @@ class Configuration(Subject):
 
     def __init__(self):
         self._camera = "static"
+        self._models = ["yolo11n.onnx"] # TODO: remove default model
         self._observers = []
         logger.info("Configuration initialized with default camera 'static'")
 
 
-    def get_camera(self) -> str:
-        logger.debug(f"Getting camera: {self._camera}")
-        return self._camera
-
-
-    def set_camera(self, value):
-        logger.info(f"Setting camera to {value}")
-        self._camera = value
-        self.notify()
-
-
+    # Observer pattern methods
     def attach(self, observer: Observer) -> None:
         self._observers.append(observer)
         logger.info(f"Observer {observer} attached")
@@ -37,3 +28,28 @@ class Configuration(Subject):
         logger.info("Notifying observers")
         for observer in self._observers:
             observer.update(self)
+
+
+    # camera property
+    def get_camera(self) -> str:
+        logger.debug(f"Getting camera: {self._camera}")
+        return self._camera
+
+
+    def set_camera(self, camera_name):
+        logger.info(f"Setting camera to {camera_name}")
+        self._camera = camera_name
+        self.notify()
+
+
+    # model property
+    def get_models(self) -> list[str]:
+        logger.debug(f"Getting models: {self._models}")
+        return self._models
+
+
+    def set_models(self, models: list[str]):
+        logger.info(f"Setting models to {models}")
+        self._models = models
+        self.notify()
+
