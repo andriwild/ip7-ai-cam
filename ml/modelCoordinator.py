@@ -1,7 +1,9 @@
 import logging
 from config.configuration import Configuration
 from controller.interfaces.operation import Operation
-from ml.impl.ultralytics import UltralyticsInference
+from ml.impl.ulSeg import UlSeg
+from ml.impl.ulPose import UlPose
+from ml.impl.ulObjectDetection import UlObjectDetection
 from model.capture import Capture
 from observer.observer import Observer
 from observer.subject import Subject
@@ -19,8 +21,14 @@ class ModelCoordinator(Observer, Operation):
     def _model_from_name(self, model_name: str) -> Operation | None:
         model = None
         match model_name: 
-            case "yolo11n.onnx" | "yolo11n-pose.onnx" | "yolo11n-seg.onnx":
-                model = UltralyticsInference(self.MODEL_PATH, model_name)
+            case "yolo11n.onnx":
+                model = UlObjectDetection(f"{self.MODEL_PATH}/{model_name}")
+            case "yolo11n-pose.onnx":
+                model = UlPose(f"{self.MODEL_PATH}/{model_name}")
+            case "yolo11n-seg.onnx":
+                model = UlSeg(f"{self.MODEL_PATH}/{model_name}")
+            case "-":
+                model = None
             case _:
                 logger.error(f"Model {model_name} not found")
         return model
@@ -44,8 +52,7 @@ class ModelCoordinator(Observer, Operation):
 
     def process(self, capture: Capture):
         for model in self._models:
-            frame = model.process(capture.get_frame())
-            capture.set_frame(frame)
+            capture = model.process(capture)
 
         return capture
 

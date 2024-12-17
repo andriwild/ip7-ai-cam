@@ -1,11 +1,14 @@
 from datetime import datetime
 import numpy as np
+from ultralytics.engine.results import Boxes, Masks, Keypoints
 
 class Capture:
 
     def __init__(self, frame = None):
         self._frame = frame 
-        self._detections = None
+        self._boxes : Boxes | None = None
+        self._masks : Masks | None = None
+        self._keypoints : Keypoints | None  = None
         self._timestamp = datetime.now()
 
 
@@ -21,12 +24,28 @@ class Capture:
         return self._timestamp
 
 
-    def get_detections(self):
-        return self._detections
+    def add_box(self, boxes: Boxes):
+        self._boxes = boxes
 
 
-    def set_detection(self, detections):
-        self._detections = detections
+    def get_boxes(self) -> Boxes | None:
+        return self._boxes
+
+
+    def add_mask(self, masks: Masks):
+        self._masks = masks
+
+
+    def get_masks(self) -> Masks | None:
+        return self._masks
+
+
+    def add_keypoints(self, keypoints: Keypoints):
+        self._keypoints = keypoints
+
+
+    def get_keypoints(self) -> Keypoints | None:
+        return self._keypoints
 
 
     def __str__(self):
@@ -43,7 +62,7 @@ class Capture:
             frame_info = "No image is set"
 
         detections_status = (
-            f"Detections: {self._detections}" if self._detections else "No detections"
+            f"Detections: {self._boxes}" if self._boxes else "No detections"
         )
 
         return (

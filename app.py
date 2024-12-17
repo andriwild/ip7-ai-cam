@@ -7,11 +7,14 @@
 import argparse
 import logging
 
+from annotator.keypointAnnotator import KeypointAnnotator
+from annotator.maskAnnotator import MaskAnnotator
 from api.server import WebServer
 from capture.sourceProvider import SourceProvider
 from config.configuration import Configuration
 from controller.controller import Controller
-from controller.impl.text_annotator import TextAnnotator
+from annotator.textAnnotator import TextAnnotator
+from annotator.boxAnnotator import BoxAnnotator
 from ml.modelCoordinator import ModelCoordinator
 
 logging.basicConfig(
@@ -26,7 +29,10 @@ def main(host: str, port: int)-> None:
     controller = Controller()
     controller.add_operations([
         TextAnnotator(),
-        model_coordinator
+        model_coordinator,
+        BoxAnnotator(),
+        KeypointAnnotator(),
+        MaskAnnotator()
     ])
 
     config = Configuration()

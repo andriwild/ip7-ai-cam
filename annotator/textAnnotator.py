@@ -8,6 +8,9 @@ class TextAnnotator(Operation):
 
     def process(self, capture: Capture):
         frame = capture.get_frame()
+        if frame is None:
+            return capture
+
         cv2.putText(
               frame,
               capture.get_timestamp().strftime("%A %d %B %Y %I:%M:%S%p"),

@@ -40,7 +40,7 @@ class WebServer:
 
         @self.app.route("/models", methods=['GET'])
         def get_models():
-            return ["yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx"]
+            return ["-", "yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx"]
 
 
         @self.app.route('/models', methods=['POST'])
@@ -66,7 +66,6 @@ class WebServer:
         while True:
             try:
                 capture = self._controller.get(timeout=1.0)  # Wait up to 1 second for a capture
-                logger.info(f"Get capture from {capture.get_timestamp()}")
             except Empty:
                 logger.warning("No captures available in queue")
                 continue

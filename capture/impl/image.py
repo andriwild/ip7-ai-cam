@@ -23,6 +23,8 @@ class ImageGenerator(Source):
     def get_capture(self) -> Capture:
         logger.debug("Getting frame from ImageGenerator")
         time.sleep(0.2)
+        self._frame = cv2.imread("image.jpg")
+        self._frame = cv2.resize(self._frame, (self._width, self._height))
         return Capture(self._frame)
 
 
