@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class Controller:
 
     def __init__(self, annotate=True, buffer_size: int = 5):
-        self._frame_queue = Queue(maxsize=buffer_size)
+        self._capture_queue = Queue(maxsize=buffer_size)
         self._annotate = annotate
         self.operations: list[Operation] = []
 
@@ -27,21 +27,21 @@ class Controller:
 
 
     def put(self, capture: Capture):
-        if self._frame_queue.full():
+        if self._capture_queue.full():
             logger.info("frame queue is full")
             try:
-                self._frame_queue.get_nowait()  # discard oldest frame
+                self._capture_queue.get_nowait()  # discard oldest frame
             except Empty:
                 pass
 
-        self._frame_queue.put(capture)
+        self._capture_queue.put(capture)
 
 
     def get(self, block=True, timeout=None):
-        frame = self._frame_queue.get(block=block, timeout=timeout)
+        capture = self._capture_queue.get(block=block, timeout=timeout)
 
         for operation in self.operations:
-            frame = operation.process(frame)
+            capture = operation.process(capture)
 
-        return frame
+        return capture
 

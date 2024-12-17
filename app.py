@@ -16,6 +16,8 @@ from controller.controller import Controller
 from annotator.textAnnotator import TextAnnotator
 from annotator.boxAnnotator import BoxAnnotator
 from ml.modelCoordinator import ModelCoordinator
+from sink.consumer import Consumer
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,14 +39,19 @@ def main(host: str, port: int)-> None:
 
     config = Configuration()
 
-    capture_provider = SourceProvider(controller)
-    capture_provider.start()
+    consumer = Consumer(controller, config)
+    consumer.start()
 
-    config.attach(capture_provider)
+    source_provider = SourceProvider(controller)
+    source_provider.start()
+
+    config.attach(source_provider)
     config.attach(model_coordinator)
+    config.attach(consumer)
 
-    server = WebServer(controller, config)
-    server.run(host, port)
+    # server = WebServer(controller, config)
+    # server.run(host, port)
+    input()
 
 
 if __name__ == '__main__':

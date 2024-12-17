@@ -1,27 +1,43 @@
 import json
 import logging
-import time
-from queue import Empty
+import threading
+from queue import Empty, Queue
 
 import cv2
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 
-from capture.impl.static import StaticFrameGenerator
 from config.configuration import Configuration
 from controller.controller import Controller
+from model.capture import Capture
+from sink.interface.sink import Sink
 
 logger = logging.getLogger(__name__)
 
-class WebServer:
+class WebServer(Sink):
     def __init__(self, controller: Controller, config: Configuration):
         self.app = Flask(__name__)
         CORS(self.app)
         self.app.config['CORS_HEADERS'] = 'Content-Type'
         self._controller = controller
         self.config = config
-
+        self._capture_queue = Queue(maxsize=5)
         self._setup_routes()
+
+        threading.Thread(target=self.run, args=("0.0.0.0", 8000)).start()
+
+
+    def put(self, capture: Capture) -> None:
+        logger.debug("Putting capture in queue")
+        if self._capture_queue.full():
+            logger.info("capture queue is full")
+            try:
+                self._capture_queue.get_nowait()  # discard oldest frame
+            except Empty:
+                pass
+
+        self._capture_queue.put(capture)
+
 
     def _setup_routes(self):
         @self.app.route("/sources", methods=['GET'])
@@ -65,7 +81,8 @@ class WebServer:
     def _generate_frame(self):
         while True:
             try:
-                capture = self._controller.get(timeout=1.0)  # Wait up to 1 second for a capture
+                logger.debug("Getting capture from queue")
+                capture = self._capture_queue.get()  # Wait up to 1 second for a capture
             except Empty:
                 logger.warning("No captures available in queue")
                 continue
@@ -75,10 +92,20 @@ class WebServer:
             (success, encoded_image) = cv2.imencode(".jpg", frame)
 
             if not success:
+                logger.error("Error encoding frame")
                 continue
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' +
                    bytearray(encoded_image) + b'\r\n')
+
+
+    # based on: https://stackoverflow.com/questions/15562446/how-to-stop-flask-application-without-using-ctrl-c 
+    def shutdown_server(self):
+        func = request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
+
 
     def run(self, host: str, port: int):
         self.app.run(

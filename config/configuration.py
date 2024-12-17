@@ -10,6 +10,7 @@ class Configuration(Subject):
         self._source = "static"
         self._models = []
         self._observers = []
+        self._sinks = ["console", "webserver"]
         logger.info("Configuration initialized with default source 'static'")
 
 
@@ -51,5 +52,17 @@ class Configuration(Subject):
     def set_models(self, models: list[str]):
         logger.info(f"Setting models to {models}")
         self._models = models
+        self.notify()
+
+
+    # sink property
+    def get_sinks(self) -> list[str]:
+        logger.debug(f"Getting sinks: {self._sinks}")
+        return self._sinks
+
+
+    def set_sinks(self, sinks: list[str]):
+        logger.info(f"Setting sinks to {sinks}")
+        self._sinks = sinks
         self.notify()
 

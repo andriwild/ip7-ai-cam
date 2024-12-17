@@ -16,6 +16,7 @@ class ModelCoordinator(Observer, Operation):
 
     def __init__(self):
         self._models: list[Operation] = []
+        logger.info("ModelCoordinator initialized")
 
 
     def _model_from_name(self, model_name: str) -> Operation | None:
