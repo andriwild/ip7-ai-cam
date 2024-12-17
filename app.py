@@ -9,14 +9,13 @@ import logging
 
 from annotator.keypointAnnotator import KeypointAnnotator
 from annotator.maskAnnotator import MaskAnnotator
-from api.server import WebServer
-from capture.sourceProvider import SourceProvider
+from capture.captureProducer import CaptureProducer
 from config.configuration import Configuration
 from controller.controller import Controller
 from annotator.textAnnotator import TextAnnotator
 from annotator.boxAnnotator import BoxAnnotator
 from ml.modelCoordinator import ModelCoordinator
-from sink.consumer import Consumer
+from sink.captureConsumer import CaptureConsumer
 
 
 logging.basicConfig(
@@ -37,21 +36,19 @@ def main(host: str, port: int)-> None:
         MaskAnnotator()
     ])
 
-    config = Configuration()
+    config = Configuration(host, port)
 
-    consumer = Consumer(controller, config)
+    consumer = CaptureConsumer(controller, config)
     consumer.start()
 
-    source_provider = SourceProvider(controller)
+    source_provider = CaptureProducer(controller)
     source_provider.start()
 
     config.attach(source_provider)
     config.attach(model_coordinator)
     config.attach(consumer)
 
-    # server = WebServer(controller, config)
-    # server.run(host, port)
-    input()
+    input() # TODO: prevent from stopping properly
 
 
 if __name__ == '__main__':

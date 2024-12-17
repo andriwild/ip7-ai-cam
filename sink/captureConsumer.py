@@ -13,7 +13,7 @@ from sink.interface.sink import Sink
 logger = logging.getLogger(__name__)
 
 
-class Consumer(Observer):
+class CaptureConsumer(Observer):
 
     def __init__(self, controller: Controller, config: Configuration):
         self._controller = controller

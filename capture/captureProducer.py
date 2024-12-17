@@ -10,7 +10,7 @@ from observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 
-class SourceProvider(Observer):
+class CaptureProducer(Observer):
 
     def __init__(self, controller: Controller):
         self._controller = controller
@@ -18,32 +18,32 @@ class SourceProvider(Observer):
         self._source_factory = SourceFactory()
         self._source: Source = self._source_factory.default_source()
         self._thread = None
-        logger.info("SourceProvider initialized with default source")
+        logger.info("CaptureProducer initialized with default source")
 
 
     def _run(self):
-        logger.info("SourceProvider run method started")
+        logger.info("CaptureProducer run method started")
 
         while not self._stop_event.is_set():
             capture = self._source.get_capture()
             self._controller.put(capture)
 
-        logger.info("SourceProvider run method stopped")
+        logger.info("CaptureProducer run method stopped")
 
 
     def start(self):
         if self._thread and self._thread.is_alive():
-            logger.warning("SourceProvider thread is already running")
+            logger.warning("CaptureProducer thread is already running")
             return
 
-        logger.info("Starting SourceProvider thread")
+        logger.info("Starting CaptureProducer thread")
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
 
     def stop(self):
-        logger.info("Stopping SourceProvider thread")
+        logger.info("Stopping CaptureProducer thread")
         self._stop_event.set()
         if self._thread:
             self._thread.join()

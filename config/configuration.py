@@ -6,12 +6,22 @@ logger = logging.getLogger(__name__)
 
 class Configuration(Subject):
 
-    def __init__(self):
+    def __init__(self, host, port):
+        self._host = host
+        self._port = port
         self._source = "static"
         self._models = []
         self._observers = []
         self._sinks = ["console", "webserver"]
         logger.info("Configuration initialized with default source 'static'")
+
+
+    def get_port(self):
+        return self._port
+
+
+    def get_host(self):
+        return self._host
 
 
     # Observer pattern methods

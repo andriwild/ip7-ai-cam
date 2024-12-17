@@ -24,7 +24,7 @@ class WebServer(Sink):
         self._capture_queue = Queue(maxsize=5)
         self._setup_routes()
 
-        threading.Thread(target=self.run, args=("0.0.0.0", 8000)).start()
+        threading.Thread(target=self.run, args=(config.get_host(), config.get_port())).start()
 
 
     def put(self, capture: Capture) -> None:
