@@ -3,12 +3,12 @@ import numpy as np
 import cv2
 import time
 
-from frame_adapter.interface.camera import Camera
+from capture.interface.source import Source
 
 logger = logging.getLogger(__name__)
 
 
-class ImageGenerator(Camera):
+class ImageGenerator(Source):
 
     NAME = "image"
 
@@ -31,5 +31,5 @@ class ImageGenerator(Camera):
 
 
     def get_name(self) -> str:
-        logger.debug("Getting camera name for ImageGenerator")
+        logger.debug("Getting source name for ImageGenerator")
         return self.NAME

@@ -1,12 +1,12 @@
 import json
 import logging
-from queue import Queue, Empty
+from queue import Empty
 
 import cv2
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 
-from configuration import Configuration
+from config.configuration import Configuration
 from controller.controller import Controller
 
 logger = logging.getLogger(__name__)
@@ -31,8 +31,8 @@ class WebServer:
         def set_source():
             data = request.get_data()
             data = json.loads(data)
-            logger.info(f"New Camera: {data['source']}")
-            self.config.set_camera(data["source"])
+            logger.info(f"New source: {data['source']}")
+            self.config.set_source(data["source"])
             return "Ok"
 
         @self.app.route("/models", methods=['GET'])

@@ -10,8 +10,8 @@ import logging
 from ultralytics import YOLO
 
 from api.server import WebServer
-from frame_adapter.frameProvider import FrameProvider
-from configuration import Configuration
+from capture.captureProvider import FrameProvider
+from config.configuration import Configuration
 from controller.controller import Controller
 from controller.impl.text_annotator import TextAnnotator
 from ml.modelCoordinator import ModelCoordinator

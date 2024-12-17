@@ -1,5 +1,5 @@
 import logging
-from configuration import Configuration
+from config.configuration import Configuration
 from controller.interfaces.operation import Operation
 from ml.impl.ultralytics import UltralyticsInference
 from observer.observer import Observer

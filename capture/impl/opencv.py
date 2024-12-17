@@ -1,11 +1,11 @@
 import time
 import logging
 
-from frame_adapter.interface.camera import Camera
+from capture.interface.source import Source
 
 logger = logging.getLogger(__name__)
 
-class OpenCVCamera(Camera):
+class OpenCVCamera(Source):
 
     NAME = "cv"
 
@@ -36,5 +36,5 @@ class OpenCVCamera(Camera):
 
 
     def get_name(self) -> str:
-        logger.debug("Getting camera name for OpenCVCamera")
+        logger.debug("Getting source name for OpenCVCamera")
         return self.NAME

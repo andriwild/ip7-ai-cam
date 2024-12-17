@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 class Configuration(Subject):
 
     def __init__(self):
-        self._camera = "static"
-        self._models = ["yolo11n.onnx"] # TODO: remove default model
+        self._source = "static"
+        self._models = []
         self._observers = []
-        logger.info("Configuration initialized with default camera 'static'")
+        logger.info("Configuration initialized with default source 'static'")
 
 
     # Observer pattern methods
@@ -30,15 +30,15 @@ class Configuration(Subject):
             observer.update(self)
 
 
-    # camera property
-    def get_camera(self) -> str:
-        logger.debug(f"Getting camera: {self._camera}")
-        return self._camera
+    # source property
+    def get_source(self) -> str:
+        logger.debug(f"Getting source: {self._source}")
+        return self._source
 
 
-    def set_camera(self, camera_name):
-        logger.info(f"Setting camera to {camera_name}")
-        self._camera = camera_name
+    def set_source(self, source_name):
+        logger.info(f"Setting source to {source_name}")
+        self._source = source_name
         self.notify()
 
 

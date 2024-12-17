@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class Camera(ABC):
+class Source(ABC):
     @abstractmethod
     def get_frame(self):
         pass

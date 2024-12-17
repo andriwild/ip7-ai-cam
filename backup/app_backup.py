@@ -7,8 +7,8 @@
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 from ultralytics import YOLO
-from frame_adapter.interface.camera import Camera
-from configuration import Configuration
+from capture.interface.source import Source
+from config.configuration import Configuration
 from utilities.metadata import get_cpu_usage, get_temperature, get_storage_usage
 
 import threading
@@ -16,7 +16,7 @@ import argparse
 import datetime
 import cv2
 import json as JSON
-from frame_adapter.cameraFactory import FrameFactory
+from capture.cameraFactory import FrameFactory
 
 
 outputFrame = None
@@ -26,7 +26,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-camera: Camera | None = None
+camera: Source | None = None
 available_cameras = []
 model = YOLO("ml_models/yolo11n.onnx")
 confidence = 0.5
@@ -224,10 +224,10 @@ def repl():
             break
         elif command == 'cv':
             with lock:
-                config.set_camera("cv")
+                config.set_source("cv")
         elif command == 'pi':
             with lock:
-                config.set_camera("pi")
+                config.set_source("pi")
         else:
             print("Unknown command. Type 'cv', 'pi', or 'q'.")
 
@@ -246,12 +246,12 @@ if __name__ == '__main__':
         print("on update callback")
         with lock:
             global camera
-            camera = camera_factory.get_camera() 
+            camera = camera_factory.get_source()
 
 
     camera_factory = FrameFactory(lock, on_update)
     config.attach(camera_factory)
-    config.set_camera("cv")
+    config.set_source("cv")
 
     # available_cameras = find_available_cameras()
     # start_camera(available_cameras[0])
