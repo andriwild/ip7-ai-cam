@@ -185,7 +185,7 @@ def get_frame():
     global camera, outputFrame, lock
     while True:
         with lock:
-            frame = camera.get_frame()
+            frame = camera.get_capture()
             if frame is None:
                 break
 

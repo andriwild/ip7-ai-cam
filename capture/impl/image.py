@@ -1,9 +1,9 @@
 import logging
-import numpy as np
 import cv2
 import time
 
 from capture.interface.source import Source
+from model.capture import Capture
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +20,10 @@ class ImageGenerator(Source):
         self._frame = cv2.resize(self._frame, (width, height))
 
 
-    def get_frame(self):
+    def get_capture(self) -> Capture:
         logger.debug("Getting frame from ImageGenerator")
         time.sleep(0.2)
-        return self._frame
+        return Capture(self._frame)
 
 
     def release(self):

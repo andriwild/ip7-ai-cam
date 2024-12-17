@@ -1,11 +1,13 @@
 import json
 import logging
+import time
 from queue import Empty
 
 import cv2
 from flask import Response, Flask, render_template, request
 from flask_cors import CORS
 
+from capture.impl.static import StaticFrameGenerator
 from config.configuration import Configuration
 from controller.controller import Controller
 
@@ -63,19 +65,21 @@ class WebServer:
     def _generate_frame(self):
         while True:
             try:
-                frame = self._controller.get(timeout=1.0)  # Wait up to 1 second for a frame
-                logger.debug(f"fetched frame: None={frame is None}")
+                capture = self._controller.get(timeout=1.0)  # Wait up to 1 second for a capture
+                logger.info(f"Get capture from {capture.get_timestamp()}")
             except Empty:
-                logger.warning("No frames available in queue")
+                logger.warning("No captures available in queue")
                 continue
 
-            # encode the frame in JPEG format
-            (success, encodedImage) = cv2.imencode(".jpg", frame)
+            # encode the capture in JPEG format
+            frame = capture.get_frame()
+            (success, encoded_image) = cv2.imencode(".jpg", frame)
+
             if not success:
                 continue
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' +
-                   bytearray(encodedImage) + b'\r\n')
+                   bytearray(encoded_image) + b'\r\n')
 
     def run(self, host: str, port: int):
         self.app.run(

@@ -2,6 +2,7 @@ import time
 import logging
 
 from capture.interface.source import Source
+from model.capture import Capture
 
 logger = logging.getLogger(__name__)
 
@@ -19,13 +20,18 @@ class OpenCVCamera(Source):
         time.sleep(1)  # Ensure the camera initializes properly
 
 
-    def get_frame(self):
+    def get_capture(self) -> Capture:
         logger.debug("Getting frame from OpenCVCamera")
-        ret, frame = self._capture.read()
-        if not ret:
-            logger.warning("Failed to retrieve frame from OpenCVCamera")
-            return None
-        return self.cv2.cvtColor(frame, self.cv2.COLOR_BGR2RGB)
+        capture = Capture()
+        if self._capture is None:
+            logger.warning("OpenCVCamera not initialized")
+        else:
+            ret, frame = self._capture.read()
+            if not ret:
+                logger.warning("Failed to retrieve frame from OpenCVCamera")
+            else:
+                capture.set_frame(self.cv2.cvtColor(frame, self.cv2.COLOR_BGR2RGB))
+        return capture
 
 
     def release(self):

@@ -2,6 +2,7 @@ import logging
 from config.configuration import Configuration
 from controller.interfaces.operation import Operation
 from ml.impl.ultralytics import UltralyticsInference
+from model.capture import Capture
 from observer.observer import Observer
 from observer.subject import Subject
 
@@ -41,9 +42,11 @@ class ModelCoordinator(Observer, Operation):
                 self._models.append(model)
 
 
-    def process(self, frame):
+    def process(self, capture: Capture):
         for model in self._models:
-            frame = model.process(frame)
-        return frame
+            frame = model.process(capture.get_frame())
+            capture.set_frame(frame)
+
+        return capture
 
 

@@ -4,6 +4,7 @@ import cv2
 import time
 
 from capture.interface.source import Source
+from model.capture import Capture
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class StaticFrameGenerator(Source):
             if self.bee_position[i] <= 50 or self.bee_position[i] >= [self.width, self.height][i] - 50:
                 self.direction[i] = -self.direction[i]  # Reverse direction on collision
 
-    def get_frame(self):
+    def get_capture(self) -> Capture:
         logger.debug("Getting frame from StaticFrameGenerator")
         frame = self.generate_screensaver_frame()
         self.update_bee_position()
@@ -48,7 +49,7 @@ class StaticFrameGenerator(Source):
         )
         self.frame_counter += 1
         time.sleep(0.05)  # Simulate delay
-        return frame
+        return Capture(frame)
 
     def release(self):
         logger.info("Releasing StaticFrameGenerator")

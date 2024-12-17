@@ -6,7 +6,7 @@ from capture.impl.static import StaticFrameGenerator
 
 logger = logging.getLogger(__name__)
 
-class FrameFactory:
+class SourceFactory:
 
     def __init__(self):
         self._source = StaticFrameGenerator()
@@ -23,8 +23,8 @@ class FrameFactory:
                 if self._is_module_available("pisource2"):
                     from capture.impl.pi import PiCamera
                     source = PiCamera(width=width, height=height)
-                    test_frame = source.get_frame()
-                    if test_frame is not None:
+                    test_capture = source.get_capture()
+                    if test_capture.get_frame() is not None:
                         logger.info("Using libsource source strategy")
                     else:
                         source.release()
@@ -37,8 +37,8 @@ class FrameFactory:
                     logger.info("Setting OpenCV source")
                     from capture.impl.opencv import OpenCVCamera
                     source = OpenCVCamera(device=device, width=width, height=height)
-                    test_frame = source.get_frame()
-                    if test_frame is not None:
+                    test_capture = source.get_capture()
+                    if test_capture.get_frame() is not None:
                         logger.info("Using OpenCV source strategy")
                     else:
                         source.release()

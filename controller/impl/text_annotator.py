@@ -1,19 +1,20 @@
 import cv2
-import datetime
 
 from controller.interfaces.operation import Operation
+from model.capture import Capture
 
 
 class TextAnnotator(Operation):
 
-    def process(self, frame):
-        timestamp = datetime.datetime.now()
+    def process(self, capture: Capture):
+        frame = capture.get_frame()
         cv2.putText(
               frame,
-              timestamp.strftime("%A %d %B %Y %I:%M:%S%p"),
+              capture.get_timestamp().strftime("%A %d %B %Y %I:%M:%S%p"),
               (10, frame.shape[0] - 10),
               cv2.FONT_HERSHEY_SIMPLEX,
               0.35,
               (100, 100, 255),
               1)
-        return frame
+        capture.set_frame(frame)
+        return capture

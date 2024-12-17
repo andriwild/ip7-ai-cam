@@ -1,52 +1,49 @@
 import threading
 import logging
 
-from capture.captureFactory import FrameFactory
+from capture.sourceFactory import SourceFactory
 from config.configuration import Configuration
 from controller.controller import Controller
+from capture.interface.source import Source
 from observer.subject import Subject
 from observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 
-class FrameProvider(Observer):
+class SourceProvider(Observer):
 
     def __init__(self, controller: Controller):
         self._controller = controller
         self._stop_event = threading.Event()
-        self._frame_factory = FrameFactory()
-        self._source = self._frame_factory.default_source()
+        self._source_factory = SourceFactory()
+        self._source: Source = self._source_factory.default_source()
         self._thread = None
-        logger.info("FrameProvider initialized with default source")
+        logger.info("SourceProvider initialized with default source")
 
 
     def _run(self):
-        logger.info("FrameProvider run method started")
+        logger.info("SourceProvider run method started")
 
         while not self._stop_event.is_set():
-            frame = self._source.get_frame()
+            capture = self._source.get_capture()
+            self._controller.put(capture)
 
-            if frame is None:
-                break
-
-            self._controller.put(frame)
-
-        logger.info("FrameProvider run method stopped")
+        logger.info("SourceProvider run method stopped")
 
 
     def start(self):
         if self._thread and self._thread.is_alive():
-            logger.warning("FrameProvider thread is already running")
+            logger.warning("SourceProvider thread is already running")
             return
 
-        logger.info("Starting FrameProvider thread")
+        logger.info("Starting SourceProvider thread")
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
 
     def stop(self):
-        logger.info("Stopping FrameProvider thread")
+        logger.info("Stopping SourceProvider thread")
         self._stop_event.set()
         if self._thread:
             self._thread.join()
@@ -69,13 +66,13 @@ class FrameProvider(Observer):
 
         if self._source is not None:
             self._source.release()
-        self._source = self._frame_factory.set_source_by_name(new_source_name)
+        self._source = self._source_factory.set_source_by_name(new_source_name)
 
         logger.info(f"Source updated to {new_source_name}.")
 
-        test_frame = self._source.get_frame()
-        if test_frame is None:
+        test_capture = self._source.get_capture()
+        if test_capture is None:
             logger.error(f"Source could not be updated to {new_source_name}, setting to default source")
-            self._source = self._frame_factory.default_source()
+            self._source = self._source_factory.default_source()
 
         self.start()  # Restart the thread
