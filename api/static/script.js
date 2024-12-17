@@ -3,7 +3,7 @@ console.log("Server runs on:" ,window.SERVER_URL);
 
 const BASE_URL = window.SERVER_URL;
 
-const cameraElement     = document.getElementById("cameraSelect");
+const sourceElement     = document.getElementById("sourceSelect");
 const resolutionElement = document.getElementById("resolutionSelect");
 const modelElement      = document.getElementById("modelSelect");
 const confidenceElement = document.getElementById("confidenceInput");
@@ -32,9 +32,17 @@ const fetchSetting = (endpoint, applyFn) => {
 
 
 fetchSetting(
-    "cameras", (
-    data => data.forEach(cam => {
-            cameraElement.innerHTML += `<option value="${cam}">${cam}</option>`;
+    "sources", (
+    data => data.forEach(source => {
+            sourceElement.innerHTML += `<option value="${source}">${source}</option>`;
+        })
+    )
+)
+
+fetchSetting(
+    "models", (
+    data => data.forEach(model => {
+            modelElement.innerHTML += `<option value="${model}">${model}</option>`;
         })
     )
 )
@@ -59,14 +67,16 @@ const updateMetaData = () => {
 updateMetaData();
 
 
-document.getElementById("cameraSelectBtn").onclick = () => 
-    sendSetting({ camera: cameraElement.value }, "camera");
+document.getElementById("sourceSelectBtn").onclick = () => 
+    sendSetting({ source: sourceElement.value }, "source");
 
 document.getElementById("resolutionSelectBtn").onclick = () => 
     sendSetting({ resolution: resolutionElement.value }, "resolution");
 
-document.getElementById("modelSelectBtn").onclick = () => 
-    sendSetting({ model: modelElement.value }, "model");
+document.getElementById("modelSelectBtn").onclick = () => {
+    var values = Array.from(modelElement.selectedOptions).map(({ value }) => value);
+    sendSetting({ models: values }, "models");
+}
 
 document.getElementById("confidenceInputBtn").onclick = () => 
     sendSetting({ confidence: confidenceElement.value }, "confidence");

@@ -22,16 +22,29 @@ class WebServer:
         self._setup_routes()
 
     def _setup_routes(self):
-        @self.app.route("/cameras", methods=['GET'])
-        def get_cameras():
+        @self.app.route("/sources", methods=['GET'])
+        def get_sources():
             return ["static", "image", "cv", "pi"]
 
-        @self.app.route('/camera', methods=['POST'])
-        def set_camera():
+
+        @self.app.route('/source', methods=['POST'])
+        def set_source():
             data = request.get_data()
             data = json.loads(data)
-            logger.info(f"New Camera: {data['camera']}")
-            self.config.set_camera(data["camera"])
+            logger.info(f"New Camera: {data['source']}")
+            self.config.set_camera(data["source"])
+            return "Ok"
+
+        @self.app.route("/models", methods=['GET'])
+        def get_models():
+            return ["yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx"]
+
+        @self.app.route('/models', methods=['POST'])
+        def set_models():
+            data = request.get_data()
+            data = json.loads(data)
+            logger.info(f"New Models: {data['models']}")
+            self.config.set_models(data["models"])
             return "Ok"
 
         @self.app.route("/")

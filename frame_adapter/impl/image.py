@@ -22,6 +22,7 @@ class ImageGenerator(Camera):
 
     def get_frame(self):
         logger.debug("Getting frame from ImageGenerator")
+        time.sleep(0.2)
         return self._frame
 
 

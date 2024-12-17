@@ -14,7 +14,7 @@ from frame_adapter.frameProvider import FrameProvider
 from configuration import Configuration
 from controller.controller import Controller
 from controller.impl.text_annotator import TextAnnotator
-from ml.impl.ultralytics import UltralyticsInference
+from ml.modelCoordinator import ModelCoordinator
 
 model = YOLO("resources/ml_models/yolo11n.onnx")
 
@@ -25,10 +25,12 @@ logging.basicConfig(
 
 
 def main(host: str, port: int)-> None:
+    model_coordinator = ModelCoordinator()
+
     controller = Controller()
     controller.add_operations([
         TextAnnotator(),
-        UltralyticsInference()
+        model_coordinator
     ])
 
     config = Configuration()
@@ -37,6 +39,7 @@ def main(host: str, port: int)-> None:
     frame_provider.start()
 
     config.attach(frame_provider)
+    config.attach(model_coordinator)
 
     server = WebServer(controller, config)
     server.run(host, port)

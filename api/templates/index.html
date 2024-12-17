@@ -90,10 +90,10 @@
         <fieldset class="border p-3 rounded mb-4">
             <legend class="fw-bold">Video Frame Settings</legend>
             <div class="mb-3">
-                <label for="cameraSelect" class="form-label">Choose Camera:</label>
+                <label for="soruceSelect" class="form-label">Choose Camera:</label>
                 <div class="input-group">
-                    <select class="form-select" id="cameraSelect" name="camera"></select>
-                    <button class="btn btn-primary" id="cameraSelectBtn">Ok</button>
+                    <select class="form-select" id="sourceSelect" name="source"></select>
+                    <button class="btn btn-primary" id="sourceSelectBtn">Ok</button>
                 </div>
             </div>
 
@@ -112,11 +112,7 @@
             <div class="mb-3">
                 <label for="modelSelect" class="form-label">Choose Model (ONNX):</label>
                 <div class="input-group">
-                    <select class="form-select" id="modelSelect" name="model">
-                        <option value="yolo11n.onnx">Yolo11 Object Detection</option>
-                        <option value="yolo11n-pose.onnx">Yolo11 Pose</option>
-                        <option value="yolo11n-seg.onnx">Yolo11 Segmentation</option>
-                    </select>
+                    <select class="form-select" id="modelSelect" name="model" multiple> </select>
                     <button class="btn btn-primary" id="modelSelectBtn">Ok</button>
                 </div>
             </div>
