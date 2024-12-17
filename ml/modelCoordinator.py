@@ -15,7 +15,7 @@ class ModelCoordinator(Observer, Operation):
     MODEL_PATH = "resources/ml_models"
 
     def __init__(self):
-        self._models: list[Operation] = []
+        self._operations: list[Operation] = []
         logger.info("ModelCoordinator initialized")
 
 
@@ -43,16 +43,16 @@ class ModelCoordinator(Observer, Operation):
         model_names: list[str] = subject.get_models()
         logger.info(f"Models updated: {model_names}")
 
-        self._models = []
+        self._operations = []
 
         for name in model_names:
             model = self._model_from_name(name)
             if model:
-                self._models.append(model)
+                self._operations.append(model)
 
 
     def process(self, capture: Capture):
-        for model in self._models:
+        for model in self._operations:
             capture = model.process(capture)
 
         return capture

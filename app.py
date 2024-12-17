@@ -38,15 +38,15 @@ def main(host: str, port: int)-> None:
 
     config = Configuration(host, port)
 
-    consumer = CaptureConsumer(controller, config)
-    consumer.start()
+    capture_consumer = CaptureConsumer(controller, config)
+    capture_consumer.start()
 
-    source_provider = CaptureProducer(controller)
-    source_provider.start()
+    capture_provider = CaptureProducer(controller)
+    capture_provider.start()
 
-    config.attach(source_provider)
+    config.attach(capture_provider)
     config.attach(model_coordinator)
-    config.attach(consumer)
+    config.attach(capture_consumer)
 
     input() # TODO: prevent from stopping properly
 

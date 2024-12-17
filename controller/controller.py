@@ -11,19 +11,19 @@ class Controller:
     def __init__(self, annotate=True, buffer_size: int = 5):
         self._capture_queue = Queue(maxsize=buffer_size)
         self._annotate = annotate
-        self.operations: list[Operation] = []
+        self._operations: list[Operation] = []
 
 
     def add_operation(self, operation: Operation) -> None:
-        self.operations.append(operation)
+        self._operations.append(operation)
 
 
     def add_operations(self, operations: list[Operation]) -> None:
-        self.operations.extend(operations)
+        self._operations.extend(operations)
 
 
     def remove_operation(self, operation: Operation) -> None:
-        self.operations.remove(operation)
+        self._operations.remove(operation)
 
 
     def put(self, capture: Capture):
@@ -40,7 +40,7 @@ class Controller:
     def get(self, block=True, timeout=None):
         capture = self._capture_queue.get(block=block, timeout=timeout)
 
-        for operation in self.operations:
+        for operation in self._operations:
             capture = operation.process(capture)
 
         return capture
