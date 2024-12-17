@@ -7,16 +7,12 @@
 import argparse
 import logging
 
-from ultralytics import YOLO
-
 from api.server import WebServer
 from capture.captureProvider import FrameProvider
 from config.configuration import Configuration
 from controller.controller import Controller
 from controller.impl.text_annotator import TextAnnotator
 from ml.modelCoordinator import ModelCoordinator
-
-model = YOLO("resources/ml_models/yolo11n.onnx")
 
 logging.basicConfig(
     level=logging.INFO,

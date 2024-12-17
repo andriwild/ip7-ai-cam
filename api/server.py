@@ -35,9 +35,11 @@ class WebServer:
             self.config.set_source(data["source"])
             return "Ok"
 
+
         @self.app.route("/models", methods=['GET'])
         def get_models():
             return ["yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx"]
+
 
         @self.app.route('/models', methods=['POST'])
         def set_models():
@@ -47,9 +49,11 @@ class WebServer:
             self.config.set_models(data["models"])
             return "Ok"
 
+
         @self.app.route("/")
         def index():
             return render_template("index.html", server_url=request.host_url)
+
 
         @self.app.route("/video_feed")
         def video_feed():

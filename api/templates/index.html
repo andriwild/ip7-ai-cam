@@ -62,30 +62,30 @@
         <div class="d-flex justify-content-center mb-4">
             <div class="image-container" id="imgContainer">
                 <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
-                <div id="roiOverlay"></div>
+                <!-- <div id="roiOverlay"></div> -->
             </div>
         </div>
 
-        <div class="text-center mb-4">
-            <div class="btn-group" role="group" aria-label="ROI Actions">
-                <button class="btn btn-primary" id="roiSaveBtn">Ok</button>
-                <button class="btn btn-secondary" id="roiResetBtn">Reset</button>
-            </div>
-        </div>
+        <!-- <div class="text-center mb-4"> -->
+        <!--     <div class="btn-group" role="group" aria-label="ROI Actions"> -->
+        <!--         <button class="btn btn-primary" id="roiSaveBtn">Ok</button> -->
+        <!--         <button class="btn btn-secondary" id="roiResetBtn">Reset</button> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
-        <div id="coords" class="text-center mb-4">
-            <div class="row g-3">
-                <div class="col-12 col-md-3">
-                    <p class="m-0">Start: (<span id="startX">--</span>, <span id="startY">--</span>)</p>
-                </div>
-                <div class="col-12 col-md-3">
-                    <p class="m-0">End: (<span id="endX">--</span>, <span id="endY">--</span>)</p>
-                </div>
-                <div class="col-12 col-md">
-                    <p class="m-0">ROI: x=<span id="roiX">--</span>, y=<span id="roiY">--</span>, width=<span id="roiW">--</span>, height=<span id="roiH">--</span></p>
-                </div>
-            </div>
-        </div>
+        <!-- <div id="coords" class="text-center mb-4"> -->
+        <!--     <div class="row g-3"> -->
+        <!--         <div class="col-12 col-md-3"> -->
+        <!--             <p class="m-0">Start: (<span id="startX">--</span>, <span id="startY">--</span>)</p> -->
+        <!--         </div> -->
+        <!--         <div class="col-12 col-md-3"> -->
+        <!--             <p class="m-0">End: (<span id="endX">--</span>, <span id="endY">--</span>)</p> -->
+        <!--         </div> -->
+        <!--         <div class="col-12 col-md"> -->
+        <!--             <p class="m-0">ROI: x=<span id="roiX">--</span>, y=<span id="roiY">--</span>, width=<span id="roiW">--</span>, height=<span id="roiH">--</span></p> -->
+        <!--         </div> -->
+        <!--     </div> -->
+        <!-- </div> -->
 
         <fieldset class="border p-3 rounded mb-4">
             <legend class="fw-bold">Video Frame Settings</legend>
@@ -97,17 +97,17 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="resolutionSelect" class="form-label">Source Resolution (might not be available):</label>
-                <div class="input-group">
-                    <select class="form-select" id="resolutionSelect" name="resolution">
-                        <option value="640x640">640x640</option>
-                        <option value="1280x720">1280x720</option>
-                        <option value="1920x1080">1920x1080</option>
-                    </select>
-                    <button class="btn btn-primary" id="resolutionSelectBtn">Ok</button>
-                </div>
-            </div>
+            <!-- <div class="mb-3"> -->
+            <!--     <label for="resolutionSelect" class="form-label">Source Resolution (might not be available):</label> -->
+            <!--     <div class="input-group"> -->
+            <!--         <select class="form-select" id="resolutionSelect" name="resolution"> -->
+            <!--             <option value="640x640">640x640</option> -->
+            <!--             <option value="1280x720">1280x720</option> -->
+            <!--             <option value="1920x1080">1920x1080</option> -->
+            <!--         </select> -->
+            <!--         <button class="btn btn-primary" id="resolutionSelectBtn">Ok</button> -->
+            <!--     </div> -->
+            <!-- </div> -->
 
             <div class="mb-3">
                 <label for="modelSelect" class="form-label">Choose Model (ONNX):</label>
@@ -117,22 +117,22 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Meta Data:</label>
-                    <div class="container">
-                        <div class="row" id="metadata">
-                            <div class="col-3"><p class="m-0">Temp (°C): °C</p></div>
-                            <div class="col-3"><span id="temp">--</span></div>
-                            <div class="w-100"></div>
-                            <div class="col-3"><p class="m-0">CPU Load Avg (1,5,15 min):</p></div>
-                            <div class="col-3"><span id="cpu">--</span></div>
-                            <div class="w-100"></div>
-                            <div class="col-3"><p class="m-0">Storage:</p></div>
-                            <div class="col-3"><span id="storage">--</span></div>
-                        </div>
-                    </div>
-                <button class="btn btn-primary mt-2" id="metadataBtn">Update</button>
-            </div>
+            <!-- <div class="mb-3"> -->
+            <!--     <label class="form-label">Meta Data:</label> -->
+            <!--         <div class="container"> -->
+            <!--             <div class="row" id="metadata"> -->
+            <!--                 <div class="col-3"><p class="m-0">Temp (°C): °C</p></div> -->
+            <!--                 <div class="col-3"><span id="temp">--</span></div> -->
+            <!--                 <div class="w-100"></div> -->
+            <!--                 <div class="col-3"><p class="m-0">CPU Load Avg (1,5,15 min):</p></div> -->
+            <!--                 <div class="col-3"><span id="cpu">--</span></div> -->
+            <!--                 <div class="w-100"></div> -->
+            <!--                 <div class="col-3"><p class="m-0">Storage:</p></div> -->
+            <!--                 <div class="col-3"><span id="storage">--</span></div> -->
+            <!--             </div> -->
+            <!--         </div> -->
+            <!--     <button class="btn btn-primary mt-2" id="metadataBtn">Update</button> -->
+            <!-- </div> -->
 
             <div class="mb-3">
                 <label for="outputDestination" class="form-label">Output Destination:</label>
@@ -143,25 +143,25 @@
                 </select>
             </div>
 
-            <div class="mb-3">
-                <label for="rate" class="form-label">ML Inference Rate (Hz):</label>
-                <input class="form-control" type="number" id="rate" name="rate" min="1" step="1" value="30" disabled>
-            </div>
+            <!-- <div class="mb-3"> -->
+            <!--     <label for="rate" class="form-label">ML Inference Rate (Hz):</label> -->
+            <!--     <input class="form-control" type="number" id="rate" name="rate" min="1" step="1" value="30" disabled> -->
+            <!-- </div> -->
 
-            <div class="mb-3">
-                <label for="confidenceInput" class="form-label">Confidence:</label>
-                <div class="input-group">
-                    <input class="form-control" type="number" id="confidenceInput" name="confidence" min="0" max="1" step="0.01" value="0.5">
-                    <button class="btn btn-primary" id="confidenceInputBtn">Ok</button>
-                </div>
-            </div>
+            <!-- <div class="mb-3"> -->
+            <!--     <label for="confidenceInput" class="form-label">Confidence:</label> -->
+            <!--     <div class="input-group"> -->
+            <!--         <input class="form-control" type="number" id="confidenceInput" name="confidence" min="0" max="1" step="0.01" value="0.5"> -->
+            <!--         <button class="btn btn-primary" id="confidenceInputBtn">Ok</button> -->
+            <!--     </div> -->
+            <!-- </div> -->
 
-            <div class="form-check">
-                <input class="form-check-input"  disabled type="checkbox" value="" id="showResults" name="show_results">
-                <label class="form-check-label" for="showResults">
-                    Show Results/Statistics
-                </label>
-            </div>
+            <!-- <div class="form-check"> -->
+            <!--     <input class="form-check-input"  disabled type="checkbox" value="" id="showResults" name="show_results"> -->
+            <!--     <label class="form-check-label" for="showResults"> -->
+            <!--         Show Results/Statistics -->
+            <!--     </label> -->
+            <!-- </div> -->
         </fieldset>
     </main>
 
