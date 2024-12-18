@@ -18,7 +18,6 @@ class ModelCoordinator(Observer, Operation):
         self._operations: list[Operation] = []
         logger.info("ModelCoordinator initialized")
 
-
     def _model_from_name(self, model_name: str) -> Operation | None:
         model = None
         match model_name: 

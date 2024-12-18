@@ -30,7 +30,7 @@ class OpenCVCamera(Source):
             if not ret:
                 logger.warning("Failed to retrieve frame from OpenCVCamera")
             else:
-                capture.set_frame(self.cv2.cvtColor(frame, self.cv2.COLOR_BGR2RGB))
+                capture.set_frame(frame)
         return capture
 
 

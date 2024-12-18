@@ -42,7 +42,7 @@ class WebServer(Sink):
     def _setup_routes(self):
         @self.app.route("/sources", methods=['GET'])
         def get_sources():
-            return ["static", "image", "cv", "pi"]
+            return ["static", "image", "default", "pi"]
 
 
         @self.app.route('/source', methods=['POST'])

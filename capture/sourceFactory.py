@@ -32,7 +32,7 @@ class SourceFactory:
                 else:
                     logger.warning("pisource2 not available")
 
-            case "cv":
+            case "default":
                 if self._is_module_available("cv2"):
                     logger.info("Setting OpenCV source")
                     from capture.impl.opencv import OpenCVCamera

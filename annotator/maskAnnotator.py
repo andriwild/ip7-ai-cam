@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import torch
 
+# developed by ChatGPT
 class MaskAnnotator(Operation):
 
     def process(self, capture: Capture) -> Capture:
@@ -18,7 +19,7 @@ class MaskAnnotator(Operation):
         # Draw each mask on the frame with transparency
         overlay = frame.copy()
         for mask in mask_data:
-            color = (0, 255, 0)  # Default green color for masks
+            color = (0, 255, 0)
             mask_binary = (mask > 0.5).astype(np.uint8) * 255
             contours, _ = cv2.findContours(mask_binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
