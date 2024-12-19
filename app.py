@@ -7,13 +7,9 @@
 import argparse
 import logging
 
-from annotator.keypointAnnotator import KeypointAnnotator
-from annotator.maskAnnotator import MaskAnnotator
-from capture.captureProducer import CaptureProducer
+from capture.frameProducer import CaptureProducer
 from config.configuration import Configuration
 from controller.controller import Controller
-from annotator.textAnnotator import TextAnnotator
-from annotator.boxAnnotator import BoxAnnotator
 from ml.modelCoordinator import ModelCoordinator
 from sink.captureConsumer import CaptureConsumer
 
@@ -29,11 +25,7 @@ def main(host: str, port: int)-> None:
 
     controller = Controller()
     controller.add_operations([
-        TextAnnotator(),
         model_coordinator,
-        BoxAnnotator(),
-        KeypointAnnotator(),
-        MaskAnnotator()
     ])
 
     config = Configuration(host, port)

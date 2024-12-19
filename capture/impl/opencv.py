@@ -1,8 +1,10 @@
 import time
 import logging
+from datetime import datetime
+
 
 from capture.interface.source import Source
-from model.capture import Capture
+from model.frame import Frame
 
 logger = logging.getLogger(__name__)
 
@@ -20,18 +22,21 @@ class OpenCVCamera(Source):
         time.sleep(1)  # Ensure the camera initializes properly
 
 
-    def get_capture(self) -> Capture:
+    def get_frame(self) -> Frame:
         logger.debug("Getting frame from OpenCVCamera")
-        capture = Capture()
+        timestamp = datetime.now()
+        frame = None
         if self._capture is None:
             logger.warning("OpenCVCamera not initialized")
         else:
             ret, frame = self._capture.read()
             if not ret:
                 logger.warning("Failed to retrieve frame from OpenCVCamera")
-            else:
-                capture.set_frame(frame)
-        return capture
+        return Frame(
+            frame_id=f"{self.NAME}_{timestamp}",
+            source_id=self.NAME,
+            frame=frame,
+            timestamp=timestamp)
 
 
     def release(self):

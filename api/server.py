@@ -9,7 +9,7 @@ from flask_cors import CORS
 
 from config.configuration import Configuration
 from controller.controller import Controller
-from model.capture import Capture
+from model.result import Result
 from sink.interface.sink import Sink
 
 logger = logging.getLogger(__name__)
@@ -21,22 +21,22 @@ class WebServer(Sink):
         self.app.config['CORS_HEADERS'] = 'Content-Type'
         self._controller = controller
         self.config = config
-        self._capture_queue = Queue(maxsize=5)
+        self._result_queue: Queue[Result] = Queue(maxsize=5)
         self._setup_routes()
 
         threading.Thread(target=self.run, args=(config.get_host(), config.get_port())).start()
 
 
-    def put(self, capture: Capture) -> None:
-        logger.debug("Putting capture in queue")
-        if self._capture_queue.full():
-            logger.info("capture queue is full")
+    def put(self, result: Result) -> None:
+        logger.debug("Putting result in queue")
+        if self._result_queue.full():
+            logger.info("result queue is full")
             try:
-                self._capture_queue.get_nowait()  # discard oldest frame
+                self._result_queue.get_nowait()  # discard oldest frame
             except Empty:
                 pass
 
-        self._capture_queue.put(capture)
+        self._result_queue.put(result)
 
 
     def _setup_routes(self):
@@ -82,13 +82,14 @@ class WebServer(Sink):
         while True:
             try:
                 logger.debug("Getting capture from queue")
-                capture = self._capture_queue.get()  # Wait up to 1 second for a capture
+                result = self._result_queue.get()
             except Empty:
                 logger.warning("No captures available in queue")
                 continue
 
             # encode the capture in JPEG format
-            frame = capture.get_frame()
+            print(type(result))
+            frame = result.draw(result.frame)
             (success, encoded_image) = cv2.imencode(".jpg", frame)
 
             if not success:

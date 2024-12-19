@@ -4,7 +4,8 @@ from controller.interfaces.operation import Operation
 from ml.impl.ulSeg import UlSeg
 from ml.impl.ulPose import UlPose
 from ml.impl.ulObjectDetection import UlObjectDetection
-from model.capture import Capture
+from model.frame import Frame
+from model.result import Result
 from observer.observer import Observer
 from observer.subject import Subject
 
@@ -15,7 +16,7 @@ class ModelCoordinator(Observer, Operation):
     MODEL_PATH = "resources/ml_models"
 
     def __init__(self):
-        self._operations: list[Operation] = []
+        self._operation = None
         logger.info("ModelCoordinator initialized")
 
     def _model_from_name(self, model_name: str) -> Operation | None:
@@ -42,18 +43,19 @@ class ModelCoordinator(Observer, Operation):
         model_names: list[str] = subject.get_models()
         logger.info(f"Models updated: {model_names}")
 
-        self._operations = []
+        self._operation = None
 
-        for name in model_names:
-            model = self._model_from_name(name)
-            if model:
-                self._operations.append(model)
+        model = self._model_from_name(model_names[0])
+        if model:
+            self._operation = model
 
 
-    def process(self, capture: Capture):
-        for model in self._operations:
-            capture = model.process(capture)
+    def process(self, frame: Frame):
+        if self._operation is None:
+            logger.error("No model loaded")
+            return Result(frame.frame_id, frame.frame, 0, 0, 0)
+        result = self._operation.process(frame)
 
-        return capture
+        return result
 
 

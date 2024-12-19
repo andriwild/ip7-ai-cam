@@ -1,7 +1,10 @@
 from ultralytics import YOLO
 
 from controller.interfaces.operation import Operation
-from model.capture import Capture
+from model.frame import Frame
+from model.result import Result
+from model.result import MaskResult
+from model.resultWrapper import MaskWrapper
 
 
 class UlSeg(Operation):
@@ -10,10 +13,15 @@ class UlSeg(Operation):
         self._model = YOLO(model_path)
         self._confidence = confidence
 
-    def process(self, capture: Capture) -> Capture:
-        frame = capture.get_frame()
-        if frame is None:
-            return capture
-        results = self._model(frame, verbose=False, conf=self._confidence)
-        capture.add_mask(results[0].masks)
-        return capture
+    def process(self, frame: Frame) -> Result:
+        results = self._model(frame.frame, verbose=False, conf=self._confidence)
+        mask_wrapper = MaskWrapper.from_ultralytics(results[0])
+        speed : dict[str, float | None] = results[0].speed
+        return MaskResult(
+            frame_id = frame.frame_id,
+            frame = frame.frame,
+            inference_time=speed["inference"],
+            preprocess_time=speed["preprocess"],
+            postprocess_time=speed["postprocess"],
+            masks=mask_wrapper
+        )

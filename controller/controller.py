@@ -2,14 +2,14 @@ from queue import Queue, Empty
 import logging
 
 from controller.interfaces.operation import Operation
-from model.capture import Capture
+from model.frame import Frame
 
 logger = logging.getLogger(__name__)
 
 class Controller:
 
     def __init__(self, annotate=True, buffer_size: int = 5):
-        self._capture_queue = Queue(maxsize=buffer_size)
+        self._capture_queue: Queue[Frame] = Queue(maxsize=buffer_size)
         self._annotate = annotate
         self._operations: list[Operation] = []
 
@@ -26,7 +26,7 @@ class Controller:
         self._operations.remove(operation)
 
 
-    def put(self, capture: Capture):
+    def put(self, frame: Frame):
         if self._capture_queue.full():
             logger.info("frame queue is full")
             try:
@@ -34,14 +34,15 @@ class Controller:
             except Empty:
                 pass
 
-        self._capture_queue.put(capture)
+        self._capture_queue.put(frame)
 
 
     def get(self, block=True, timeout=None):
-        capture = self._capture_queue.get(block=block, timeout=timeout)
+        frame = self._capture_queue.get(block=block, timeout=timeout)
 
+        result = None
         for operation in self._operations:
-            capture = operation.process(capture)
+            result = operation.process(frame)
 
-        return capture
+        return result
 

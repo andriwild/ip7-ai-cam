@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 
-from model.capture import Capture
+from model.frame import Frame
+from model.result import Result
 
 
 class Operation(ABC):
 
     @abstractmethod
-    def process(self, capture: Capture) -> Capture:
+    def process(self, frame: Frame) -> Result:
         pass

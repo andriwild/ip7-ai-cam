@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from model.capture import Capture
+from model.result import Result
 
 
 class Sink(ABC):
 
     @abstractmethod
-    def put(self, capture: Capture) -> None:
+    def put(self, result: Result) -> None:
         pass

@@ -1,7 +1,10 @@
 from ultralytics import YOLO
 
 from controller.interfaces.operation import Operation
-from model.capture import Capture
+from model.frame import Frame
+from model.result import Result, BoxResult
+from model.resultWrapper import BoxWrapper
+from ultralytics.engine.results import Results
 
 
 class UlObjectDetection(Operation):
@@ -10,11 +13,15 @@ class UlObjectDetection(Operation):
         self._model = YOLO(model_path)
         self._confidence = confidence
 
-    def process(self, capture: Capture) -> Capture:
-        frame = capture.get_frame()
-        if frame is None:
-            return capture
-        results = self._model(frame, verbose=False, conf=self._confidence)
-        capture.add_box(results[0].boxes)
-        return capture
-
+    def process(self, frame: Frame) -> Result:
+        results: list[Results] = self._model(frame.frame, verbose=False, conf=self._confidence)
+        box_wrapper = BoxWrapper.from_ultralytics(results[0])
+        speed : dict[str, float | None] = results[0].speed
+        return BoxResult(
+            frame_id = frame.frame_id,
+            frame = frame.frame,
+            inference_time=speed["inference"],
+            preprocess_time=speed["preprocess"],
+            postprocess_time=speed["postprocess"],
+            boxes=box_wrapper
+        )

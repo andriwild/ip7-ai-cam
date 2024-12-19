@@ -1,9 +1,10 @@
 import logging
 import cv2
 import time
+from datetime import datetime
 
 from capture.interface.source import Source
-from model.capture import Capture
+from model.frame import Frame
 
 logger = logging.getLogger(__name__)
 
@@ -16,16 +17,19 @@ class ImageGenerator(Source):
         logger.info("Initializing ImageGenerator")
         self._width = width
         self._height = height
-        self._frame = cv2.imread("image.jpg")
-        self._frame = cv2.resize(self._frame, (width, height))
 
 
-    def get_capture(self) -> Capture:
+    def get_frame(self) -> Frame:
         logger.debug("Getting frame from ImageGenerator")
         time.sleep(0.2)
-        self._frame = cv2.imread("image.jpg")
-        self._frame = cv2.resize(self._frame, (self._width, self._height))
-        return Capture(self._frame)
+        frame = cv2.imread("image.jpg")
+        frame = cv2.resize(frame, (self._width, self._height))
+        timestamp = datetime.now()
+        return Frame(
+            frame_id=f"{self.NAME}_{timestamp}",
+            source_id=self.NAME,
+            frame=frame,
+            timestamp=timestamp)
 
 
     def release(self):

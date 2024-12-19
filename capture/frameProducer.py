@@ -25,7 +25,7 @@ class CaptureProducer(Observer):
         logger.info("CaptureProducer run method started")
 
         while not self._stop_event.is_set():
-            capture = self._source.get_capture()
+            capture = self._source.get_frame()
             self._controller.put(capture)
 
         logger.info("CaptureProducer run method stopped")
@@ -70,7 +70,7 @@ class CaptureProducer(Observer):
 
         logger.info(f"Source updated to {new_source_name}.")
 
-        test_capture = self._source.get_capture()
+        test_capture = self._source.get_frame()
         if test_capture is None:
             logger.error(f"Source could not be updated to {new_source_name}, setting to default source")
             self._source = self._source_factory.default_source()

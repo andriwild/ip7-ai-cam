@@ -23,8 +23,8 @@ class SourceFactory:
                 if self._is_module_available("picamera2"):
                     from capture.impl.pi import PiCamera
                     source = PiCamera(width=width, height=height)
-                    test_capture = source.get_capture()
-                    if test_capture.get_frame() is not None:
+                    test_capture = source.get_frame()
+                    if test_capture.frame is not None:
                         logger.info("Using libsource source strategy")
                     else:
                         source.release()
@@ -37,8 +37,8 @@ class SourceFactory:
                     logger.info("Setting OpenCV source")
                     from capture.impl.opencv import OpenCVCamera
                     source = OpenCVCamera(device=device, width=width, height=height)
-                    test_capture = source.get_capture()
-                    if test_capture.get_frame() is not None:
+                    test_capture = source.get_frame()
+                    if test_capture.frame is not None:
                         logger.info("Using OpenCV source strategy")
                     else:
                         source.release()

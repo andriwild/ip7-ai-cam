@@ -1,8 +1,9 @@
 import time
 import logging
+from datetime import datetime
 
 from capture.interface.source import Source
-from model.capture import Capture
+from model.frame import Frame
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,19 @@ class PiCamera(Source):
         time.sleep(1)  # Ensure the camera initializes properly
 
 
-    def get_capture(self) -> Capture:
+    def get_frame(self) -> Frame:
         logger.debug("Getting frame from PiCamera")
+        timestamp = datetime.now()
+        frame = None
         if self._camera is None:
             logger.warning("PiCamera not initialized")
-            return Capture()
-        return Capture(self._camera.capture_array())
+        else:
+            frame = self._camera.capture_array()
+        return Frame(
+            frame_id=f"{self.NAME}_{timestamp}",
+            source_id=self.NAME,
+            frame=frame,
+            timestamp=timestamp)
 
 
     def release(self):

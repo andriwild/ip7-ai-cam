@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from model.capture import Capture
+from model.frame import Frame
 
 class Source(ABC):
     @abstractmethod
-    def get_capture(self) -> Capture:
+    def get_frame(self) -> Frame:
         pass
 
     @abstractmethod
