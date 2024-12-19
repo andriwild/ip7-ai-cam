@@ -20,7 +20,7 @@ class SourceFactory:
 
         match name:
             case "pi":
-                if self._is_module_available("pisource2"):
+                if self._is_module_available("picamera2"):
                     from capture.impl.pi import PiCamera
                     source = PiCamera(width=width, height=height)
                     test_capture = source.get_capture()

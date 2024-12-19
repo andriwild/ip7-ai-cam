@@ -4,6 +4,7 @@ import time
 import os
 available_cameras = []
 
+# Picamera2.global_camera_info()
 # image not displayed: wayland issues: QT_QPA_PLATFORM=xcb
 
 for camera in glob.glob("/dev/video?"):
