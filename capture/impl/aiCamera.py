@@ -16,7 +16,7 @@ class AiCamera(Source, Operation):
 
     NAME = "ai_camera"
 
-    def __init__(self, model_path: str, width: int = 640, height: int = 480):
+    def __init__(self, model_path: str, width: int = 640, height: int = 640):
         logger.info("Initializing AiCamera with model: %s", model_path)
         self._camera = None
         self._model_path = model_path
@@ -35,6 +35,7 @@ class AiCamera(Source, Operation):
             controls={"FrameRate": intrinsics.inference_rate}
         )
         self._camera.start(config)
+        print(intrinsics)
         time.sleep(1)  # Ensure the camera initializes properly
 
     def get_frame(self) -> Frame:
