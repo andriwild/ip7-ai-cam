@@ -27,15 +27,15 @@ class AiCamera(Source, Operation):
     def _initialize_camera(self):
         logger.info("Setting up Picamera2 with IMX500")
         self._imx500 = IMX500(self._model_path)
-        self._camera = Picamera2(self._imx500.camera_num)
         intrinsics = NetworkIntrinsics()
         intrinsics.task = "object detection"
         config = self._camera.create_preview_configuration(
             main={"size": (self._width, self._height), "format": "RGB888"},
             controls={"FrameRate": intrinsics.inference_rate}
         )
-        self._camera.start(config)
         print(intrinsics)
+        self._camera = Picamera2(self._imx500.camera_num)
+        self._camera.start(config)
         time.sleep(1)  # Ensure the camera initializes properly
 
     def get_frame(self) -> Frame:
