@@ -8,7 +8,7 @@ from model.result import Result
 from controller.interfaces.operation import Operation
 from picamera2 import Picamera2
 from picamera2.devices import IMX500
-from picamera2.devices.imx500 import postprocess_yolov8
+from picamera2.devices.imx500 import postprocess_yolov8, NetworkIntrinsics
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +28,11 @@ class AiCamera(Source, Operation):
         logger.info("Setting up Picamera2 with IMX500")
         self._imx500 = IMX500(self._model_path)
         self._camera = Picamera2(self._imx500.camera_num)
+        intrinsics = NetworkIntrinsics()
+        intrinsics.task = "object detection"
         config = self._camera.create_preview_configuration(
             main={"size": (self._width, self._height), "format": "RGB888"},
-            controls={"FrameRate": self._imx500.network_intrinsics.inference_rate}
+            controls={"FrameRate": intrinsics.inference_rate}
         )
         self._camera.start(config)
         time.sleep(1)  # Ensure the camera initializes properly
