@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional
 from model.annotator import BoxDrawingStrategy, MaskDrawingStrategy, KeypointDrawingStrategy
@@ -35,13 +34,12 @@ class BoxResult(Result):
     boxes: BoxWrapper = field(default_factory=BoxWrapper) 
 
     def draw(self, frame: np.ndarray):
-        logger.info("Drawing boxes")
         return BoxDrawingStrategy().draw(frame, self.boxes)
 
 
 @dataclass
 class MaskResult(Result):
-    masks: MaskWrapper = field(default_factory=MaskWrapper)
+    masks: MaskWrapper = field(default_factory=lambda: MaskWrapper(np.zeros((0, 0, 0))))
 
     def draw(self, frame: np.ndarray):
         return MaskDrawingStrategy().draw(frame, self.masks)
@@ -49,7 +47,7 @@ class MaskResult(Result):
 
 @dataclass
 class KeypointResult(Result):
-    keypoint: KeypointWrapper = field(default_factory=KeypointWrapper)
+    keypoint: KeypointWrapper = field(default_factory=lambda: KeypointWrapper(np.zeros((0, 0, 0))))
 
     def draw(self, frame: np.ndarray):
         return KeypointDrawingStrategy().draw(frame, self.keypoint)

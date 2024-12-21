@@ -19,6 +19,19 @@ class SourceFactory:
         source = StaticFrameGenerator()
 
         match name:
+            case "ai_camera":
+                if self._is_module_available("picamera2"):
+                    from capture.impl.aiCamera import AiCamera
+                    source = AiCamera("resources/ml_models/yolov8n.imx", width=width, height=height)
+                    test_capture = source.get_frame()
+                    if test_capture.frame is not None:
+                        logger.info("Using libsource source strategy")
+                    else:
+                        source.release()
+                        logger.warning("libsource source strategy not available")
+                else:
+                    logger.warning("pisource2 not available")
+
             case "pi":
                 if self._is_module_available("picamera2"):
                     from capture.impl.pi import PiCamera

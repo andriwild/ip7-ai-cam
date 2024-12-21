@@ -52,7 +52,6 @@ class ModelCoordinator(Observer, Operation):
 
     def process(self, frame: Frame):
         if self._operation is None:
-            logger.error("No model loaded")
             return Result(frame.frame_id, frame.frame, 0, 0, 0)
         result = self._operation.process(frame)
 
