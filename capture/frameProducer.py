@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 class CaptureProducer(Observer):
 
-    def __init__(self, controller: Controller):
+    def __init__(self, controller: Controller, ai_camera):
         self._controller = controller
         self._stop_event = threading.Event()
-        self._source_factory = SourceFactory()
+        self._source_factory = SourceFactory(ai_camera)
         self._source: Source = self._source_factory.default_source()
         self._thread = None
         logger.info("CaptureProducer initialized with default source")

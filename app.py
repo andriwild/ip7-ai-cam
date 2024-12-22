@@ -8,6 +8,7 @@ import argparse
 import logging
 
 from capture.frameProducer import CaptureProducer
+from capture.impl.aiCamera import AiCamera
 from config.configuration import Configuration
 from controller.controller import Controller
 from ml.modelCoordinator import ModelCoordinator
@@ -21,7 +22,8 @@ logging.basicConfig(
 
 
 def main(host: str, port: int)-> None:
-    model_coordinator = ModelCoordinator()
+    aicam = AiCamera("resources/ml_models/network.rpk")
+    model_coordinator = ModelCoordinator(ai_camera=aicam)
 
     controller = Controller()
     controller.add_operations([
@@ -33,7 +35,7 @@ def main(host: str, port: int)-> None:
     capture_consumer = CaptureConsumer(controller, config)
     capture_consumer.start()
 
-    capture_provider = CaptureProducer(controller)
+    capture_provider = CaptureProducer(controller, ai_camera=aicam)
     capture_provider.start()
 
     config.attach(capture_provider)

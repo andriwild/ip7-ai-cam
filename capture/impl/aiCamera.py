@@ -93,7 +93,3 @@ class AiCamera(Source, Operation):
         logger.debug("Getting source name for AiCamera")
         return self.NAME
 
-    def __new__(cls):
-      if not hasattr(cls, 'instance'):
-        cls.instance = super(AiCamera, cls).__new__(cls)
-      return cls.instance

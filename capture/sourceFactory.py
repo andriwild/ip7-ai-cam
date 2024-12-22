@@ -8,7 +8,8 @@ logger = logging.getLogger(__name__)
 
 class SourceFactory:
 
-    def __init__(self):
+    def __init__(self, ai_camera):
+        self._ai_camera = ai_camera
         self._source = StaticFrameGenerator()
         logger.info("SourceFactory initialized with StaticFrameSource")
 
@@ -21,8 +22,7 @@ class SourceFactory:
         match name:
             case "ai_camera":
                 if self._is_module_available("picamera2"):
-                    from capture.impl.aiCamera import AiCamera
-                    source = AiCamera("resources/ml_models/network.rpk", width=width, height=height)
+                    source = self._ai_camera
                     test_capture = source.get_frame()
                     if test_capture.frame is not None:
                         logger.info("Using libsource source strategy")

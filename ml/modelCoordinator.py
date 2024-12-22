@@ -16,8 +16,9 @@ class ModelCoordinator(Observer, Operation):
 
     MODEL_PATH = "resources/ml_models"
 
-    def __init__(self):
+    def __init__(self, ai_camera: AiCamera):
         self._operation = None
+        self._ai_camera = ai_camera
         logger.info("ModelCoordinator initialized")
 
     def _model_from_name(self, model_name: str) -> Operation | None:
@@ -30,7 +31,7 @@ class ModelCoordinator(Observer, Operation):
             case "yolo11n-seg.onnx":
                 model = UlSeg(f"{self.MODEL_PATH}/{model_name}")
             case "ai_camera":
-                model = AiCamera("resources/ml_models/network.rpk")
+                model = self._ai_camera
             case "-":
                 model = None
             case _:
