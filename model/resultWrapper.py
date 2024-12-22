@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any, Tuple
 import numpy as np
 from dataclasses import dataclass, field
 import torch
@@ -12,6 +12,11 @@ class Wrapper(ABC):
     @classmethod
     @abstractmethod
     def from_ultralytics(cls, result: Results):
+        raise NotImplementedError("Subclasses must implement from_ultralytics.")
+
+    @classmethod
+    @abstractmethod
+    def from_ai_cam(cls, result: Any):
         raise NotImplementedError("Subclasses must implement from_ultralytics.")
 
 @dataclass
@@ -42,6 +47,12 @@ class BoxWrapper(Wrapper):
             boxes.append(Box(xywhn=box, conf=float(score), label=int(label)))
 
         return cls(boxes=boxes)
+
+    @classmethod
+    def from_ai_cam(cls, result: Tuple[np.ndarray, np.ndarray, np.ndarray]):
+        """Extracts relevant properties from ultralytics Boxes."""
+        return cls(boxes=[Box(xywhn=box, conf=score, label=label) for box, score, label in zip(*result)])
+
 
 
 @dataclass

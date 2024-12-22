@@ -6,6 +6,8 @@ from capture.interface.source import Source
 from model.frame import Frame
 from model.result import Result
 from controller.interfaces.operation import Operation
+from model.resultWrapper import BoxWrapper
+from model.result import BoxResult
 from picamera2 import Picamera2
 from picamera2.devices import IMX500
 from picamera2.devices.imx500 import (NetworkIntrinsics,postprocess_yolov8_detection)
@@ -17,7 +19,7 @@ class AiCamera(Source, Operation):
 
     NAME = "ai_camera"
 
-    def __init__(self, model_path: str, width: int = 320, height: int = 320):
+    def __init__(self, model_path: str, width: int = 640, height: int = 640):
         logger.info("Initializing AiCamera with model: %s", model_path)
         self._camera = None
         self._model_path = model_path
@@ -62,7 +64,7 @@ class AiCamera(Source, Operation):
         )
 
     def process(self, frame: Frame) -> Result:
-        logger.debug("Processing frame for inference")
+        logger.info("Processing frame for inference")
         start_time = time.time()
         metadata = self._camera.capture_metadata()
         np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
@@ -71,10 +73,12 @@ class AiCamera(Source, Operation):
             boxes = np_outputs[0][0]    # Shape: (300, 4)
             scores = np_outputs[1][0]   # Shape: (300,)
             classes = np_outputs[2][0]  # Shape: (300,)
+            box_wrapper = BoxWrapper.from_ai_cam((boxes, scores, classes))
         result = BoxResult(
             frame_id=frame.frame_id,
             frame=frame.frame,
-            inference_time=inference_time
+            inference_time=0,
+            boxes=box_wrapper if box_wrapper else BoxWrapper()
         )
         return result
 
@@ -88,3 +92,8 @@ class AiCamera(Source, Operation):
     def get_name(self) -> str:
         logger.debug("Getting source name for AiCamera")
         return self.NAME
+
+    def __new__(cls):
+      if not hasattr(cls, 'instance'):
+        cls.instance = super(AiCamera, cls).__new__(cls)
+      return cls.instance

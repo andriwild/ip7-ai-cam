@@ -8,6 +8,7 @@ from model.frame import Frame
 from model.result import Result
 from observer.observer import Observer
 from observer.subject import Subject
+from capture.impl.aiCamera import AiCamera
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,8 @@ class ModelCoordinator(Observer, Operation):
                 model = UlPose(f"{self.MODEL_PATH}/{model_name}")
             case "yolo11n-seg.onnx":
                 model = UlSeg(f"{self.MODEL_PATH}/{model_name}")
+            case "ai_camera":
+                model = AiCamera("resources/ml_models/network.rpk")
             case "-":
                 model = None
             case _:
