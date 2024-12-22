@@ -48,13 +48,6 @@ class AiCamera(Source, Operation):
         logger.debug("Capturing frame from AiCamera")
         timestamp = datetime.now()
         frame = self._camera.capture_array()
-        metadata = self._camera.capture_metadata()
-        np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
-        if np_outputs:
-            print(f"Output shapes: {[output.shape for output in np_outputs]}")
-            boxes = np_outputs[0][0]    # Shape: (300, 4)
-            scores = np_outputs[1][0]   # Shape: (300,)
-            classes = np_outputs[2][0]  # Shape: (300,)
         return Frame(
             frame_id=f"{self.NAME}_{timestamp}",
             source_id=self.NAME,
@@ -72,7 +65,15 @@ class AiCamera(Source, Operation):
             boxes = np_outputs[0][0]    # Shape: (300, 4)
             scores = np_outputs[1][0]   # Shape: (300,)
             classes = np_outputs[2][0]  # Shape: (300,)
-            box_wrapper = BoxWrapper.from_ai_cam((boxes, scores, classes))
+            valid_mask = scores > 0.6
+            
+            # Filterung der Arrays anhand der Maske
+            filtered_boxes = boxes[valid_mask]
+            filtered_scores = scores[valid_mask]
+            filtered_classes = classes[valid_mask]
+    
+            result_tuple = (filtered_boxes, filtered_scores, filtered_classes)
+            box_wrapper = BoxWrapper.from_ai_cam(result_tuple)
         result = BoxResult(
             frame_id=frame.frame_id,
             frame=frame.frame,
