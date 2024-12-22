@@ -71,6 +71,7 @@ class AiCamera(Source, Operation):
             filtered_boxes = boxes[valid_mask]
             filtered_scores = scores[valid_mask]
             filtered_classes = classes[valid_mask]
+            filtered_boxes = [self._imx500.convert_inference_coords(box, metadata, self._camera) for box in filtered_boxes]
     
             result_tuple = (filtered_boxes, filtered_scores, filtered_classes)
             box_wrapper = BoxWrapper.from_ai_cam(result_tuple)
