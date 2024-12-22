@@ -1,107 +1,92 @@
 import time
 import logging
 from datetime import datetime
-
-from capture.interface.source import Source
-from model.frame import Frame
-from model.result import Result
-from controller.interfaces.operation import Operation
-from model.resultWrapper import BoxWrapper
-from model.result import BoxResult
+import numpy as np
 from picamera2 import Picamera2
 from picamera2.devices import IMX500
-from picamera2.devices.imx500 import (NetworkIntrinsics,postprocess_yolov8_detection)
-import numpy as np
+from model.frame import Frame
 
 logger = logging.getLogger(__name__)
 
-class Detection:
-    def __init__(self, coords, category, conf):
-        """Create a Detection object, recording the bounding box, category and confidence."""
-        self.category = category
-        self.conf = conf
-        self.box = coords
+class AiCamera:
 
-class AiCamera(Source, Operation):
+    NAME = "ai"
 
-    NAME = "ai_camera"
+    def __init__(self, model_path: str, threshold: float = 0.55, max_detections: int = 10):
+        logger.info("Initializing AiCamera")
 
-    def __init__(self, model_path: str, width: int = 640, height: int = 640):
-        logger.info("Initializing AiCamera with model: %s", model_path)
-        self._camera = None
-        self._model_path = model_path
-        self._width = width
-        self._height = height
-        self._initialize_camera()
+        self.threshold = threshold
+        self.max_detections = max_detections
 
-    def _initialize_camera(self):
-        logger.info("Setting up Picamera2 with IMX500")
-        self._imx500 = IMX500(self._model_path)
-        intrinsics = NetworkIntrinsics()
-        intrinsics.task = "object detection"
-        intrinsics.cpu = {"bbox_normalization": "true", "bbox_order": "yx"}
-        intrinsics.update_with_defaults()
-        print(intrinsics)
+        # Load IMX500 AI camera
+        self._imx500 = IMX500(model_path)
+
+        # Set up network intrinsics
+        self._intrinsics = self._imx500.network_intrinsics
+        self._intrinsics.task = "object detection"
+        self._intrinsics.update_with_defaults()
+
+        # Initialize Picamera2
         self._camera = Picamera2(self._imx500.camera_num)
-
-        config = self._camera.create_preview_configuration(
-            main={"size": (self._width, self._height), "format": "RGB888"},
-            controls={"FrameRate": intrinsics.inference_rate},
+        self._config = self._camera.create_preview_configuration(
+            controls={"FrameRate": self._intrinsics.inference_rate}, buffer_count=12
         )
-        self._camera.start(config)
-        time.sleep(1)  # Ensure the camera initializes properly
+
+        self._camera.start(self._config)
+        time.sleep(1)  # Ensure initialization
 
     def get_frame(self) -> Frame:
-        logger.debug("Capturing frame from AiCamera")
+        logger.debug("Getting frame and detections from AiCamera")
         timestamp = datetime.now()
-        frame = self._camera.capture_array()
+        metadata = self._camera.capture_metadata()
+
+        # Perform detection
+        np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
+        if np_outputs is None:
+            logger.warning("No detections found in the current frame")
+            return Frame(
+                frame_id=f"{self.NAME}_{timestamp}",
+                source_id=self.NAME,
+                frame=None,
+                timestamp=timestamp,
+                detections=[]
+            )
+
+        boxes, scores, classes = self._parse_detections(np_outputs)
+        detections = self._format_detections(boxes, scores, classes, metadata)
+
+        # Capture frame data
+        frame_data = self._camera.capture_array()
+
         return Frame(
             frame_id=f"{self.NAME}_{timestamp}",
             source_id=self.NAME,
-            frame=frame,
-            timestamp=timestamp
+            frame=frame_data,
+            timestamp=timestamp,
+            detections=detections
         )
 
-    def process(self, frame: Frame) -> Result:
-        logger.info("Processing frame for inference")
-        metadata = self._camera.capture_metadata()
-        np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
-        input_w, input_h = self._imx500.get_input_size()
-        print("input_w: ", input_w)
-        print("input_h: ", input_h)
-        box_wrapper = BoxWrapper()
-        if np_outputs:
-            boxes, scores, classes = np_outputs[0][0], np_outputs[1][0], np_outputs[2][0]
-            boxes = boxes / input_h
-            boxes = np.array_split(boxes, 4, axis=1)
-            boxes = zip(*boxes)
-            last_detections = [
-                Detection(box, category, score)
-                for box, score, category in zip(boxes, scores, classes)
-                if score > 0.6
-            ]
-            print(last_detections)
+    def _parse_detections(self, outputs):
+        boxes, scores, classes = outputs[0][0], outputs[1][0], outputs[2][0]
+        boxes = np.array_split(boxes, 4, axis=1)  # Split box coordinates
+        return zip(*boxes), scores, classes
 
-            boxes = np_outputs[0][0]    # Shape: (300, 4)
-            scores = np_outputs[1][0]   # Shape: (300,)
-            classes = np_outputs[2][0]  # Shape: (300,)
-            valid_mask = scores > 0.6
-            
-            # Filterung der Arrays anhand der Maske
-            filtered_boxes = boxes[valid_mask]
-            filtered_scores = scores[valid_mask]
-            filtered_classes = classes[valid_mask]
-            filtered_boxes = [self._imx500.convert_inference_coords(box, metadata, self._camera) for box in filtered_boxes]
-    
-            result_tuple = (filtered_boxes, filtered_scores, filtered_classes)
-            box_wrapper = BoxWrapper.from_ai_cam(result_tuple)
-        result = BoxResult(
-            frame_id=frame.frame_id,
-            frame=frame.frame,
-            inference_time=0,
-            boxes=box_wrapper
-        )
-        return result
+    def _format_detections(self, boxes, scores, classes, metadata):
+        from picamera2.devices.imx500 import postprocess_nanodet_detection
+        
+        if self._intrinsics.postprocess == "nanodet":
+            boxes, scores, classes = postprocess_nanodet_detection(
+                outputs=outputs[0], conf=self.threshold, iou_thres=0.65, max_out_dets=self.max_detections
+            )
+        
+        return [
+            {
+                "box": box.tolist(),
+                "score": score,
+                "class": cls
+            }
+            for box, score, cls in zip(boxes, scores, classes) if score > self.threshold
+        ]
 
     def release(self):
         if self._camera is not None:
@@ -113,4 +98,3 @@ class AiCamera(Source, Operation):
     def get_name(self) -> str:
         logger.debug("Getting source name for AiCamera")
         return self.NAME
-
