@@ -22,7 +22,7 @@ class SourceFactory:
             case "ai_camera":
                 if self._is_module_available("picamera2"):
                     from capture.impl.aiCamera import AiCamera
-                    source = AiCamera("resources/ml_models/yolov8n.imx", width=width, height=height)
+                    source = AiCamera("resources/ml_models/network.rpk", width=width, height=height)
                     test_capture = source.get_frame()
                     if test_capture.frame is not None:
                         logger.info("Using libsource source strategy")
