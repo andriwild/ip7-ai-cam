@@ -16,11 +16,11 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 class Detection:
-    def __init__(self, coords, category, conf, metadata, picam2, imx500):
+    def __init__(self, coords, category, conf):
         """Create a Detection object, recording the bounding box, category and confidence."""
         self.category = category
         self.conf = conf
-        self.box = imx500.convert_inference_coords(coords, metadata, picam2)
+        self.box = coords
 
 class AiCamera(Source, Operation):
 
@@ -67,6 +67,8 @@ class AiCamera(Source, Operation):
         metadata = self._camera.capture_metadata()
         np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
         input_w, input_h = self._imx500.get_input_size()
+        print("input_w: ", input_w)
+        print("input_h: ", input_h)
         box_wrapper = BoxWrapper()
         if np_outputs:
             boxes, scores, classes = np_outputs[0][0], np_outputs[1][0], np_outputs[2][0]
@@ -74,7 +76,7 @@ class AiCamera(Source, Operation):
             boxes = np.array_split(boxes, 4, axis=1)
             boxes = zip(*boxes)
             last_detections = [
-                Detection(box, category, score, metadata, self._camera, self._imx500)
+                Detection(box, category, score)
                 for box, score, category in zip(boxes, scores, classes)
                 if score > 0.6
             ]
