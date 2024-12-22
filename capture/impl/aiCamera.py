@@ -68,8 +68,8 @@ class AiCamera(Source, Operation):
         start_time = time.time()
         metadata = self._camera.capture_metadata()
         np_outputs = self._imx500.get_outputs(metadata, add_batch=True)
+        box_wrapper = BoxWrapper()
         if np_outputs:
-            print(f"Output shapes: {[output.shape for output in np_outputs]}")
             boxes = np_outputs[0][0]    # Shape: (300, 4)
             scores = np_outputs[1][0]   # Shape: (300,)
             classes = np_outputs[2][0]  # Shape: (300,)
@@ -78,7 +78,7 @@ class AiCamera(Source, Operation):
             frame_id=frame.frame_id,
             frame=frame.frame,
             inference_time=0,
-            boxes=box_wrapper if box_wrapper else BoxWrapper()
+            boxes=box_wrapper
         )
         return result
 
