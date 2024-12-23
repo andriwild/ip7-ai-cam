@@ -56,7 +56,7 @@ class WebServer(Sink):
 
         @self.app.route("/models", methods=['GET'])
         def get_models():
-            return ["-", "yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx", "ai_camera"]
+            return ["-", "yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx", "ai_camera", "hailo"]
 
 
         @self.app.route('/models', methods=['POST'])

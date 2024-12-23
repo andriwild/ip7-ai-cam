@@ -1,6 +1,7 @@
 import logging
 from config.configuration import Configuration
 from controller.interfaces.operation import Operation
+from ml.impl.hailoObjectDetection import HailoObjectDetection
 from ml.impl.ulSeg import UlSeg
 from ml.impl.ulPose import UlPose
 from ml.impl.ulObjectDetection import UlObjectDetection
@@ -30,6 +31,8 @@ class ModelCoordinator(Observer, Operation):
                 model = UlPose(f"{self.MODEL_PATH}/{model_name}")
             case "yolo11n-seg.onnx":
                 model = UlSeg(f"{self.MODEL_PATH}/{model_name}")
+            case "hailo":
+                model = HailoObjectDetection()
             case "ai_camera":
                 model = self._ai_camera
             case "-":
