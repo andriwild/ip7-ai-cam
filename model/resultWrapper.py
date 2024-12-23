@@ -49,9 +49,16 @@ class BoxWrapper(Wrapper):
         return cls(boxes=boxes)
 
     @classmethod
-    def from_ai_cam(cls, result: Tuple[np.ndarray, np.ndarray, np.ndarray]):
-        """Extracts relevant properties from ultralytics Boxes."""
-        return cls(boxes=[Box(xywhn=box, conf=score, label=label) for box, score, label in zip(*result)])
+    def from_ai_cam(cls, result: Any):
+
+        boxes, scores, classes = result[0][0], result[1][0], result[2][0]
+
+        valid_indices = np.where(scores >= 0.5)[0]
+        boxes   = boxes[valid_indices]
+        scores  = scores[valid_indices]
+        classes = classes[valid_indices]
+
+        return cls(boxes=[Box(xywhn=boxes, conf=scores, label=classes)])
 
 
 
