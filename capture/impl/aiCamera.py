@@ -37,8 +37,8 @@ class AiCamera(Source, Operation):
         logger.info("Initializing AiCamera")
 
         from picamera2 import Picamera2
-        from picamera2.devices import IMX500, NetworkIntrinsics
-        from picamera2.devices.imx500 import postprocess_nanodet_detection
+        from picamera2.devices import IMX500
+        from picamera2.devices.imx500 import (NetworkIntrinsics, postprocess_nanodet_detection)
 
         self._IMX500 = IMX500
         self._postprocess_nanodet_detection = postprocess_nanodet_detection
