@@ -12,12 +12,12 @@ class OpenCVCamera(Source):
 
     NAME = "cv"
 
-    def __init__(self, device: str = "/dev/video0", width: int = 640, height: int = 480):  # Improved typing
+    def __init__(self, device: str = "/dev/video0", width: int = 640, height: int = 720):  # Improved typing
         logger.info("Initializing OpenCVCamera")
         import cv2
         self.cv2 = cv2
         self._capture = self.cv2.VideoCapture(device)
-        self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, width)
+        #self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, width)
         self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, height)
         time.sleep(1)  # Ensure the camera initializes properly
 

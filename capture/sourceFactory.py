@@ -18,7 +18,6 @@ class SourceFactory:
         logger.info(f"Creating source: {name} with device {device}, width {width}, height {height}")
 
         source = StaticFrameGenerator()
-        name = "ai_camera"
 
         match name:
             case "ai_camera":

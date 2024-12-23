@@ -4,15 +4,22 @@ from model.result import Result, BoxResult
 from ultralytics.engine.results import Results
 from model.resultWrapper import BoxWrapper
 from picamera2.devices import Hailo
+import cv2
 
 class HailoObjectDetection(Operation):
 
     def __init__(self, model_path: str ="/usr/share/hailo-models/yolov8s_h8l.hef", confidence: float = 0.5):
+        print("init hailo")
         self._model = Hailo(model_path)
         self._confidence = confidence
+        model_h, model_w, _ = self._model.get_input_shape()
+        print("hailo size: ", model_h, model_w)
 
     def process(self, frame: Frame) -> Result:
-        results = self._model.run(frame)
+        print("process hailo inference")
+        print(frame.frame.shape[1], frame.frame.shape[0])
+        frame_r = cv2.resize(frame.frame, (640, 640))
+        results = self._model.run(frame_r)
         detections = extract_detections(results, frame.frame.shape[1], frame.frame.shape[0], [0] * 80, threshold=self._confidence)
         print(detections)
         box_wrapper = BoxWrapper()
