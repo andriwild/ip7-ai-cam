@@ -9,7 +9,7 @@ class Configuration(Subject):
     def __init__(self, host, port):
         self._host = host
         self._port = port
-        self._source = "static"
+        self._source = "ai_camera"
         self._models = []
         self._observers = []
         self._sinks = ["console", "webserver"]

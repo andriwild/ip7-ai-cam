@@ -51,6 +51,7 @@ class CaptureProducer(Observer):
 
 
     def update(self, subject: Subject) -> None:
+        return
         if not isinstance(subject, Configuration):
             logger.error("Expected subject to be an instance of Configuration")
             raise TypeError("Expected subject to be an instance of Configuration")

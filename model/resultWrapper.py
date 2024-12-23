@@ -50,15 +50,31 @@ class BoxWrapper(Wrapper):
 
     @classmethod
     def from_ai_cam(cls, result: Any):
-
         boxes, scores, classes = result[0][0], result[1][0], result[2][0]
 
+        # Nach Score filtern
         valid_indices = np.where(scores >= 0.5)[0]
         boxes   = boxes[valid_indices]
         scores  = scores[valid_indices]
         classes = classes[valid_indices]
 
-        return cls(boxes=[Box(xywhn=boxes, conf=scores, label=classes)])
+        box_list = []
+        for (y0, x0, y1, x1), conf, label_id in zip(boxes, scores, classes):
+            w = (x1 - x0)
+            h = (y1 - y0)
+            x_center = x0 + w / 2
+            y_center = y0 + h / 2
+
+            box_list.append(
+                Box(
+                    xywhn=(x_center, y_center, w, h),
+                    label=int(label_id),
+                    conf=float(conf)
+                )
+            )
+
+
+        return cls(boxes=box_list)
 
 
 

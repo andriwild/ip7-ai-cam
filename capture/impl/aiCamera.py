@@ -30,7 +30,8 @@ class AiCamera(Source, Operation):
         self,
         width: int = 640,
         height: int = 640,
-        model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
+        #model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
+        model_path: str = "resources/ml_models/network.rpk",
         threshold: float = 0.5,
         iou: float = 0.5
     ):
@@ -59,7 +60,8 @@ class AiCamera(Source, Operation):
         self.last_detection = None
 
         config = self._camera.create_preview_configuration(
-            main={"size": (width, height), "format": "RGB888"},
+            #main={"size": (width, height), "format": "RGB888"},
+            main={"format": "RGB888"},
             buffer_count=4,  # Je nach Bedarf mehr Buffer
             controls={"FrameRate": self._intrinsics.inference_rate if self._intrinsics.inference_rate else 10}
         )
@@ -80,7 +82,7 @@ class AiCamera(Source, Operation):
 
         detections = self._parse_detections(metadata)
 
-        last_detection = self._imx500.get_outputs(metadata, add_batch=True)
+        self.last_detection = self._imx500.get_outputs(metadata, add_batch=True)
 
         frame_data = self._camera.capture_array("main")
 
@@ -96,7 +98,7 @@ class AiCamera(Source, Operation):
 
     def process(self, frame: Frame):
         boxes = BoxWrapper(boxes=[])
-        if self.last_detection is None:
+        if self.last_detection is not None:
             boxes = BoxWrapper.from_ai_cam(self.last_detection)
 
         return BoxResult(
@@ -123,7 +125,8 @@ class AiCamera(Source, Operation):
         classes = classes[valid_indices]
 
 
-        (img_h, img_w, _) = self._camera.stream_configuration("main")["size"][::-1]
+        img_h, img_w = self._camera.stream_configuration("main")["size"][::-1]
+        print("frame size: ", img_h, img_w)
         # img_h = 640
         # img_w = 640
 
@@ -166,7 +169,7 @@ class AiCamera(Source, Operation):
                 overlay,
                 (x, y),
                 (x + w, y + h),
-                color=(0, 255, 0),
+                color=(255, 255, 255),
                 thickness=2
             )
 
