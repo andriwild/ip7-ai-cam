@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
 
+from model.frame import Frame
 from model.result import Result
 
 
-class Sink(ABC):
+class Inference(ABC):
 
     @abstractmethod
-    def put(self, result: Result) -> None:
+    def infer(self, frame: Frame) -> Result:
         pass
 
     @abstractmethod
     def get_name(self) -> str:
         pass
+

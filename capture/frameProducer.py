@@ -10,14 +10,13 @@ from observer.observer import Observer
 
 logger = logging.getLogger(__name__)
 
-class CaptureProducer(Observer):
+class CaptureProducer():
 
-    def __init__(self, controller: Controller, ai_camera):
-        self._controller = controller
+    def __init__(self, queue, sources):
         self._stop_event = threading.Event()
-        self._source_factory = SourceFactory(ai_camera)
-        self._source: Source = self._source_factory.default_source()
+        self._source: Source = sources[0]
         self._thread = None
+        self._queue = queue
         logger.info("CaptureProducer initialized with default source")
 
 
@@ -26,7 +25,7 @@ class CaptureProducer(Observer):
 
         while not self._stop_event.is_set():
             capture = self._source.get_frame()
-            self._controller.put(capture)
+            self._queue.put(capture)
 
         logger.info("CaptureProducer run method stopped")
 
@@ -50,29 +49,29 @@ class CaptureProducer(Observer):
             self._thread = None
 
 
-    def update(self, subject: Subject) -> None:
-        if not isinstance(subject, Configuration):
-            logger.error("Expected subject to be an instance of Configuration")
-            raise TypeError("Expected subject to be an instance of Configuration")
+    # def update(self, subject: Subject) -> None:
+    #     if not isinstance(subject, Configuration):
+    #         logger.error("Expected subject to be an instance of Configuration")
+    #         raise TypeError("Expected subject to be an instance of Configuration")
 
-        new_source_name: str = subject.get_source()
-        logger.info(f"Updating source to {new_source_name}")
+    #     new_source_name: str = subject.get_source()
+    #     logger.info(f"Updating source to {new_source_name}")
 
-        if self._source.get_name() == new_source_name:
-            logger.info("Source ealready set to the desired configuration")
-            return
+    #     if self._source.get_name() == new_source_name:
+    #         logger.info("Source ealready set to the desired configuration")
+    #         return
 
-        self.stop()  # Stop the current thread
+    #     self.stop()  # Stop the current thread
 
-        if self._source is not None:
-            self._source.release()
-        self._source = self._source_factory.set_source_by_name(new_source_name)
+    #     if self._source is not None:
+    #         self._source.release()
+    #     self._source = self._source_factory.set_source_by_name(new_source_name)
 
-        logger.info(f"Source updated to {new_source_name}.")
+    #     logger.info(f"Source updated to {new_source_name}.")
 
-        test_capture = self._source.get_frame()
-        if test_capture is None:
-            logger.error(f"Source could not be updated to {new_source_name}, setting to default source")
-            self._source = self._source_factory.default_source()
+    #     test_capture = self._source.get_frame()
+    #     if test_capture is None:
+    #         logger.error(f"Source could not be updated to {new_source_name}, setting to default source")
+    #         self._source = self._source_factory.default_source()
 
-        self.start()  # Restart the thread
+    #     self.start()  # Restart the thread

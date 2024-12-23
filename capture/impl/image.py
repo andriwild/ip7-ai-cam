@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator(Source):
 
-    NAME = "image"
+    NAME = "static image"
 
     def __init__(self, width: int = 640, height: int = 480):
         logger.info("Initializing ImageGenerator")

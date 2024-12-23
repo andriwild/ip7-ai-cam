@@ -48,6 +48,15 @@ class BoxWrapper(Wrapper):
 
         return cls(boxes=boxes)
 
+
+    @classmethod
+    def dummy(cls, result: Any):
+        boxes = []
+        boxes.append(Box(xywhn=(0.5, 0.5, 0.2, 0.2), conf=0.5, label=0))
+        return cls(boxes=boxes)
+
+
+
     @classmethod
     def from_ai_cam(cls, result: Any):
         boxes, scores, classes = result[0][0], result[1][0], result[2][0]

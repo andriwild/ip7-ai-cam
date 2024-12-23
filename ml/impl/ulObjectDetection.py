@@ -9,7 +9,7 @@ from ultralytics.engine.results import Results
 
 class UlObjectDetection(Operation):
 
-    def __init__(self, model_path: str = "yolo11n.onnx", confidence: float = 0.5):
+    def __init__(self, model_path: str = "resources/ml_models/yolo11n.onnx", confidence: float = 0.5):
         self._model = YOLO(model_path)
         self._confidence = confidence
 
@@ -25,3 +25,6 @@ class UlObjectDetection(Operation):
             postprocess_time=speed["postprocess"],
             boxes=box_wrapper
         )
+
+    def get_name(self) -> str:
+        return "Ultralytics Object Detection"

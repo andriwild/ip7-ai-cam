@@ -15,16 +15,16 @@ from sink.interface.sink import Sink
 logger = logging.getLogger(__name__)
 
 class WebServer(Sink):
-    def __init__(self, controller: Controller, config: Configuration):
+    def __init__(self, host, port):
         self.app = Flask(__name__)
         CORS(self.app)
         self.app.config['CORS_HEADERS'] = 'Content-Type'
-        self._controller = controller
-        self.config = config
+        # self._controller = controller
+        # self.config = config
         self._result_queue: Queue[Result] = Queue(maxsize=5)
         self._setup_routes()
 
-        threading.Thread(target=self.run, args=(config.get_host(), config.get_port())).start()
+        threading.Thread(target=self.run, args=(host, port)).start()
 
 
     def put(self, result: Result) -> None:
@@ -40,32 +40,32 @@ class WebServer(Sink):
 
 
     def _setup_routes(self):
-        @self.app.route("/sources", methods=['GET'])
-        def get_sources():
-            return ["static", "image", "default", "pi", "ai_camera"]
+        # @self.app.route("/sources", methods=['GET'])
+        # def get_sources():
+        #     return ["static", "image", "default", "pi", "ai_camera"]
 
 
-        @self.app.route('/source', methods=['POST'])
-        def set_source():
-            data = request.get_data()
-            data = json.loads(data)
-            logger.info(f"New source: {data['source']}")
-            self.config.set_source(data["source"])
-            return "Ok"
+        # @self.app.route('/source', methods=['POST'])
+        # def set_source():
+        #     data = request.get_data()
+        #     data = json.loads(data)
+        #     logger.info(f"New source: {data['source']}")
+        #     self.config.set_source(data["source"])
+        #     return "Ok"
 
 
-        @self.app.route("/models", methods=['GET'])
-        def get_models():
-            return ["-", "yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx", "ai_camera", "hailo"]
+        # @self.app.route("/models", methods=['GET'])
+        # def get_models():
+        #     return ["-", "yolo11n.onnx", "yolo11n-pose.onnx", "yolo11n-seg.onnx", "ai_camera", "hailo"]
 
 
-        @self.app.route('/models', methods=['POST'])
-        def set_models():
-            data = request.get_data()
-            data = json.loads(data)
-            logger.info(f"New Models: {data['models']}")
-            self.config.set_models(data["models"])
-            return "Ok"
+        # @self.app.route('/models', methods=['POST'])
+        # def set_models():
+        #     data = request.get_data()
+        #     data = json.loads(data)
+        #     logger.info(f"New Models: {data['models']}")
+        #     self.config.set_models(data["models"])
+        #     return "Ok"
 
 
         @self.app.route("/")
@@ -115,3 +115,6 @@ class WebServer(Sink):
             threaded=True,
             use_reloader=False
         )
+
+    def get_name(self) -> str:
+        return "web_server"
