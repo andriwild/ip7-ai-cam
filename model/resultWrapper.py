@@ -52,7 +52,6 @@ class BoxWrapper(Wrapper):
     def from_ai_cam(cls, result: Any):
         boxes, scores, classes = result[0][0], result[1][0], result[2][0]
 
-        # Nach Score filtern
         valid_indices = np.where(scores >= 0.5)[0]
         boxes   = boxes[valid_indices]
         scores  = scores[valid_indices]
