@@ -23,4 +23,7 @@ sinks:
     file_path: ./sink/impl/console.py
   - name: webserver
     class_name: WebServer
-    file_path: ./sink/impl/api/server.py
+    file_path: ./api/server.py
+    parameters:
+      host: 0.0.0.0
+      port: 8000

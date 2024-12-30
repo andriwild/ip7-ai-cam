@@ -11,6 +11,7 @@ class OpenCVCamera(Source):
 
     def __init__(self, name: str, device: str = "/dev/video0", width: int = 640, height: int = 720):  # Improved typing
         logger.info("Initializing OpenCVCamera")
+        super().__init__(name)
         self._name = name
         import cv2
         self.cv2 = cv2

@@ -43,12 +43,13 @@ class ResultConsumer(Observer):
                 sink.put(capture)
         logger.info("Consumer run method stopped")
 
+
     def _instantiate_sink(self, load_config):
         src_cls = ClassLoader.get_class_from_file(load_config.file_path, load_config.class_name)
         if not src_cls:
             logger.error(f"Failed to load class {load_config.class_name} from {load_config.file_path}")
             return None
-        return src_cls(load_config.name)
+        return src_cls(load_config.name, load_config.parameters)
 
 
     def update(self, subject: Subject) -> None:
@@ -71,8 +72,6 @@ class ResultConsumer(Observer):
     
         to_remove = old_sink_names - new_sink_names
         to_add = new_sink_names - old_sink_names
-        logger.info(f"Removing sinks: {to_remove}")
-        logger.info(f"Adding sinks: {to_add}")
 
         for sink_obj in self._sinks:
             if sink_obj.get_name() in to_remove:
@@ -89,4 +88,5 @@ class ResultConsumer(Observer):
             
             new_sink_instance = self._instantiate_sink(load_cfg)
             self._sinks.append(new_sink_instance)
+        logger.info(f"Consumer updated with {new_sink_names}")
 

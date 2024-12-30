@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator(Source):
 
-    NAME = "static_image"
-
-    def __init__(self, width: int = 640, height: int = 480):
+    def __init__(self, name: str, width: int = 640, height: int = 480):
         logger.info("Initializing ImageGenerator")
+        super().__init__(name)
+        self._name = name
         self._width = width
         self._height = height
 
@@ -27,8 +27,8 @@ class ImageGenerator(Source):
         frame = cv2.resize(frame, (self._width, self._height))
         timestamp = datetime.now()
         return Frame(
-            frame_id=f"{self.NAME}_{timestamp}",
-            source_id=self.NAME,
+            frame_id=f"{self._name}_{timestamp}",
+            source_id=self._name,
             frame=frame,
             timestamp=timestamp)
 
@@ -36,7 +36,3 @@ class ImageGenerator(Source):
     def release(self):
         logger.info("Releasing ImageGenerator")
 
-
-    def get_name(self) -> str:
-        logger.debug("Getting source name for ImageGenerator")
-        return self.NAME

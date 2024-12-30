@@ -28,6 +28,7 @@ class AiCamera(Source, Operation):
 
     def __init__(
         self,
+        name: str,
         width: int = 640,
         height: int = 640,
         #model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
@@ -36,6 +37,7 @@ class AiCamera(Source, Operation):
         iou: float = 0.5
     ):
         logger.info("Initializing AiCamera")
+        super().__init__(name)
 
         from picamera2 import Picamera2
         from picamera2.devices import IMX500
@@ -207,7 +209,3 @@ class AiCamera(Source, Operation):
             self._camera = None
             self._imx500 = None
 
-
-    def get_name(self) -> str:
-        logger.debug("Getting source name for AiCamera")
-        return self.NAME

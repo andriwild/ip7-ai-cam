@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 class PiCamera(Source):
 
-    NAME = "pi"
-
-    def __init__(self, width: int = 640, height: int = 480):  # Improved typing
+    def __init__(self, name: str, width: int = 640, height: int = 480):  # Improved typing
         logger.info("Initializing PiCamera")
+        super().__init__(name)
+        self._name = name
         from picamera2 import Picamera2
         self._camera = Picamera2()
         self._camera.configure(
@@ -33,8 +33,8 @@ class PiCamera(Source):
         else:
             frame = self._camera.capture_array()
         return Frame(
-            frame_id=f"{self.NAME}_{timestamp}",
-            source_id=self.NAME,
+            frame_id=f"{self._name}_{timestamp}",
+            source_id=self._name,
             frame=frame,
             timestamp=timestamp)
 
@@ -46,7 +46,3 @@ class PiCamera(Source):
             self._camera.close()
             self._camera = None
 
-
-    def get_name(self) -> str:
-        logger.debug("Getting source name for PiCamera")
-        return self.NAME

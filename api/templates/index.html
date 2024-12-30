@@ -62,44 +62,30 @@
         <div class="d-flex justify-content-center mb-4">
             <div class="image-container" id="imgContainer">
                 <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+                <div id="roiOverlay"></div>
             </div>
         </div>
 
-        <!-- Video Frame Settings -->
         <fieldset class="border p-3 rounded mb-4">
             <legend class="fw-bold">Video Frame Settings</legend>
-            
-            <!-- Source selection (single) -->
             <div class="mb-3">
-                <label for="sourceSelect" class="form-label">Choose Source (one):</label>
+                <label for="sourceSelect" class="form-label">Choose Source:</label>
                 <div class="input-group">
                     <select class="form-select" id="sourceSelect" name="source"></select>
                     <button class="btn btn-primary" id="sourceSelectBtn">Ok</button>
                 </div>
             </div>
 
-            <!-- Model selection (multiple) -->
-            <div class="mb-3">
-                <label for="modelSelect" class="form-label">Choose Model(s):</label>
-                <div class="input-group">
-                    <select class="form-select" id="modelSelect" name="model" multiple></select>
-                    <button class="btn btn-primary" id="modelSelectBtn">Ok</button>
-                </div>
-            </div>
-        </fieldset>
 
-        <!-- Sinks Settings -->
-        <fieldset class="border p-3 rounded mb-4">
-            <legend class="fw-bold">Output Settings</legend>
             <div class="mb-3">
-                <label for="sinkSelect" class="form-label">Choose Sink(s):</label>
+                <label for="sinkSelect" class="form-label">Choose Sink:</label>
                 <div class="input-group">
-                    <select class="form-select" id="sinkSelect" name="sink" multiple></select>
+                    <select class="form-select" id="sinkSelect" name="sink" multiple> </select>
                     <button class="btn btn-primary" id="sinkSelectBtn">Ok</button>
                 </div>
             </div>
-        </fieldset>
 
+        </fieldset>
     </main>
 
     <footer class="bg-body-tertiary py-3 mt-auto">
@@ -108,9 +94,6 @@
         </div>
     </footer>
 
-    <script>
-        window.SERVER_URL = "{{ server_url }}";
-    </script>
     <script 
         src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" 
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" 
@@ -121,11 +104,11 @@
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" 
         crossorigin="anonymous">
     </script>
-    <script src="static/script.js"></script>
-    <script src="static/roi.js"></script>
+    <script type="module" src="/static/script.js"></script>
     <script>
         const themeSwitch = document.getElementById('themeSwitch');
         const htmlEl = document.documentElement;
+
 
         themeSwitch.addEventListener('change', () => {
             if (themeSwitch.checked) {
@@ -134,6 +117,8 @@
                 htmlEl.setAttribute('data-bs-theme', 'light');
             }
         });
+
+
     </script>
 </body>
 </html>

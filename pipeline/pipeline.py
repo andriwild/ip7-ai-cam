@@ -29,7 +29,8 @@ class Pipeline(Observer):
             if not frame:
                 logger.warning("Received empty frame")
                 continue
-            if self._steps:
+            #if self._steps:
+            if False:
                 result = self._steps[0].process(frame)
             else:
                 result = BoxResult(frame_id=frame.frame_id, 

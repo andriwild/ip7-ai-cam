@@ -12,10 +12,9 @@ logger = logging.getLogger(__name__)
 
 class StaticFrameGenerator(Source):
 
-    NAME = "static"
-
-    def __init__(self, width: int = 640, height: int = 480):
+    def __init__(self, name: str, width: int = 640, height: int = 480):
         logger.info("Initializing StaticFrameGenerator")
+        super().__init__(name)
         self.width = width
         self.height = height
         self.frame_counter = 0
@@ -52,15 +51,11 @@ class StaticFrameGenerator(Source):
         self.frame_counter += 1
         time.sleep(0.05)  # Simulate delay
         return Frame(
-            frame_id=f"{self.NAME}_{timestamp}",
-            source_id=self.NAME,
+            frame_id=f"{self._name}_{timestamp}",
+            source_id=self._name,
             frame=frame,
             timestamp=timestamp)
 
     def release(self):
         logger.info("Releasing StaticFrameGenerator")
-
-    def get_name(self) -> str:
-        logger.debug("Getting source name for StaticFrameGenerator")
-        return self.NAME
 
