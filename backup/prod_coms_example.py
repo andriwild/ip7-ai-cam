@@ -16,7 +16,7 @@ class FrameProvider(ABC):
 
 class CameraFrameProvider(FrameProvider):
     def __init__(self, camera_id=0):
-        # In a real implementation, you would open a camera capture, e.g. cv2.VideoCapture
+        # In a real implementation, you would open a camera source, e.g. cv2.VideoCapture
         # Here, we simulate with a random matrix as a frame.
         self.camera_id = camera_id
 

@@ -1,0 +1,26 @@
+sources:
+  - name: default
+    file_path: ./source/impl/opencv.py
+    class_name: OpenCVCamera
+  - name: pi
+    class_name: PiCamera
+    file_path: ./source/impl/pi.py
+  - name: static_image
+    class_name: StaticFrameGenerator
+    file_path: ./source/impl/static.py
+steps:
+  - name: detect coco objects
+    class_name: UlObjectDetection
+    file_path: ./ml/impl/ulObjectDetection.py
+    input: image
+    output: detection_results
+    parameters:
+      confidence_threshold: 0.5
+      nms_threshold: 0.3
+sinks:
+  - name: console
+    class_name: Console
+    file_path: ./sink/impl/console.py
+  - name: webserver
+    class_name: WebServer
+    file_path: ./sink/impl/api/server.py

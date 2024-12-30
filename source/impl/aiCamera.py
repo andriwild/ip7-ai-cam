@@ -5,9 +5,9 @@ from datetime import datetime
 import cv2
 import numpy as np
 
-from capture.interface.source import Source
+from source.interface.source import Source
 from model.frame import Frame
-from controller.interfaces.operation import Operation
+from ml.interface.operation import Operation
 from model.result import BoxResult
 from model.resultWrapper import BoxWrapper
 

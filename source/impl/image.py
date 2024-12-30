@@ -1,9 +1,10 @@
 import logging
-import cv2
 import time
 from datetime import datetime
 
-from capture.interface.source import Source
+import cv2
+
+from source.interface.source import Source
 from model.frame import Frame
 
 logger = logging.getLogger(__name__)
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator(Source):
 
-    NAME = "static image"
+    NAME = "static_image"
 
     def __init__(self, width: int = 640, height: int = 480):
         logger.info("Initializing ImageGenerator")

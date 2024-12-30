@@ -1,6 +1,6 @@
 import cv2
 
-from controller.interfaces.operation import Operation
+from ml.interface.operation import Operation
 from model.capture import Capture
 
 

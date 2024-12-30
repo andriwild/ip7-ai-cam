@@ -12,3 +12,7 @@ class Sink(ABC):
     @abstractmethod
     def get_name(self) -> str:
         pass
+
+    @abstractmethod
+    def release(self) -> None:
+        pass

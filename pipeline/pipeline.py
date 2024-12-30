@@ -1,77 +1,104 @@
-
 import threading
-from queue import Queue
 import logging
 
-from capture.frameProducer import CaptureProducer
+from ml.interface.operation import Operation
 from model.result import BoxResult
+from utilities.classLoader import ClassLoader
 from model.resultWrapper import BoxWrapper
-from sink.captureConsumer import CaptureConsumer
+from observer.observer import Observer
+from observer.subject import Subject
+from config.config import ConfigManager
 
-# Configure logging
+
 logger = logging.getLogger(__name__)
 
-class Pipeline:
-    def __init__(self, sources, models, sinks, queue_size=10):
-        """
-        Initialize the Pipeline.
-        :param sources: List of source objects.
-        :param models: List of model objects with an `infer` method.
-        :param sinks: List of sink objects.
-        :param queue_size: Size of the internal queue.
-        :param active_source: The source object that acts as the active source.
-        """
-        self.sources = sources
-        self.models = models
-        self.sinks = sinks
-        self.in_queue = Queue(maxsize=queue_size)
-        self.out_queue = Queue(maxsize=queue_size)
-        self.running = False
-        self.producer = CaptureProducer(self.in_queue, sources)
-        self.consumer = CaptureConsumer(self.out_queue, sinks)
+class Pipeline(Observer):
+    def __init__(self, in_queue, out_queue):
+        self.in_queue = in_queue
+        self.out_queue = out_queue
+        self._stop_event = threading.Event()
+        self._thread = None
+        self._steps: list[Operation] = []
+        logger.info("Pipeline initialized")
+
+
+    def _run(self):
+        while not self._stop_event.is_set():
+            print("pipeline running")
+            frame = self.in_queue.get()
+            if not frame:
+                logger.warning("Received empty frame")
+                continue
+            if self._steps:
+                result = self._steps[0].process(frame)
+            else:
+                result = BoxResult(frame_id=frame.frame_id, 
+                                   frame=frame.frame, 
+                                   boxes=BoxWrapper.dummy(None))
+
+            self.out_queue.put(result)
 
     def start(self):
-        logger.info("Starting pipeline.")
-        logger.info(self)
+        if self._thread and self._thread.is_alive():
+            logger.info("Pipeline thread is already running")
+            return
 
-        self.running = True
+        logger.info("Starting Pipeline thread")
+        self._stop_event.clear()
+        self._thread = threading.Thread(target=self._run)
+        self._thread.start()
 
-        self.producer.start()
-        self.consumer.start()
-
-        # Start the model threads
-        def transform():
-            while self.running:
-                frame = self.in_queue.get()
-                result = self.models[0].process(frame)
-                #result = BoxResult(frame_id=frame.frame_id, frame=frame.frame, boxes=BoxWrapper.dummy(None))
-                self.out_queue.put(result)
-
-        threading.Thread(target=transform).start()
-
-        
     def stop(self):
-        """
-        Stop the pipeline and all its components.
-        """
-        self.running = False
-        logger.info("Stopping pipeline...")
+        logger.info("Stopping Pipeline thread")
+        self._stop_event.set()
+        if self._thread:
+            self._thread.join()
+            self._thread = None
 
 
-    def __str__(self) -> str:
-        """
-        Create a string representation of the pipeline.
-        :return: String with details about sources, model, sinks, and configuration.
-        """
-        sources_names = [source.get_name() for source in self.sources]
-        sinks_names = [sink.get_name() for sink in self.sinks]
-        model_names = [model.get_name() for model in self.models]
+    def _instantiate_step(self, load_config):
+        src_cls = ClassLoader.get_class_from_file(load_config.file_path, load_config.class_name)
+        if not src_cls:
+            logger.error(f"Failed to load class {load_config.class_name} from {load_config.file_path}")
+            return None
+        return src_cls(load_config.name)
 
-        return (
-            f"\nPipeline:\n"
-            f"  Sources: {', '.join(sources_names)}\n"
-            f"  Model: {', '.join(model_names)}\n"
-            f"  Sinks: {', '.join(sinks_names)}\n" 
-            f"  Input Queue Size: {self.in_queue.maxsize}\n"
-            f"  Output Queue Size: {self.out_queue.maxsize}\n"
-            f"  Running: {'Yes' if self.running else 'No'}")
+
+    def update(self, subject: Subject) -> None:
+        logger.info("Pipeline received update from SettingsManager")
+
+        if not isinstance(subject, ConfigManager):
+            logger.error("not instance of SettingsManager")
+            return
+
+        new_steps_setting = subject.get_setting("steps")
+        if not new_steps_setting:
+            logger.warning("No steps found in settings")
+            return
+        
+        if not isinstance(new_steps_setting, list):
+            new_steps_setting = [new_steps_setting]
+    
+        old_step_names = {step.get_name() for step in self._steps}
+        new_step_names = set(new_steps_setting)
+    
+        to_remove = old_step_names - new_step_names
+        to_add = new_step_names - old_step_names
+
+        logger.info(f"Removing steps: {to_remove}")
+        logger.info(f"Adding steps: {to_add}")
+
+        for step_obj in self._steps:
+            if step_obj.get_name() in to_remove:
+                self._steps.remove(step_obj)
+    
+        self._steps = [s for s in self._steps if s.get_name() not in to_remove]
+    
+        for step_name in to_add:
+            load_cfg = subject.get_step_config_by_name(step_name)
+            if not load_cfg:
+                logger.warning(f"No LoadConfig found for step '{step_name}'")
+                continue
+            
+            new_step_instance = self._instantiate_step(load_cfg)
+            self._steps.append(new_step_instance)

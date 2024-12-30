@@ -5,11 +5,6 @@ const BASE_URL = window.SERVER_URL;
 
 const sourceElement     = document.getElementById("sourceSelect");
 const modelElement      = document.getElementById("modelSelect");
-// const resolutionElement = document.getElementById("resolutionSelect");
-// const confidenceElement = document.getElementById("confidenceInput");
-// const tempElement       = document.getElementById("temp");
-// const cpuElement        = document.getElementById("cpu");
-// const storageElement    = document.getElementById("storage");
 
 const sendSetting = (json, endpoint) => {
     fetch(`${BASE_URL}${endpoint}`, {
@@ -47,31 +42,8 @@ fetchSetting(
     )
 )
 
-// fetchSetting(
-//     "confidence", (
-//     data => confidenceElement.value = data["confidence"]
-//     )
-// )
-
-// const updateMetaData = () => {
-//     fetchSetting(
-//         "meta", (
-//             data => {
-//                 tempElement.innerText    = data["temp"]
-//                 cpuElement.innerText     = data["cpu"]
-//                 storageElement.innerText = data["storage"]
-//             }
-//         )
-//     )
-// };
-// updateMetaData();
-
-
 document.getElementById("sourceSelectBtn").onclick = () => 
     sendSetting({ source: sourceElement.value }, "source");
-
-// document.getElementById("resolutionSelectBtn").onclick = () => 
-//     sendSetting({ resolution: resolutionElement.value }, "resolution");
 
 document.getElementById("modelSelectBtn").onclick = () => {
     var values = Array.from(modelElement.selectedOptions).map(({ value }) => value);

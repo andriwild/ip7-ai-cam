@@ -1,7 +1,6 @@
-from controller.interfaces.operation import Operation
+from ml.interface.operation import Operation
 from model.frame import Frame
 from model.result import Result, BoxResult
-from ultralytics.engine.results import Results
 from model.resultWrapper import BoxWrapper
 from picamera2.devices import Hailo
 import cv2

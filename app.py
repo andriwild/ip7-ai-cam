@@ -1,55 +1,43 @@
-# based on: https://pyimagesearch.com/2020/09/02/opencv-stream-video-to-web-browser-html-page/
-# onnx runtime info: https://onnxruntime.ai/docs/tutorials/iot-edge/rasp-pi-cv.html
-
-
-# TODO: was kann ein ultralytics model alles verarbeiten? Schnittstelle für model outputs (bounding boxen, ...)
-
 import argparse
 import logging
 
-from capture.frameProducer import CaptureProducer
-from capture.impl.aiCamera import AiCamera
-from config.configuration import Configuration
-from controller.controller import Controller
-from ml.modelCoordinator import ModelCoordinator
-from sink.captureConsumer import CaptureConsumer
-
+from config.config import ConfigManager
+from kafkaUtil.helper import start_settings_consumer_in_thread
+from model.fps_queue import FpsQueue
+from pipeline.pipeline import Pipeline
+from pipeline.resultConsumer import ResultConsumer
+from pipeline.frameproducer import FrameProducer
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
+def main(config_file: str)-> None:
+    in_queue = FpsQueue(maxsize=10)
+    out_queue = FpsQueue(maxsize=10)
 
-def main(host: str, port: int)-> None:
-    aicam = AiCamera("resources/ml_models/network.rpk")
-    model_coordinator = ModelCoordinator(ai_camera=aicam)
+    producer = FrameProducer(queue=in_queue)
+    consumer = ResultConsumer(queue=out_queue)
+    pipeline = Pipeline(in_queue, out_queue)
 
-    controller = Controller()
-    controller.add_operations([
-        model_coordinator,
-    ])
+    settings = ConfigManager()
 
-    config = Configuration(host, port)
+    start_settings_consumer_in_thread(settings)
 
-    capture_consumer = CaptureConsumer(controller, config)
-    capture_consumer.start()
+    settings.attach(producer)
+    settings.attach(pipeline)
+    settings.attach(consumer)
 
-    capture_provider = CaptureProducer(controller, ai_camera=aicam)
-    capture_provider.start()
+    settings.load_config(config_file)
 
-    config.attach(capture_provider)
-    config.attach(model_coordinator)
-    config.attach(capture_consumer)
-
-    input() # TODO: prevent from stopping properly
+    producer.start()
+    consumer.start()
+    pipeline.start()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--ip", type=str, default="0.0.0.0", help="ip address of the server")
-    parser.add_argument("-o", "--port", type=int, default=8000, help="ephemeral port number of the server")
+    parser.add_argument("-c", "--config", type=str, default="config.yml", help="config file to load configuration")
     args = vars(parser.parse_args())
-
-    main(args["ip"], args["port"])
-
+    main(args["config"])

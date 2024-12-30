@@ -2,7 +2,7 @@ import time
 import logging
 from datetime import datetime
 
-from capture.interface.source import Source
+from source.interface.source import Source
 from model.frame import Frame
 
 logger = logging.getLogger(__name__)
