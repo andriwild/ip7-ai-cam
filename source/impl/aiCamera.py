@@ -26,7 +26,6 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         logger.info("Initializing AiCamera")
         super().__init__(name)
 
-        from picamera2 import Picamera2
         from picamera2.devices import IMX500
         from picamera2.devices.imx500 import (NetworkIntrinsics, postprocess_nanodet_detection)
 
@@ -38,16 +37,19 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         self._model_path = "resources/ml_models/network.rpk"
         self._threshold = parameters.get("confidence", 0.5)
         self._iou = 0.5
+        self.last_detection = None
 
+
+    def init_camera(self):
         self._imx500 = self._IMX500(self._model_path)
         self._intrinsics = self._imx500.network_intrinsics
         if not self._intrinsics:
             self._intrinsics = self._NetworkIntrinsics()
             self._intrinsics.task = "object detection"
 
+        from picamera2 import Picamera2
         self._camera = Picamera2(self._imx500.camera_num)
 
-        self.last_detection = None
 
         config = self._camera.create_preview_configuration(
             #main={"size": (width, height), "format": "RGB888"},
@@ -63,6 +65,8 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
 
     def get_frame(self) -> Frame:
         logger.debug("Getting frame from AiCamera")
+        if self._camera is None:
+            self.init_camera()
         metadata = self._camera.capture_metadata()
         detections = self._parse_detections(metadata)
         self.last_detection = self._imx500.get_outputs(metadata, add_batch=True)
