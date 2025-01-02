@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 class HailoObjectDetection(Operation):
 
-    def __init__(self, name: str,  model_path: str ="/usr/share/hailo-models/yolov8s_h8l.hef", confidence: float = 0.5):
+    def __init__(self, name: str, params):
         super().__init__(name)
-        self._model = Hailo(model_path)
-        self._confidence = confidence
+        self._model = Hailo("/usr/share/hailo-models/yolov8s_h8l.hef")
+        self._confidence = params.get("confidence", 0.5)
         model_h, model_w, _ = self._model.get_input_shape()
         print("hailo size: ", model_h, model_w)
 
