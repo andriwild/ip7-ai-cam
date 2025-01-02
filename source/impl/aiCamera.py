@@ -19,7 +19,7 @@ class AiCamDetection:
         self.category = category
         self.conf = conf
 
-class AiCamera(Source, Operation, SingletonMeta):
+class AiCamera(Source, Operation,metaclass=SingletonMeta):
 
     def __init__( self, name: str, parameters):
 
