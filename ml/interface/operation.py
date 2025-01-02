@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
 
-from model.frame import Frame
-from model.result import Result
+from model.detection import Detection
+import numpy as np
 
 
 class Operation(ABC):
+    def __init__(self, name: str):
+        self._name = name
 
     @abstractmethod
-    def process(self, frame: Frame) -> Result:
+    def process(self, frame: np.ndarray) -> list[Detection]:
         pass
 
-    @abstractmethod
     def get_name(self) -> str:
-        pass
+        return self._name

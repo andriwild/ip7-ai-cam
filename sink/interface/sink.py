@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from model.result import Result
+from pipeline.pipeline import Result
 
 
 class Sink(ABC):

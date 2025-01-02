@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from model.frame import Frame
-from model.result import Result
+from pipeline.pipeline import Result
 
 
 class Inference(ABC):

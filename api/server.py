@@ -12,8 +12,8 @@ from fastapi.staticfiles import StaticFiles
 
 from config.config import ConfigManager
 from kafkaUtil.helper import get_kafka_producer
-from model.result import Result
 from sink.interface.sink import Sink
+from pipeline.pipeline import Result
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class WebServer(Sink):
 
         self._host = parameters["host"]
         self._port = parameters["port"]
-        self._result_queue = Queue(maxsize=5)
+        self._result_queue: Queue[Result] = Queue(maxsize=5)
 
         self._producer = get_kafka_producer("localhost:29092")
 
@@ -109,14 +109,20 @@ class WebServer(Sink):
             if not result:
                 continue
 
-            # 'result.draw(...)' presumably draws bounding boxes, text, etc.
-            frame = result.draw(result.frame)
-            success, encoded_image = cv2.imencode(".jpg", frame)
+            #frame = result.draw(result.frame)
+            image = result.frame.frame
+            for p in result.predictions:
+                print(f"draw predictions {p.model_name}")
+                for data in p.infer_data:
+                    image = data.draw(image)
+
+
+                p.infer_data
+            success, encoded_image = cv2.imencode(".jpg", image)
             if not success:
                 logger.error("Error encoding frame")
                 continue
 
-            # Each yielded chunk is a single frame in the MJPEG stream.
             yield (
                 b"--frame\r\n"
                 b"Content-Type: image/jpeg\r\n\r\n" +
@@ -133,13 +139,10 @@ class WebServer(Sink):
             host=self._host,
             port=self._port,
             log_level="info",
-            # You can disable "reload" in production or tune it as needed:
-            # reload=True,
         )
         self._server = uvicorn.Server(config)
 
         logger.info(f"Server starting on {self._host}:{self._port}...")
-        # This call blocks until self._server.should_exit is set to True
         self._server.run()
 
     def start(self):
@@ -162,10 +165,8 @@ class WebServer(Sink):
         logger.info("Signaling server to stop...")
         self._running = False
 
-        # Tell Uvicorn to stop
         self._server.should_exit = True
 
-        # Wait for the server thread to fully exit
         self._server_thread.join()
 
         self._server = None

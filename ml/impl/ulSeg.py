@@ -9,7 +9,8 @@ from model.resultWrapper import MaskWrapper
 
 class UlSeg(Operation):
 
-    def __init__(self, model_path: str = "yolo11n-seg.onnx", confidence: float = 0.5):
+    def __init__(self, name: str, model_path: str = "yolo11n-seg.onnx", confidence: float = 0.5):
+        super().__init__(name)
         self._model = YOLO(model_path)
         self._confidence = confidence
 

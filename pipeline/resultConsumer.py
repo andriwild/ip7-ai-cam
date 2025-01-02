@@ -37,7 +37,6 @@ class ResultConsumer(Observer):
     def _run(self):
         logger.info("Consumer run method started")
         while not self._stop_event.is_set():
-            print("consumer running")
             capture = self._queue.get()  # might be a BoxResult or something else
             for sink in self._sinks:
                 sink.put(capture)

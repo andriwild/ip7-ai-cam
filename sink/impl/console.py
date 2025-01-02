@@ -1,5 +1,5 @@
-from model.result import Result
 from sink.interface.sink import Sink
+from pipeline.pipeline import Result
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ class Console(Sink):
         logger.info("Console initialized")
 
     def put(self, result: Result) -> None:
-        logger.info(f"Frame {result.frame_id} processed")
+        logger.info(f"Frame {result.frame.frame_id} processed")
 
     def release(self):
         logger.info("Console released")

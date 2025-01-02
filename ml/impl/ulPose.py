@@ -9,7 +9,8 @@ from model.resultWrapper import KeypointWrapper
 
 class UlPose(Operation):
 
-    def __init__(self, model_path: str = "yolo11n-pose.onnx", confidence: float = 0.5):
+    def __init__(self, name: str, model_path: str = "yolo11n-pose.onnx", confidence: float = 0.5):
+        super().__init__(name)
         self._model = YOLO(model_path)
         self._confidence = confidence
 

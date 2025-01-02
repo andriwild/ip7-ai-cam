@@ -2,48 +2,14 @@ from abc import abstractmethod
 import numpy as np
 import cv2
 import logging
+from model.detection import Box
 from model.resultWrapper import BoxWrapper, MaskWrapper, KeypointWrapper, Wrapper
 
 logger = logging.getLogger(__name__)
 
-class DrawingStrategy:
-    @abstractmethod
-    def draw(self, frame: np.ndarray, data: Wrapper):
-        raise NotImplementedError("Subclasses must implement draw.")
 
 
-class BoxDrawingStrategy(DrawingStrategy):
-    def draw(self, frame: np.ndarray, data: Wrapper):
-
-        if not isinstance(data, BoxWrapper):
-            raise TypeError("BoxDrawingStrategy can only draw BoxWrapper instances.")
-
-        height, width = frame.shape[:2]
-        for box in data.boxes:
-            x_center, y_center, w, h = box.xywhn
-            x1 = int((x_center - w / 2) * width)
-            y1 = int((y_center - h / 2) * height)
-            x2 = int((x_center + w / 2) * width)
-            y2 = int((y_center + h / 2) * height)
-
-            def map_conf_to_color(conf):
-                red = int(255 * (1 - conf))
-                green = int(255 * conf)
-                return (0, green, red)  # BGR
-
-            def map_to_label(label):
-                return int(label)
-            #return self.cooc_labels["names"][int(label)]
-
-            color = map_conf_to_color(box.conf)
-            label_text = f"Class {map_to_label(int(box.label))}: {box.conf:.2f}"
-
-            cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-            cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
-        return frame
-
-
-class MaskDrawingStrategy(DrawingStrategy):
+class MaskDrawingStrategy:
     def draw(self, frame: np.ndarray, data: Wrapper):
 
         if not isinstance(data, MaskWrapper):
@@ -67,7 +33,7 @@ class MaskDrawingStrategy(DrawingStrategy):
         return frame
 
 
-class KeypointDrawingStrategy(DrawingStrategy):
+class KeypointDrawingStrategy:
     def draw(self, frame: np.ndarray, data: Wrapper):
 
         if not isinstance(data, KeypointWrapper):

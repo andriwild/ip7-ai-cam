@@ -9,14 +9,47 @@ sources:
     class_name: StaticFrameGenerator
     file_path: ./source/impl/static.py
 steps:
+  - name: dummy - draw center rectangle
+    class_name: Dummy
+    file_path: ./ml/impl/dummy.py
+    input_id: raw_image
+    output_id: rectangle
+    task: detection 
   - name: detect coco objects
     class_name: UlObjectDetection
     file_path: ./ml/impl/ulObjectDetection.py
-    input: image
-    output: detection_results
+    input_id: raw_image
+    output_id: car_results
+    task: detection 
     parameters:
       confidence_threshold: 0.5
       nms_threshold: 0.3
+  # - name: detect person objects
+  #   class_name: PersonObjectDetection
+  #   file_path: ./ml/impl/personObjectDetection.py
+  #   task: detection 
+  #   input_id: image
+  #   output_id: car_detections
+  #   parameters:
+  #     confidence_threshold: 0.8
+  #     nms_threshold: 0.4
+  # - name: detect person objects
+  #   class_name: PersonObjectDetection
+  #   file_path: ./ml/impl/personObjectDetection.py
+  #   input_id: car_detections
+  #   task: detection 
+  #   output_id: person_detections
+  #   parameters:
+  #     confidence_threshold: 0.8
+  #     nms_threshold: 0.4
+  # - name: detect person keypoints
+  #   class_name: PersonKeypoints
+  #   file_path: ./ml/impl/personKeypoints.py
+  #   input_id: person_detections
+  #   output_id: person_keypoints
+  #   task: pose 
+  #   parameters:
+  #     confidence_threshold: 0.8
 sinks:
   - name: console
     class_name: Console

@@ -8,23 +8,18 @@ import numpy as np
 from source.interface.source import Source
 from model.frame import Frame
 from ml.interface.operation import Operation
-from model.result import BoxResult
-from model.resultWrapper import BoxWrapper
+from model.singleton import SingletonMeta
+from model.detection import Box, Detection
 
 logger = logging.getLogger(__name__)
 
-class Detection:
-    """
-    Repräsentiert einen einzelnen Detektions-Output
-    """
+class AiCamDetection:
     def __init__(self, box, category, conf):
         self.box = box         # (x, y, width, height)
         self.category = category
         self.conf = conf
 
-class AiCamera(Source, Operation):
-
-    NAME = "ai"
+class AiCamera(Source, Operation, SingletonMeta):
 
     def __init__(
         self,
@@ -74,23 +69,14 @@ class AiCamera(Source, Operation):
         logger.info("AiCamera initialization complete.")
 
     def get_frame(self) -> Frame:
-        """
-        Liest das aktuelle Kamerabild als numpy-Array aus, führt eine Inferenz durch (über Metadata),
-        zeichnet ggf. gefundene Bounding Boxen ins Bild und gibt ein Frame-Objekt zurück.
-        """
         logger.debug("Getting frame from AiCamera")
-
         metadata = self._camera.capture_metadata()
-
         detections = self._parse_detections(metadata)
-
         self.last_detection = self._imx500.get_outputs(metadata, add_batch=True)
-
         frame_data = self._camera.capture_array("main")
-
         frame_data_annotated = self._draw_detections(frame_data, detections)
-
         timestamp = datetime.now()
+
         return Frame(
             frame_id=f"{self.NAME}_{timestamp}",
             source_id=self.NAME,
@@ -98,16 +84,34 @@ class AiCamera(Source, Operation):
             timestamp=timestamp
         )
 
-    def process(self, frame: Frame):
-        boxes = BoxWrapper(boxes=[])
+    def process(self, frame) -> list[Detection]:
         if self.last_detection is not None:
-            boxes = BoxWrapper.from_ai_cam(self.last_detection)
+            result = self.last_detection
+            boxes, scores, classes = result[0][0], result[1][0], result[2][0]
 
-        return BoxResult(
-                frame.frame_id, 
-                frame.frame,
-                boxes=boxes
+            valid_indices = np.where(scores >= 0.5)[0]
+            boxes   = boxes[valid_indices]
+            scores  = scores[valid_indices]
+            classes = classes[valid_indices]
+
+            box_list = []
+            for (y0, x0, y1, x1), conf, label_id in zip(boxes, scores, classes):
+                w = (x1 - x0)
+                h = (y1 - y0)
+                x_center = x0 + w / 2
+                y_center = y0 + h / 2
+
+                box_list.append(
+                    Box(
+                        xywhn=(x_center, y_center, w, h),
+                        label=int(label_id),
+                        conf=float(conf)
+                    )
                 )
+
+
+            return box_list
+        return []
 
 
     def _parse_detections(self, metadata: dict):
@@ -144,7 +148,7 @@ class AiCamera(Source, Operation):
             height_box = br_y - top_left_y
 
             detections.append(
-                Detection(
+                AiCamDetection(
                     box=(top_left_x, top_left_y, width_box, height_box),
                     category=int(category),
                     conf=float(score)
