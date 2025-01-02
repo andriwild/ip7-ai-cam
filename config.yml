@@ -36,15 +36,15 @@ steps:
     task: detection 
     parameters:
       confidence: 0.5
-      #  - name: detect coco objects
-      #    class_name: UlObjectDetection
-      #    file_path: ./ml/impl/ulObjectDetection.py
-      #    input_id: raw_image
-      #    output_id: car_results
-      #    task: detection 
-      #    parameters:
-      #      confidence_threshold: 0.5
-      #      nms_threshold: 0.3
+        #  - name: detect coco objects
+        #    class_name: UlObjectDetection
+        #    file_path: ./ml/impl/ulObjectDetection.py
+        #    input_id: raw_image
+        #    output_id: car_results
+        #    task: detection 
+        #    parameters:
+        #      confidence_threshold: 0.5
+        #      nms_threshold: 0.3
       #  - name: ai camera
       #    class_name: AiCamera
       #    file_path: ./source/impl/aiCamera.py

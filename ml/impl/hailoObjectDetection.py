@@ -6,7 +6,7 @@ import cv2
 import logging
 import numpy as np
 
-from utilities.formatConverter import yxyx_to_xywhn
+from utilities.formatConverter import yxyxn_to_xywhn
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,6 @@ def extract_detections(hailo_output, w, h, class_names, threshold=0.5):
             score = detection[4]
             if score >= threshold:
                 y0, x0, y1, x1 = detection[:4]
-                xywhn = yxyx_to_xywhn((y0, x0, y1, x1), w, h)
+                xywhn = yxyxn_to_xywhn(y0, x0, y1, x1)
                 boxes.append(Box(xywhn=xywhn, conf=score, label=class_names[class_id]))
     return boxes
