@@ -71,8 +71,8 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         timestamp = datetime.now()
 
         return Frame(
-            frame_id=f"{self.NAME}_{timestamp}",
-            source_id=self.NAME,
+            frame_id=f"{self._name}_{timestamp}",
+            source_id=self._name,
             frame=frame_data_annotated,
             timestamp=timestamp
         )
