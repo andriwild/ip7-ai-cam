@@ -1,4 +1,10 @@
 sources:
+  # - name: aicamera 
+  #   file_path: ./source/impl/aiCamera.py
+  #   class_name: AiCamera
+  #   parameters:
+  #     width: 640
+  #     height: 640 
   - name: default
     file_path: ./source/impl/opencv.py
     class_name: OpenCVCamera
@@ -22,15 +28,32 @@ steps:
     input_id: raw_image
     output_id: rectangle
     task: detection 
-  - name: detect coco objects
-    class_name: UlObjectDetection
-    file_path: ./ml/impl/ulObjectDetection.py
+  - name: hailo
+    class_name: HailoObjectDetection
+    file_path: ./ml/impl/hailoObjectDetection.py
     input_id: raw_image
-    output_id: car_results
+    output_id: hailo_output
     task: detection 
     parameters:
-      confidence_threshold: 0.5
-      nms_threshold: 0.3
+      confidence: 0.5
+      #  - name: detect coco objects
+      #    class_name: UlObjectDetection
+      #    file_path: ./ml/impl/ulObjectDetection.py
+      #    input_id: raw_image
+      #    output_id: car_results
+      #    task: detection 
+      #    parameters:
+      #      confidence_threshold: 0.5
+      #      nms_threshold: 0.3
+      #  - name: ai camera
+      #    class_name: AiCamera
+      #    file_path: ./source/impl/aiCamera.py
+      #    input_id: raw_image
+      #    output_id: ai_camera_results
+      #    task: detection 
+      #    parameters:
+      #      confidence_threshold: 0.5
+      #      nms_threshold: 0.3
   # - name: detect person objects
   #   class_name: PersonObjectDetection
   #   file_path: ./ml/impl/personObjectDetection.py
