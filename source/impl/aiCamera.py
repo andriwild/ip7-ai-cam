@@ -19,7 +19,7 @@ class AiCamDetection:
         self.category = category
         self.conf = conf
 
-class AiCamera(Source, Operation,metaclass=SingletonMeta):
+class AiCamera(Source, Operation, metaclass=SingletonMeta):
 
     def __init__( self, name: str, parameters):
 
@@ -33,8 +33,9 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         self._postprocess_nanodet_detection = postprocess_nanodet_detection
         self._NetworkIntrinsics = NetworkIntrinsics
 
-        #model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
-        self._model_path = "resources/ml_models/network.rpk"
+        model_path_1: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
+        model_path_2: str =  "resources/ml_models/network.rpk"
+        self._model_path = model_path_1
         self._threshold = parameters.get("confidence", 0.5)
         self._iou = 0.5
         self.last_detection = None
@@ -56,7 +57,7 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         config = self._camera.create_preview_configuration(
             #main={"size": (width, height), "format": "RGB888"},
             main={"format": "RGB888"},
-            buffer_count=4,  # Je nach Bedarf mehr Buffer
+            buffer_count=4,
             controls={"FrameRate": self._intrinsics.inference_rate if self._intrinsics.inference_rate else 10}
         )
 
@@ -131,7 +132,6 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
 
 
         img_h, img_w = self._camera.stream_configuration("main")["size"][::-1]
-        print("frame size: ", img_h, img_w)
         # img_h = 640
         # img_w = 640
 

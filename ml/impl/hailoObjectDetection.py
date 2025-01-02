@@ -6,6 +6,8 @@ import cv2
 import logging
 import numpy as np
 
+from utilities.formatConverter import yxyx_to_xywhn
+
 logger = logging.getLogger(__name__)
 
 class HailoObjectDetection(Operation):
@@ -18,11 +20,9 @@ class HailoObjectDetection(Operation):
         print("hailo size: ", model_h, model_w)
 
     def process(self, frame: np.ndarray) -> list[Detection]:
-        print("process hailo inference")
         frame_r = cv2.resize(frame, (640, 640))
         results = self._model.run(frame_r)
         detections = extract_detections(results, frame.shape[1], frame.shape[0], [0] * 80, threshold=self._confidence)
-        print(detections)
         return detections
         
 
@@ -33,6 +33,6 @@ def extract_detections(hailo_output, w, h, class_names, threshold=0.5):
             score = detection[4]
             if score >= threshold:
                 y0, x0, y1, x1 = detection[:4]
-                bbox = (int(x0 * w), int(y0 * h), int(x1 * w), int(y1 * h))
-                boxes.append(Box(xywhn=bbox, conf=score, label=class_names[class_id]))
+                xywhn = yxyx_to_xywhn((y0, x0, y1, x1), w, h)
+                boxes.append(Box(xywhn=xywhn, conf=score, label=class_names[class_id]))
     return boxes

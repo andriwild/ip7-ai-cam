@@ -109,15 +109,10 @@ class WebServer(Sink):
             if not result:
                 continue
 
-            #frame = result.draw(result.frame)
             image = result.frame.frame
             for p in result.predictions:
-                print(f"draw predictions {p.model_name}")
                 for data in p.infer_data:
                     image = data.draw(image)
-
-
-                p.infer_data
             success, encoded_image = cv2.imencode(".jpg", image)
             if not success:
                 logger.error("Error encoding frame")
