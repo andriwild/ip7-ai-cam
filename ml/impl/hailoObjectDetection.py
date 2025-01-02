@@ -19,7 +19,6 @@ class HailoObjectDetection(Operation):
 
     def process(self, frame: np.ndarray) -> list[Detection]:
         print("process hailo inference")
-        print(frame.shape[1], frame.shape[0])
         frame_r = cv2.resize(frame, (640, 640))
         results = self._model.run(frame_r)
         detections = extract_detections(results, frame.shape[1], frame.shape[0], [0] * 80, threshold=self._confidence)
@@ -28,7 +27,6 @@ class HailoObjectDetection(Operation):
         
 
 def extract_detections(hailo_output, w, h, class_names, threshold=0.5):
-    """Extract detections from the HailoRT-postprocess output."""
     boxes = []
     for class_id, detections in enumerate(hailo_output):
         for detection in detections:
