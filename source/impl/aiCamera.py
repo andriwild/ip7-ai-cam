@@ -38,6 +38,8 @@ class AiCamera(Source, Operation,metaclass=SingletonMeta):
         self._threshold = parameters.get("confidence", 0.5)
         self._iou = 0.5
         self.last_detection = None
+        self._camera = None
+        self._imx500 = None
 
 
     def init_camera(self):
