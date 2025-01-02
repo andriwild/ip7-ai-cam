@@ -47,7 +47,7 @@ class ResultConsumer(Observer):
         src_cls = ClassLoader.get_class_from_file(load_config.file_path, load_config.class_name)
         if not src_cls:
             logger.error(f"Failed to load class {load_config.class_name} from {load_config.file_path}")
-            return None
+            exit(1)
         return src_cls(load_config.name, load_config.parameters)
 
 

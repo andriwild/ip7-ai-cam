@@ -21,16 +21,8 @@ class AiCamDetection:
 
 class AiCamera(Source, Operation, SingletonMeta):
 
-    def __init__(
-        self,
-        name: str,
-        width: int = 640,
-        height: int = 640,
-        #model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
-        model_path: str = "resources/ml_models/network.rpk",
-        threshold: float = 0.5,
-        iou: float = 0.5
-    ):
+    def __init__( self, name: str, parameters):
+
         logger.info("Initializing AiCamera")
         super().__init__(name)
 
@@ -42,9 +34,10 @@ class AiCamera(Source, Operation, SingletonMeta):
         self._postprocess_nanodet_detection = postprocess_nanodet_detection
         self._NetworkIntrinsics = NetworkIntrinsics
 
-        self._model_path = model_path
-        self._threshold = threshold
-        self._iou = iou
+        #model_path: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk",
+        self._model_path = "resources/ml_models/network.rpk"
+        self._threshold = parameters.get("confidence", 0.5)
+        self._iou = 0.5
 
         self._imx500 = self._IMX500(self._model_path)
         self._intrinsics = self._imx500.network_intrinsics

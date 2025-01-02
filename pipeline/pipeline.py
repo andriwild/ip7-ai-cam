@@ -182,7 +182,7 @@ class Pipeline(Observer):
         src_cls = ClassLoader.get_class_from_file(path, name)
         if not src_cls:
             logger.error(f"Failed to load class {name} from {path}")
-            return None
+            exit(1)
         return src_cls(name, params)
 
 
