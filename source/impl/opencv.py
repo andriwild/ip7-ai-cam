@@ -9,16 +9,17 @@ logger = logging.getLogger(__name__)
 
 class OpenCVCamera(Source):
 
-    def __init__(self, name: str, device: str = "/dev/video0", width: int = 640, height: int = 720):  # Improved typing
+    def __init__(self, name: str, params):
         logger.info("Initializing OpenCVCamera")
         super().__init__(name)
+
         self._name = name
         import cv2
         self.cv2 = cv2
-        self._device = device
-        self._capture = self.cv2.VideoCapture(device)
-        self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, width)
-        self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, height)
+        self._device = params.get("device", "/dev/video0")
+        self._capture = self.cv2.VideoCapture(self._device)
+        self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, params.get("width", 640))
+        self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, params.get("height", 640))
         time.sleep(1)  # Ensure the camera initializes properly
 
 

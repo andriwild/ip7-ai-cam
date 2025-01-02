@@ -9,15 +9,17 @@ logger = logging.getLogger(__name__)
 
 class PiCamera(Source):
 
-    def __init__(self, name: str, width: int = 640, height: int = 480):  # Improved typing
+    def __init__(self, name: str, params):
         logger.info("Initializing PiCamera")
         super().__init__(name)
         self._name = name
+        self._width = params.get("width", 640)
+        self._height = params.get("height", 640)
         from picamera2 import Picamera2
         self._camera = Picamera2()
         self._camera.configure(
             self._camera.create_preview_configuration(
-                main={"size": (width, height), "format": "RGB888"}
+                main={"size": (self._width, self._height), "format": "RGB888"}
             )
         )
         self._camera.start()

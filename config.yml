@@ -2,9 +2,16 @@ sources:
   - name: default
     file_path: ./source/impl/opencv.py
     class_name: OpenCVCamera
+    parameters:
+      device: "/dev/video0"
+      width: 640
+      height: 640 
   - name: pi
     class_name: PiCamera
     file_path: ./source/impl/pi.py
+    parameters:
+      width: 640
+      height: 640
   - name: static_image
     class_name: StaticFrameGenerator
     file_path: ./source/impl/static.py

@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 class StaticFrameGenerator(Source):
 
-    def __init__(self, name: str, width: int = 640, height: int = 480):
+    def __init__(self, name: str, params):
         logger.info("Initializing StaticFrameGenerator")
         super().__init__(name)
-        self.width = width
-        self.height = height
+        self.width = params.get("width", 640)
+        self.height = params.get("height", 640)
         self.frame_counter = 0
         self.bee_position = [self.width // 2, self.height // 2]  # Initial bee position
         self.direction = [5, 3]  # Movement direction

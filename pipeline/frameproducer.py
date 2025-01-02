@@ -44,7 +44,8 @@ class FrameProducer(Observer):
         if not src_cls:
             logger.error(f"Failed to load class {load_config.class_name} from {load_config.file_path}")
             exit(1)
-        return src_cls(load_config.name, load_config.parameters)
+        params = load_config.parameters if load_config.parameters else {}
+        return src_cls(load_config.name, params)
 
 
     def _run(self):

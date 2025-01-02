@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 class ImageGenerator(Source):
 
-    def __init__(self, name: str, width: int = 640, height: int = 480):
+    def __init__(self, name: str, params):
         logger.info("Initializing ImageGenerator")
         super().__init__(name)
         self._name = name
-        self._width = width
-        self._height = height
+        self._width = params.get("width", 640)
+        self._height = params.get("height", 640)
 
 
     def get_frame(self) -> Frame:
