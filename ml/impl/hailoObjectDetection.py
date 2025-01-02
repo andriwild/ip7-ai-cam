@@ -4,6 +4,7 @@ from model.detection import Detection, Box
 from picamera2.devices import Hailo
 import cv2
 import logging
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -16,12 +17,12 @@ class HailoObjectDetection(Operation):
         model_h, model_w, _ = self._model.get_input_shape()
         print("hailo size: ", model_h, model_w)
 
-    def process(self, frame: Frame) -> list[Detection]:
+    def process(self, frame: np.ndarray) -> list[Detection]:
         print("process hailo inference")
-        print(frame.frame.shape[1], frame.frame.shape[0])
-        frame_r = cv2.resize(frame.frame, (640, 640))
+        print(frame.shape[1], frame.shape[0])
+        frame_r = cv2.resize(frame, (640, 640))
         results = self._model.run(frame_r)
-        detections = extract_detections(results, frame.frame.shape[1], frame.frame.shape[0], [0] * 80, threshold=self._confidence)
+        detections = extract_detections(results, frame.shape[1], frame.shape[0], [0] * 80, threshold=self._confidence)
         print(detections)
         return detections
         
