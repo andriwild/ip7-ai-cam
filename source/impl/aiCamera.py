@@ -38,7 +38,7 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         self._model_path = model_path_1
         self._threshold = parameters.get("confidence", 0.5)
         self._iou = 0.5
-        self.last_detection = None
+        self._last_detection = None
         self._camera = None
         self._imx500 = None
 
@@ -72,7 +72,7 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
             self.init_camera()
         metadata = self._camera.capture_metadata()
         detections = self._parse_detections(metadata)
-        self.last_detection = self._imx500.get_outputs(metadata, add_batch=True)
+        self._last_detection = self._imx500.get_outputs(metadata, add_batch=True)
         frame_data = self._camera.capture_array("main")
         frame_data_annotated = self._draw_detections(frame_data, detections)
         timestamp = datetime.now()
@@ -85,8 +85,8 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         )
 
     def process(self, frame) -> list[Detection]:
-        if self.last_detection is not None:
-            result = self.last_detection
+        if self._last_detection is not None:
+            result = self._last_detection
             boxes, scores, classes = result[0][0], result[1][0], result[2][0]
 
             valid_indices = np.where(scores >= 0.5)[0]
@@ -108,7 +108,6 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
                         conf=float(conf)
                     )
                 )
-
 
             return box_list
         return []
@@ -202,13 +201,11 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         return frame_data
 
     def release(self):
-        """
-        Gibt die Kamera-Ressourcen frei.
-        """
         if self._camera is not None:
             logger.info("Releasing AiCamera")
             self._camera.stop()
             self._camera.close()
             self._camera = None
+            self._last_detection = None
             self._imx500 = None
 

@@ -17,9 +17,9 @@ class Detection(ABC):
 class Box(Detection):
     xywhn: Tensor  # Normalized x, y, width, height
     conf: float
-    label: int
+    label: str
 
-    def draw(self, frame: np.ndarray) -> np.ndarray:
+    def draw(self, frame: np.ndarray, color = (0,0,255)) -> np.ndarray:
 
         height, width = frame.shape[:2]
         x_center, y_center, w, h = self.xywhn
@@ -28,27 +28,16 @@ class Box(Detection):
         x2 = int((x_center + w / 2) * width)
         y2 = int((y_center + h / 2) * height)
 
-        def map_conf_to_color(conf):
-            red = int(255 * (1 - conf))
-            green = int(255 * conf)
-            return (0, green, red)  # BGR
+        label_text = f"Class {self.label}: {self.conf:.2f}"
 
-        def map_to_label(label):
-            return int(label)
-        #return self.cooc_labels["names"][int(label)]
-
-        color = map_conf_to_color(self.conf)
-        label_text = f"Class {map_to_label(int(self.label))}: {self.conf:.2f}"
-
-        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-        cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 4)
+        cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 1)
         return frame
 
 
 @dataclass
 class Mask(Detection):
     masks: np.ndarray
-    conf: float
 
     @staticmethod
     def draw(frame: np.ndarray, data: List['Mask']) -> np.ndarray:

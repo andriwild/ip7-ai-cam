@@ -25,7 +25,7 @@ class BoxAnnotator(Operation):
             return capture
 
         height, width = frame.shape[:2]
-        xywhn = boxes.xywhn  # boxes in [x, y, width, height] normalized format
+        xywhn = boxes.xywhn
         conf = boxes.conf if boxes.conf is not None else np.ones(xywhn.shape[0])  # default to 1 if no confidence
         cls = boxes.cls if boxes.cls is not None else [0] * xywhn.shape[0]  # default class 0
 

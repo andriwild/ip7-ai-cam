@@ -31,9 +31,9 @@ def main(config_file: str)-> None:
 
     settings.load_config(config_file)
 
-    producer.start()
     consumer.start()
     pipeline.start()
+    producer.start()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 from queue import Queue, Empty
 
 import cv2
@@ -24,8 +25,12 @@ class WebServer(Sink):
         self._host = parameters["host"]
         self._port = parameters["port"]
         self._result_queue: Queue[Result] = Queue(maxsize=5)
+        self._producer = None
 
-        self._producer = get_kafka_producer("localhost:29092")
+        try:
+            self._producer = get_kafka_producer("localhost:29092")
+        except Exception as e:
+            logger.warning(f"Failed to connect to Kafka: {e}")
 
         self._app = FastAPI()
 
@@ -60,6 +65,11 @@ class WebServer(Sink):
 
         @self._app.post("/source")
         def set_source(data: dict = Body(...)):
+            if self._producer is None:
+                return JSONResponse(
+                    content={"status": "error", "message": "Kafka producer not available"},
+                    status_code=500,
+                )
             source_val = data.get("source")
             if source_val:
                 self._producer.send(
@@ -74,6 +84,11 @@ class WebServer(Sink):
 
         @self._app.post("/sinks")
         def set_sinks(data: dict = Body(...)):
+            if self._producer is None:
+                return JSONResponse(
+                    content={"status": "error", "message": "Kafka producer not available"},
+                    status_code=500,
+                )
             sinks_val = data.get("sinks")
             if sinks_val:
                 self._producer.send(
@@ -102,7 +117,9 @@ class WebServer(Sink):
     def _generate_frame(self):
         while self._running:
             try:
-                result = self._result_queue.get(timeout=1)
+                logger.info("get new frame")
+                result = self._result_queue.get()
+                logger.info("new frame received")
             except Empty:
                 continue
 
@@ -110,9 +127,12 @@ class WebServer(Sink):
                 continue
 
             image = result.frame.frame
-            for p in result.predictions:
-                for data in p.infer_data:
-                    image = data.draw(image)
+
+            print(f"server_frame {result.frame.frame_id} {time.time()}")
+            # for p in result.predictions:
+            #     if p.annotate:
+            #         for data in p.infer_data:
+            #             image = data.draw(image)
             success, encoded_image = cv2.imencode(".jpg", image)
             if not success:
                 logger.error("Error encoding frame")

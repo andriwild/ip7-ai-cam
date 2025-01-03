@@ -108,6 +108,7 @@
     <script>
         const themeSwitch = document.getElementById('themeSwitch');
         const htmlEl = document.documentElement;
+        htmlEl.setAttribute('data-bs-theme', 'dark');
 
 
         themeSwitch.addEventListener('change', () => {
@@ -117,6 +118,7 @@
                 htmlEl.setAttribute('data-bs-theme', 'light');
             }
         });
+
 
 
     </script>

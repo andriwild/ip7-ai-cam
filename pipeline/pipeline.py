@@ -1,5 +1,6 @@
+import time
 from dataclasses import dataclass
-import threading
+import threading 
 import logging
 from typing import Optional
 
@@ -18,11 +19,11 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-
 @dataclass
 class Prediction:
     infer_data: list[Box|Mask|Keypoint]
     model_name: str
+    annotate: bool
 
 
 @dataclass
@@ -39,11 +40,15 @@ class Result:
 class Step:
     operation: Operation
     name: str
-    task: Optional[str] = "detect"
-    input_id: Optional[str] = "raw_image"
+    annotate: bool
+    input_id: str = "raw_image"
     output_id: Optional[str] = None
 
+# TODO: also validate that the graph
 def sort_steps(steps):
+    if len(steps) == 0:
+        return steps
+
     # Build a graph of dependencies
     graph = defaultdict(list)
     in_degree = defaultdict(int)
@@ -55,9 +60,13 @@ def sort_steps(steps):
             in_degree[step.output_id] += 1
 
     # Output graph for debugging
-    print("Graph:")
-    for key, value in graph.items():
-        print(f"{key} -> {value}")
+    if logger.isEnabledFor(logging.INFO):
+        graph_str = "Graph:\n"
+        graph_str += "-" * 50 + "\n"
+        for key, value in graph.items():
+            graph_str += f"\t{key} -> {value}\n"
+        graph_str += "-" * 50 + "\n"
+        logger.info(graph_str)
 
     # Check for root existence (raw_image)
     if "raw_image" not in {step.input_id for step in steps}:
@@ -101,63 +110,119 @@ class Pipeline(Observer):
 
 
 
-    def _preprocess(self, input: Prediction, frame: np.ndarray) -> list[np.ndarray]:
+    def _preprocess(self, boxes: list[Box], frame: np.ndarray) -> list[np.ndarray]:
+        assert True == False
+
         cropped_images = []
 
-        # Iterate over the infer_data to process only Box objects
-        for item in input.infer_data:
-            if isinstance(item, Box):  # Check if the item is a Box
-                height, width = frame.shape[:2]
-                x_center, y_center, w, h = item.xywhn
+        for item in boxes: 
+            height, width = frame.shape[:2]
+            x_center, y_center, w, h = item.xywhn
 
-                # Convert normalized coordinates to pixel coordinates
-                x1 = int((x_center - w / 2) * width)
-                y1 = int((y_center - h / 2) * height)
-                x2 = int((x_center + w / 2) * width)
-                y2 = int((y_center + h / 2) * height)
+            # Convert normalized coordinates to pixel coordinates
+            x1 = int((x_center - w / 2) * width)
+            y1 = int((y_center - h / 2) * height)
+            x2 = int((x_center + w / 2) * width)
+            y2 = int((y_center + h / 2) * height)
 
-                # Clip coordinates to image boundaries
-                x1, y1 = max(0, x1), max(0, y1)
-                x2, y2 = min(width, x2), min(height, y2)
+            # Clip coordinates to image boundaries
+            x1, y1 = max(0, x1), max(0, y1)
+            x2, y2 = min(width, x2), min(height, y2)
 
-                # Crop the image region
-                cropped_image = frame[y1:y2, x1:x2]
-                cropped_images.append(cropped_image)
+            # Crop the image region
+            cropped_image = frame[y1:y2, x1:x2]
+            cropped_images.append(cropped_image)
         
         return cropped_images
+
+
+
+    def _predict_from_original_frame(self, input, step) -> Prediction:
+        detections = step.operation.process(input)
+        p = Prediction(
+            infer_data=detections, 
+            model_name=step.name, 
+            annotate=step.annotate)
+        return p
+
+    def _predict_from_previous_prediction(self, frame: np.ndarray, step: Step, prediction) -> Prediction:
+        results = []
+        height, width = frame.shape[:2]
+        boxes = prediction.infer_data
+        cropped_images = self._preprocess(boxes, frame)
+
+        for i, crop in enumerate(cropped_images):
+            crop_h, crop_w = crop.shape[:2]
+            detections: list[Box] = step.operation.process(crop)
+            x1_item = (boxes[i].xywhn[0] - boxes[i].xywhn[2] / 2) * width
+            y1_item = (boxes[i].xywhn[1] - boxes[i].xywhn[3] / 2) * height
+
+            for det in detections:
+                cx_crop = det.xywhn[0] * crop_w
+                cy_crop = det.xywhn[1] * crop_h
+                w_crop = det.xywhn[2] * crop_w
+                h_crop = det.xywhn[3] * crop_h
+
+                cx_orig = x1_item + cx_crop + w_crop / 2
+                cy_orig = y1_item + cy_crop + h_crop / 2
+                w_orig = w_crop
+                h_orig = h_crop
+
+                cx_norm = cx_orig / width
+                cy_norm = cy_orig / height
+                w_norm = w_orig / width
+                h_norm = h_orig / height
+
+                results.append(
+                    Box(
+                        xywhn=(cx_norm, cy_norm, w_norm, h_norm),
+                        conf=det.conf,
+                        label=str(det.label)
+                    )
+                )
+
+        return Prediction(
+            infer_data=results,
+            model_name=step.name,
+            annotate=step.annotate
+        )
+
+
+    def _run_all_steps(self, frame: np.ndarray) -> dict[str, Prediction]:
+        result_map: dict[str, Prediction] = {}
+
+        for step in self._steps:
+           if step.input_id == "raw_image":
+               p = self._predict_from_original_frame(frame, step)
+           else:
+               assert True == False
+               prev_prediction = result_map.get(step.input_id)
+               p = self._predict_from_previous_prediction(frame, step, prev_prediction)
+
+           # if step.output_id:
+           #     result_map[step.output_id] = p
+
+
+        return result_map
+
 
     def _run(self):
         self._steps = sort_steps(self._steps)
 
         while not self._stop_event.is_set():
-            frame = self.in_queue.get()
-            result_map: dict[str, Prediction] = {}
-
-            if not frame:
-                logger.warning("Received empty frame")
-                continue
-
-            for step in self._steps:
-                if step.input_id == "raw_image":
-                    input = frame.frame
-                else:
-                    prev_det = result_map.get(step.input_id)
-                    input = self._preprocess(prev_det, frame.frame) # TODO: e.g. cut out the detected object from the frame
-                    if not input: 
-                        logger.error(f"Missing input {step.input_id} for step {step.name}")
-                        exit(1)
-
-                detections = step.operation.process(input)
-
-                p = Prediction(infer_data=detections, model_name=step.name)
-
-                result_map[step.output_id] = p
-
+            t1 = time.time()
+            frame: Frame = self.in_queue.get()
+            #self._predict_from_original_frame(frame.frame, self._steps[0])
+            detections = self._steps[0].operation.process(frame.frame)
             result = Result(frame)
-            for key in result_map.keys():
-                result.add_prediction(result_map[key])
-
+            # if self._steps:
+            #     result_map = self._run_all_steps(frame.frame)
+                # for key in result_map.keys():
+                #    result.add_prediction(result_map[key])
             self.out_queue.put(result)
+            t2 = time.time()
+            logger.info(f"cycle: {t2 - t1}")
+
 
     def start(self):
         if self._thread and self._thread.is_alive():
@@ -226,5 +291,8 @@ class Pipeline(Observer):
             if not new_step_instance:
                 logger.warning(f"Failed to instantiate step '{step_name}'")
             else:
-                self._steps.append(Step(new_step_instance, load_cfg.name, load_cfg.task, load_cfg.input_id, load_cfg.output_id))
+                input_id = load_cfg.parameters.get("input_id", "raw_image")
+                output_id = load_cfg.parameters.get("output_id")
+                annotate =  load_cfg.parameters.get("annotate", False)
+                self._steps.append(Step(new_step_instance, load_cfg.name, annotate, input_id, output_id))
 

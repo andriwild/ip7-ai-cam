@@ -58,7 +58,10 @@ class ConfigManager(Subject, metaclass=SingletonMeta):
         self._config = yaml.safe_load(open(file))
 
         sinks =  [sink["name"] for sink in self._config.get("sinks", [])]
-        steps =  [step["name"] for step in self._config.get("steps", [])]
+        step_list = self._config.get("steps")
+        if step_list is None:
+            step_list = []
+        steps =  [step["name"] for step in step_list]
         source =  self._config.get("sources", [])[0]["name"]
 
         self.update_setting("sinks", sinks)

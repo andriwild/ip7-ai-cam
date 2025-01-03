@@ -12,78 +12,105 @@ sources:
       device: "/dev/video0"
       width: 640
       height: 640 
-  - name: pi
-    class_name: PiCamera
-    file_path: ./source/impl/pi.py
-    parameters:
-      width: 640
-      height: 640
-  - name: static_image
-    class_name: StaticFrameGenerator
-    file_path: ./source/impl/static.py
+  # - name: pi
+  #   class_name: PiCamera
+  #   file_path: ./source/impl/pi.py
+  #   parameters:
+  #     width: 640
+  #     height: 640
+  # - name: frame_generator
+  #   class_name: StaticFrameGenerator
+  #   file_path: ./source/impl/static.py
+  #- name: static_image
+  #  class_name: ImageGenerator 
+  #  file_path: ./source/impl/image.py
+  #  parameters:
+  #    #image_path: ./resources/images/flower_2.jpg
+  #    image_path: /home/andri/minio/images/
+  #    fps: 0.1
 steps:
-  - name: dummy - draw center rectangle
-    class_name: Dummy
-    file_path: ./ml/impl/dummy.py
-    input_id: raw_image
-    output_id: rectangle
-    task: detection 
-  - name: hailo
-    class_name: HailoObjectDetection
-    file_path: ./ml/impl/hailoObjectDetection.py
-    input_id: raw_image
-    output_id: hailo_output
-    task: detection 
+#  - name: draw center rectangle
+#    class_name: Dummy
+#    file_path: ./ml/impl/dummy.py
+#    parameters:
+#      input_id: raw_image
+#      output_id: rectangle
+#      annotate: True
+  # - name: onnx inference yolov8n 
+  #   class_name: ONNXInference
+  #   file_path: ./ml/impl/onnx.py
+  #   parameters:
+  #     model_path: ./resources/ml_models/yolov8n.onnx
+  #     label_path: ./resources/labels/coco.yaml
+  #     input_id: raw_image
+  #     output_id: onnx_result
+  # - name: hailo yolo detection
+  #   class_name: HailoObjectDetection
+  #   file_path: ./ml/impl/hailoObjectDetection.py
+  #   parameters:
+  #     input_id: raw_image
+  #     output_id: hailo_output
+  #     confidence: 0.5
+  #     lable_path: ./resources/labels/coco.yaml
+  - name: detect coco objects
+    class_name: UlDetect
+    file_path: ./ml/impl/ulDetect.py
     parameters:
-      confidence: 0.5
-        #  - name: detect coco objects
-        #    class_name: UlObjectDetection
-        #    file_path: ./ml/impl/ulObjectDetection.py
-        #    input_id: raw_image
-        #    output_id: car_results
-        #    task: detection 
-        #    parameters:
-        #      confidence_threshold: 0.5
-        #      nms_threshold: 0.3
+      model_path: ./resources/ml_models/yolo11n.onnx
+      input_id: raw_image
+      output_id: coco_detections
+      confidence_threshold: 0.5
+      nms_threshold: 0.3
+      annotate: True
       #  - name: ai camera
       #    class_name: AiCamera
       #    file_path: ./source/impl/aiCamera.py
       #    input_id: raw_image
       #    output_id: ai_camera_results
-      #    task: detection 
       #    parameters:
       #      confidence_threshold: 0.5
       #      nms_threshold: 0.3
-  # - name: detect person objects
-  #   class_name: PersonObjectDetection
-  #   file_path: ./ml/impl/personObjectDetection.py
-  #   task: detection 
-  #   input_id: image
-  #   output_id: car_detections
+  # - name: detect flower objects
+  #   class_name: Yolov5onnx
+  #   file_path: ./ml/impl/yolov5onnx.py
   #   parameters:
+  #     input_id: raw_image
+  #     lable_path: ./resources/labels/flower.txt
+  #     model_path: ./resources/ml_models/flower_n.onnx
+  #     output_id: flower_detections
   #     confidence_threshold: 0.8
   #     nms_threshold: 0.4
+  #     annotate: False
+  # - name: detect pollinator objects
+  #   class_name: Yolov5onnx
+  #   file_path: ./ml/impl/yolov5onnx.py
+  #   parameters:
+  #     lable_path: ./resources/labels/pollinator.txt
+  #     model_path: ./resources/ml_models/pollinator_simplified.onnx
+  #     input_id: flower_detections
+  #     output_id: pollinator_detections
+  #     confidence_threshold: 0.3
+  #     nms_threshold: 0.4
+  #     annotate: True
   # - name: detect person objects
   #   class_name: PersonObjectDetection
   #   file_path: ./ml/impl/personObjectDetection.py
   #   input_id: car_detections
-  #   task: detection 
   #   output_id: person_detections
   #   parameters:
   #     confidence_threshold: 0.8
   #     nms_threshold: 0.4
   # - name: detect person keypoints
-  #   class_name: PersonKeypoints
-  #   file_path: ./ml/impl/personKeypoints.py
-  #   input_id: person_detections
-  #   output_id: person_keypoints
-  #   task: pose 
+  #   class_name: UlPose
+  #   file_path: ./ml/impl/ulPose.py
   #   parameters:
+  #     model_path: ./resources/ml_models/yolo11n-pose.onnx
+  #     input_id: raw_image
   #     confidence_threshold: 0.8
 sinks:
-  - name: console
-    class_name: Console
-    file_path: ./sink/impl/console.py
+#  - name: console
+#    class_name: Console
+#    file_path: ./sink/impl/console.py
   - name: webserver
     class_name: WebServer
     file_path: ./api/server.py
