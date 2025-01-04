@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from config.config import ConfigManager
+from model.config import ConfigManager
 from kafkaUtil.helper import start_settings_consumer_in_thread
 from model.fps_queue import FpsQueue
 from pipeline.pipeline import Pipeline

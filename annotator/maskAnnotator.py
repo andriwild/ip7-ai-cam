@@ -1,4 +1,4 @@
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 from model.capture import Capture
 import numpy as np
 import cv2

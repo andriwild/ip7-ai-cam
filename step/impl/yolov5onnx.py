@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 from model.detection import Box
 from utilities.formatConverter import letterbox
+from utilities.labelLoader import load_lables_from_file
 
 
 class Yolov5onnx(Operation):
@@ -14,19 +15,9 @@ class Yolov5onnx(Operation):
         self.model= params.get("model_path")
         self.classes_file= params.get("lable_path")
         self.net = cv2.dnn.readNetFromONNX(self.model)
-        self.classes= self.class_name()
+        self.classes = load_lables_from_file(self.classes_file)
         self.input_size= (640, 640)
-         
 
-    def class_name(self):
-        classes=[]
-        file= open(self.classes_file,'r')
-        while True:
-            name=file.readline().strip('\n')
-            classes.append(name)
-            if not name:
-                break
-        return classes
 
     def process(self, frame: np.ndarray) -> list[Box]:
         h_img, w_img = frame.shape[:2]

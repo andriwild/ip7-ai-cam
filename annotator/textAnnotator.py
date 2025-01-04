@@ -1,6 +1,6 @@
 import cv2
 
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 from model.capture import Capture
 
 

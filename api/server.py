@@ -1,17 +1,16 @@
 import logging
 import threading
-import time
 from queue import Queue, Empty
 
 import cv2
 import uvicorn
 from fastapi import FastAPI, Request, Body
-from fastapi.responses import JSONResponse, StreamingResponse, HTMLResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from config.config import ConfigManager
+from model.config import ConfigManager
 from kafkaUtil.helper import get_kafka_producer
 from sink.interface.sink import Sink
 from pipeline.pipeline import Result
@@ -128,11 +127,10 @@ class WebServer(Sink):
 
             image = result.frame.frame
 
-            print(f"server_frame {result.frame.frame_id} {time.time()}")
-            # for p in result.predictions:
-            #     if p.annotate:
-            #         for data in p.infer_data:
-            #             image = data.draw(image)
+            for p in result.predictions:
+                if p.annotate:
+                    for data in p.infer_data:
+                        image = data.draw(image)
             success, encoded_image = cv2.imencode(".jpg", image)
             if not success:
                 logger.error("Error encoding frame")

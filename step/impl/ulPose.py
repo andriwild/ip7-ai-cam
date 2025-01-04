@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 import torch
 import numpy as np
 from model.frame import Frame

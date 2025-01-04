@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 from model.frame import Frame
 from model.result import Result
 from model.result import MaskResult

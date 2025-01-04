@@ -1,10 +1,10 @@
 import logging
 import threading
 
-from config.config import ConfigManager
+from model.config import ConfigManager
 from model.fps_queue import FpsQueue
-from observer.observer import Observer
-from observer.subject import Subject
+from model.observer.observer import Observer
+from model.observer.subject import Subject
 from utilities.classLoader import ClassLoader
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ import threading
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 
-from config.config import ConfigManager
+from model.config import ConfigManager
 
 logger = logging.getLogger(__name__)
 

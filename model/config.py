@@ -6,8 +6,8 @@ import yaml
 
 from model.loadConfig import LoadConfig
 from model.singleton import SingletonMeta
-from observer.observer import Observer
-from observer.subject import Subject
+from model.observer.observer import Observer
+from model.observer.subject import Subject
 
 logger = logging.getLogger(__name__)
 

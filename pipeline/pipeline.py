@@ -1,16 +1,14 @@
-import time
-from dataclasses import dataclass
-import threading 
+import threading
 import logging
 from typing import Optional
 
 from collections import defaultdict, deque
-from ml.interface.operation import Operation
+from step.interface.operation import Operation
 from model.frame import Frame
 from utilities.classLoader import ClassLoader
-from observer.observer import Observer
-from observer.subject import Subject
-from config.config import ConfigManager
+from model.observer.observer import Observer
+from model.observer.subject import Subject
+from model.config import ConfigManager
 from model.detection import Box, Mask, Keypoint
 from dataclasses import dataclass, field
 import numpy as np
@@ -111,8 +109,6 @@ class Pipeline(Observer):
 
 
     def _preprocess(self, boxes: list[Box], frame: np.ndarray) -> list[np.ndarray]:
-        assert True == False
-
         cropped_images = []
 
         for item in boxes: 
@@ -195,13 +191,11 @@ class Pipeline(Observer):
            if step.input_id == "raw_image":
                p = self._predict_from_original_frame(frame, step)
            else:
-               assert True == False
                prev_prediction = result_map.get(step.input_id)
                p = self._predict_from_previous_prediction(frame, step, prev_prediction)
 
-           # if step.output_id:
-           #     result_map[step.output_id] = p
-
+           if step.output_id:
+               result_map[step.output_id] = p
 
         return result_map
 
@@ -210,18 +204,13 @@ class Pipeline(Observer):
         self._steps = sort_steps(self._steps)
 
         while not self._stop_event.is_set():
-            t1 = time.time()
             frame: Frame = self.in_queue.get()
-            #self._predict_from_original_frame(frame.frame, self._steps[0])
-            detections = self._steps[0].operation.process(frame.frame)
             result = Result(frame)
-            # if self._steps:
-            #     result_map = self._run_all_steps(frame.frame)
-                # for key in result_map.keys():
-                #    result.add_prediction(result_map[key])
+            if self._steps:
+                result_map = self._run_all_steps(frame.frame)
+                for key in result_map.keys():
+                   result.add_prediction(result_map[key])
             self.out_queue.put(result)
-            t2 = time.time()
-            logger.info(f"cycle: {t2 - t1}")
 
 
     def start(self):

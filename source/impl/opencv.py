@@ -20,7 +20,7 @@ class OpenCVCamera(Source):
         self._capture = self.cv2.VideoCapture(self._device)
         self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, params.get("width", 640))
         self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, params.get("height", 640))
-        time.sleep(1)  # Ensure the camera initializes properly
+        time.sleep(0.5)  # Ensure the camera initializes properly
 
 
     def get_frame(self) -> Frame:

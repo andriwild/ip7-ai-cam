@@ -2,14 +2,15 @@ import logging
 import threading
 import time
 
-from config.config import ConfigManager
+from model.config import ConfigManager
 from model.fps_queue import FpsQueue
 from model.loadConfig import LoadConfig
-from observer.observer import Observer
-from observer.subject import Subject
+from model.observer.observer import Observer
+from model.observer.subject import Subject
 from utilities.classLoader import ClassLoader
 
 logger = logging.getLogger(__name__)
+
 
 class FrameProducer(Observer):
     def __init__(self, queue: FpsQueue):
@@ -55,7 +56,6 @@ class FrameProducer(Observer):
                 frame = self._source_instance.get_frame()
                 if frame is not None:
                     self._queue.put(frame)
-                    # Log FPS, etc.
         logger.info("CaptureProducer run method stopped")
 
 
