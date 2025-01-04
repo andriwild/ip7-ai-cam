@@ -159,8 +159,8 @@ class Pipeline(Observer):
                 w_crop = det.xywhn[2] * crop_w
                 h_crop = det.xywhn[3] * crop_h
 
-                cx_orig = x1_item + cx_crop + w_crop / 2
-                cy_orig = y1_item + cy_crop + h_crop / 2
+                cx_orig = x1_item + cx_crop# + w_crop / 2
+                cy_orig = y1_item + cy_crop# + h_crop / 2
                 w_orig = w_crop
                 h_orig = h_crop
 

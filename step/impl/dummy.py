@@ -16,5 +16,5 @@ class Dummy(Operation):
 
     def process(self, frame) -> list[Detection]:
         boxes = []
-        boxes.append(Box(xywhn=(0.5, 0.5, 0.2, 0.2), conf=1.0, label="dummy"))
+        boxes.append(Box(xywhn=(0.5, 0.5, 0.5, 0.5), conf=1.0, label="dummy"))
         return boxes

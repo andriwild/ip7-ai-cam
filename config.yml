@@ -29,13 +29,13 @@ sources:
       image_path: /home/andri/minio/images/
       fps: 0.1
 steps:
-#  - name: draw center rectangle
-#    class_name: Dummy
-#    file_path: ./step/impl/dummy.py
-#    parameters:
-#      input_id: raw_image
-#      output_id: rectangle
-#      annotate: True
+  - name: draw center rectangle
+    class_name: Dummy
+    file_path: ./step/impl/dummy.py
+    parameters:
+      input_id: raw_image
+      output_id: rectangle
+      annotate: True
   # - name: onnx inference yolov8n 
   #   class_name: ONNXInference
   #   file_path: ./step/impl/onnx.py
@@ -58,7 +58,7 @@ steps:
     parameters:
       model_path: ./resources/ml_models/yolo11n.onnx
       lable_path: ./resources/labels/coco.txt
-      input_id: raw_image
+      input_id: rectangle
       output_id: coco_detections
       confidence_threshold: 0.5
       nms_threshold: 0.3
