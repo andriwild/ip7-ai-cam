@@ -26,7 +26,6 @@ class OpenCVCamera(Source):
     def get_frame(self) -> Frame:
         logger.debug("Getting frame from OpenCVCamera")
         timestamp = datetime.now()
-        print(f"get_frame {self._name}_{timestamp} {time.time()}")
         if self._capture is None:
             logger.warning("OpenCVCamera not initialized")
             self._capture = self.cv2.VideoCapture(self._device)
