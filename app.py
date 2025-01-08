@@ -12,10 +12,15 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+logging.disable()
+
+logger = logging.getLogger(__name__)
 
 def main(config_file: str)-> None:
-    in_queue = FpsQueue(maxsize=10)
-    out_queue = FpsQueue(maxsize=10)
+    logger.info(f"Starting with config file {config_file}")
+
+    in_queue = FpsQueue(maxsize=1)
+    out_queue = FpsQueue(maxsize=1)
 
     producer = FrameProducer(queue=in_queue)
     consumer = ResultConsumer(queue=out_queue)
