@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from model.config import ConfigManager
-from kafkaUtil.helper import get_kafka_producer
 from sink.interface.sink import Sink
 from pipeline.pipeline import Result
 
@@ -26,10 +25,6 @@ class WebServer(Sink):
         self._result_queue: Queue[Result] = Queue(maxsize=5)
         self._producer = None
 
-        try:
-            self._producer = get_kafka_producer("localhost:29092")
-        except Exception as e:
-            logger.warning(f"Failed to connect to Kafka: {e}")
 
         self._app = FastAPI()
 

@@ -6,5 +6,4 @@ fastapi
 uvicorn
 ultralytics~=8.3.40
 torch~=2.5.1
-kafka-python~=2.0.2
 PyYAML~=6.0.2
