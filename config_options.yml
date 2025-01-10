@@ -34,7 +34,7 @@ sources:
       fps: 0.1
 
 
-steps:
+pipes:
   - name: draw center rectangle
     class_name: Dummy
     file_path: ./step/impl/dummy.py

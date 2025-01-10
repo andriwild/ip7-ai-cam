@@ -6,14 +6,15 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from config.config import ConfigManager
+
+from pipeline.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
-class ConfigServer:
-    def __init__(self, config_manager: ConfigManager, all_settings, host: str, port: int):
-        self._config_manager = config_manager
+class PipelineConfigurator:
+    def __init__(self, pipeline: Pipeline, all_settings, host: str, port: int):
         self._all_settings = all_settings.copy()
+        self._pipeline = pipeline
 
         self._host = host
         self._port = port
@@ -33,6 +34,7 @@ class ConfigServer:
         self._app.get("/config")(self.get_config)
         self._app.post("/source")(self.set_source)
         self._app.post("/sinks")(self.set_sinks)
+        self._app.post("/pipe")(self.set_pipe)
         self._app.get("/")(self.index)
         self._server_thread = threading.Thread(target=self._run_server)
         self._running = False
@@ -43,27 +45,38 @@ class ConfigServer:
         return JSONResponse(content=self._all_settings)
 
     def set_source(self, data: dict = Body(...)):
-        source_val = data.get("source")
-        if source_val:
-            config = self._config_manager.get_config()
-            all_sources = self._all_settings.get("sources")
-            for s in all_sources:
-                if s["name"] == source_val:
-                    config.update({"sources": [s]})
-            self._config_manager.update_setting(config)
+        new_source = data.get("source")
+        success = self._pipeline.set_source(new_source)
 
+        if success:
             return JSONResponse(content={"status": "ok"})
+
         return JSONResponse(
-            content={"status": "error", "message": "No source provided"}, status_code=400
+            content={"status": "error", "message": "No source provided"}, 
+            status_code=400
         )
 
     def set_sinks(self, data: dict = Body(...)):
-        # sinks_val = data.get("sinks")
-        # if sinks_val:
-        #     self._config_manager.update_setting("sinks", sinks_val)
-        #     return JSONResponse(content={"status": "ok", "sinks": sinks_val})
+        new_sinks  = data.get("sinks")
+
+        success = self._pipeline.set_sinks(new_sinks)
+        if success:
+            return JSONResponse(content={"status": "ok"})
+
         return JSONResponse(
             content={"status": "error", "message": "No sinks provided"}, status_code=400
+        )
+
+    def set_pipe(self, data: dict = Body(...)):
+        new_pipe = data.get("pipe")
+        success = self._pipeline.set_pipe(new_pipe)
+
+        if success:
+            return JSONResponse(content={"status": "ok"})
+
+        return JSONResponse(
+            content={"status": "error", "message": "No pipe provided"}, 
+            status_code=400
         )
 
     def index(self, request: Request):

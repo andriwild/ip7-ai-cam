@@ -1,9 +1,10 @@
 console.log('script.js loaded');
 
-import { sendSource, sendSinks } from './helper.js';
+import { sendSource, sendSinks, sendPipe } from './helper.js';
 
 const sourceElement = document.getElementById("sourceSelect");
 const sinkElement   = document.getElementById("sinkSelect");
+const pipeElement   = document.getElementById("pipeSelect");
 
 const fetchSetting = (endpoint, applyFn) => {
     fetch(`/${endpoint}`)
@@ -23,6 +24,9 @@ fetchSetting(
             data.sinks.forEach(sink => { 
                 sinkElement.innerHTML += `<option value="${sink.name}">${sink.name}</option>`; 
             });
+            data.pipes.forEach(pipe => { 
+                pipeElement.innerHTML += `<option value="${pipe.name}">${pipe.name}</option>`; 
+            });
         })
     )
 
@@ -38,19 +42,18 @@ fetch("/source", {
   .then((data) => console.log(data))
   .catch((err) => console.error(err));
 
-// fetchSetting(
-//     "models", (
-//     data => data.forEach(model => {
-//             modelElement.innerHTML += `<option value="${model}">${model}</option>`;
-//         })
-//     )
-// )
+
+document.getElementById("pipeSelectBtn").onclick = () => 
+    sendPipe(pipeElement.value);
 
 document.getElementById("sourceSelectBtn").onclick = () => 
     sendSource(sourceElement.value);
 
-document.getElementById("sinkSelectBtn").onclick = () => 
-    sendSinks(sinkElement.value);
+document.getElementById("sinkSelectBtn").onclick = () => {
+    let options = sinkElement.selectedOptions;
+    let values = Array.from(options).map(({ value }) => value);
+    sendSinks(values);
+};
 
 
 // document.getElementById("confidenceInputBtn").onclick = () => 
