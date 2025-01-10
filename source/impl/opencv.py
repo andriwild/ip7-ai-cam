@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class OpenCVCamera(Source):
 
-    def __init__(self, name: str, params):
+    def __init__(self, name: str, params = {}):
         logger.info("Initializing OpenCVCamera")
         super().__init__(name)
 
@@ -21,6 +21,7 @@ class OpenCVCamera(Source):
         self._capture.set(self.cv2.CAP_PROP_FRAME_WIDTH, params.get("width", 640))
         self._capture.set(self.cv2.CAP_PROP_FRAME_HEIGHT, params.get("height", 640))
         time.sleep(0.5)  # Ensure the camera initializes properly
+        logger.info("OpenCVCamera initialized")
 
 
     def get_frame(self) -> Frame:
@@ -33,6 +34,7 @@ class OpenCVCamera(Source):
         ret, frame = self._capture.read()
         if not ret:
             logger.warning("Failed to retrieve frame from OpenCVCamera")
+            time.sleep(1)
         return Frame(
             frame_id=f"{self._name}_{timestamp}",
             source_id=self._name,

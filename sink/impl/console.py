@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Console(Sink):
-    def __init__(self, name: str, parameters: dict):
+    def __init__(self, name: str, parameters: dict = {}):
         super().__init__(name)
         self._parameters = parameters
         logger.info("Console initialized")

@@ -1,12 +1,18 @@
 import argparse
 import logging
+import yaml
+from queue import Queue
+from pprint import pprint
 
+from model.configServer import ConfigServer
 from model.config import ConfigManager
-from kafkaUtil.helper import start_settings_consumer_in_thread
-from model.fps_queue import FpsQueue
+from step.impl.bridge import Bridge
 from pipeline.pipeline import Pipeline
-from pipeline.resultConsumer import ResultConsumer
-from pipeline.frameproducer import FrameProducer
+from sink.impl.console import Console
+from sink.interface.sink import Sink
+from source.impl.opencv import OpenCVCamera
+from source.interface.source import Source
+from step.interface.operation import Operation
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,29 +21,33 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
+def load_config(file_path: str):
+    logger.info(f"Loading settings from {file_path}")
+    config = yaml.safe_load(open(file_path))
+
+    settings = {
+        "sinks": config.get("sinks"),
+        "steps": config.get("steps"),
+        "sources": config.get("sources"),
+    }
+    return settings
+
+
 def main(config_file: str)-> None:
-    logger.info(f"Starting with config file {config_file}")
+    logger.info(f"Start Edge ML Pipeline")
+    config = load_config(config_file)
+    pprint(config)
 
-    in_queue = FpsQueue(maxsize=1)
-    out_queue = FpsQueue(maxsize=1)
 
-    producer = FrameProducer(queue=in_queue)
-    consumer = ResultConsumer(queue=out_queue)
-    pipeline = Pipeline(in_queue, out_queue)
+    manager = ConfigManager(config)
+    ConfigServer(manager, config, "0.0.0.0", 8001)
 
-    settings = ConfigManager()
+    queue  = Queue(maxsize=10)
+    pipeline = Pipeline(queue=queue)
 
-    start_settings_consumer_in_thread(settings)
-
-    settings.attach(producer)
-    settings.attach(pipeline)
-    settings.attach(consumer)
-
-    settings.load_config(config_file)
-
-    consumer.start()
-    pipeline.start()
-    producer.start()
+    manager.attach(pipeline)
+    pipeline.run_forever()
 
 
 if __name__ == '__main__':

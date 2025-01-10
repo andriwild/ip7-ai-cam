@@ -73,7 +73,6 @@ class FrameProducer(Observer):
             logger.info(f"CaptureProducer: source unchanged: {new_source_name}")
             return
 
-        # Check if we have a LoadConfig for this name
         new_conf = subject.get_source_config_by_name(new_source_name)
         if new_conf:
             self.stop()
@@ -81,7 +80,6 @@ class FrameProducer(Observer):
             if self._source_instance:
                 self._source_instance.release()
             self._source_instance = self._instantiate_source(new_conf)
-            time.sleep(1)
             self._current_source_name = new_source_name
             logger.info(f"CaptureProducer: source changed to {new_source_name}")
             self.start()
