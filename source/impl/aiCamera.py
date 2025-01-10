@@ -42,6 +42,8 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         self._camera = None
         self._imx500 = None
 
+    def init(self):
+        self.init_camera()
 
     def init_camera(self):
         self._imx500 = self._IMX500(self._model_path)

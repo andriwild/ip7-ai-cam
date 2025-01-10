@@ -15,11 +15,17 @@ class StaticFrameGenerator(Source):
     def __init__(self, name: str, params):
         logger.info("Initializing StaticFrameGenerator")
         super().__init__(name)
+
         self.width = params.get("width", 640)
         self.height = params.get("height", 640)
         self.frame_counter = 0
-        self.bee_position = [self.width // 2, self.height // 2]  # Initial bee position
+        self.object_position = [self.width // 2, self.height // 2]
         self.direction = [5, 3]  # Movement direction
+
+
+    def init(self):
+        self.frame_counter = 0
+
 
     def generate_screensaver_frame(self):
         logger.debug("Generating initial screensaver frame")
@@ -28,22 +34,24 @@ class StaticFrameGenerator(Source):
         cv2.rectangle(frame, (border, border), (self.width - border, self.height - border), (0, 255, 0), 2)
         return frame
 
-    def update_bee_position(self):
+
+    def update_object_position(self):
         for i in range(2):
-            self.bee_position[i] += self.direction[i]
-            if self.bee_position[i] <= 50 or self.bee_position[i] >= [self.width, self.height][i] - 50:
+            self.object_position[i] += self.direction[i]
+            if self.object_position[i] <= 50 or self.object_position[i] >= [self.width, self.height][i] - 50:
                 self.direction[i] = -self.direction[i]  # Reverse direction on collision
+
 
     def get_frame(self) -> Frame:
         logger.debug("Getting frame from StaticFrameGenerator")
         frame = self.generate_screensaver_frame()
         timestamp = datetime.now()
-        self.update_bee_position()
+        self.update_object_position()
 
-        # Draw a moving bee (circle) on the frame
+        # Draw a moving object (circle) on the frame
         cv2.circle(
             frame, 
-            tuple(self.bee_position), 
+            tuple(self.object_position), 
             20, 
             (0, 255, 255), 
             -1  # Filled circle
@@ -55,6 +63,7 @@ class StaticFrameGenerator(Source):
             source_id=self._name,
             frame=frame,
             timestamp=timestamp)
+
 
     def release(self):
         logger.info("Releasing StaticFrameGenerator")

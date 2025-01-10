@@ -33,6 +33,10 @@ class ImageGenerator(Source):
             logger.error(f"Invalid path specified: {self._image_path}")
             raise ValueError(f"Invalid path: {self._image_path}")
 
+    def init(self):
+        logger.info("Initializing ImageGenerator")
+
+
     def _load_images_from_directory(self, directory):
         images = []
         for root, _, files in os.walk(directory):

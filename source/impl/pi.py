@@ -4,6 +4,7 @@ from datetime import datetime
 
 from source.interface.source import Source
 from model.model import Frame
+from picamera2 import Picamera2
 
 logger = logging.getLogger(__name__)
 
@@ -15,25 +16,33 @@ class PiCamera(Source):
         self._name = name
         self._width = params.get("width", 640)
         self._height = params.get("height", 640)
-        from picamera2 import Picamera2
+
+
+    def init(self):
         self._camera = Picamera2()
+        # TODO: check configuration
         self._camera.configure(
             self._camera.create_preview_configuration(
                 main={"size": (self._width, self._height), "format": "RGB888"}
             )
         )
+        self._camera.video_configuration.controls.FrameRate = 25.0
         self._camera.start()
-        time.sleep(1)  # Ensure the camera initializes properly
+        time.sleep(0.5)  # ensure the camera initializes properly
 
 
     def get_frame(self) -> Frame:
         logger.debug("Getting frame from PiCamera")
-        timestamp = datetime.now()
-        frame = None
+
         if self._camera is None:
+            self.init()
             logger.warning("PiCamera not initialized")
-        else:
-            frame = self._camera.capture_array()
+
+        assert self._camera is not None, "PiCamera not initialized when trying to get frame"
+
+        frame = self._camera.capture_array()
+        timestamp = datetime.now()
+
         return Frame(
             frame_id=f"{self._name}_{timestamp}",
             source_id=self._name,
