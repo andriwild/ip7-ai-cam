@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from model.frame import Frame
+from model.model import Frame
 
 class Source(ABC):
 

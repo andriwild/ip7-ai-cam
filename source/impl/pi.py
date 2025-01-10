@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 
 from source.interface.source import Source
-from model.frame import Frame
+from model.model import Frame
 
 logger = logging.getLogger(__name__)
 

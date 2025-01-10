@@ -1,13 +1,12 @@
 import logging
 import uvicorn
 import threading
-from pprint import pprint
 from fastapi import FastAPI, Body, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from model.config import ConfigManager
+from config.config import ConfigManager
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +14,6 @@ class ConfigServer:
     def __init__(self, config_manager: ConfigManager, all_settings, host: str, port: int):
         self._config_manager = config_manager
         self._all_settings = all_settings.copy()
-        print("All settings")
-        pprint(all_settings)
 
         self._host = host
         self._port = port
@@ -30,8 +27,8 @@ class ConfigServer:
             allow_headers=["*"],
         )
 
-        self._app.mount("/static", StaticFiles(directory="api/static"), name="static")
-        self._templates = Jinja2Templates(directory="./api/templates/config/")
+        self._app.mount("/static", StaticFiles(directory="static"), name="static")
+        self._templates = Jinja2Templates(directory="./static/templates/config/")
 
         self._app.get("/config")(self.get_config)
         self._app.post("/source")(self.set_source)
@@ -46,24 +43,15 @@ class ConfigServer:
         return JSONResponse(content=self._all_settings)
 
     def set_source(self, data: dict = Body(...)):
-        print(data)
         source_val = data.get("source")
         if source_val:
             config = self._config_manager.get_config()
             all_sources = self._all_settings.get("sources")
-            print("All sources")
-            pprint(all_sources)
             for s in all_sources:
-                print("check for source:", s["name"])
                 if s["name"] == source_val:
-                    print("Found source")
                     config.update({"sources": [s]})
-            print("Updated config")
-            pprint(config)
             self._config_manager.update_setting(config)
 
-            print("updated")
-            pprint(self._config_manager.get_config())
             return JSONResponse(content={"status": "ok"})
         return JSONResponse(
             content={"status": "error", "message": "No source provided"}, status_code=400

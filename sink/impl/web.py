@@ -1,11 +1,10 @@
 import logging
 import threading
 from queue import Queue, Empty
-from fastapi import FastAPI, Body, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
-from model.config import ConfigManager
 from sink.interface.sink import Sink
 from fastapi.staticfiles import StaticFiles
 import cv2
@@ -29,8 +28,8 @@ class VideoFeedServer(Sink):
             allow_headers=["*"],
         )
 
-        self._app.mount("/static", StaticFiles(directory="api/static"), name="static")
-        self._templates = Jinja2Templates(directory="./api/templates/stream/")
+        #self._app.mount("/static", StaticFiles(directory="api/static"), name="static")
+        self._templates = Jinja2Templates(directory="./static/templates/stream/")
 
         self._app.get("/video_feed")(self.video_feed)
         self._app.get("/")(self.index)

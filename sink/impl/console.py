@@ -1,5 +1,5 @@
 from sink.interface.sink import Sink
-from pipeline.pipeline import Result
+from model.model import Result
 from model.detection import Box
 import logging
 

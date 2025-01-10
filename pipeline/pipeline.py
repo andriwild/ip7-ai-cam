@@ -7,13 +7,12 @@ from utilities.classLoader import ClassLoader
 from sink.interface.sink import Sink
 from source.interface.source import Source
 from step.interface.operation import Operation
-from model.frame import Frame
+from model.model import Frame, Result
 from utilities.classLoader import ClassLoader
 from model.observer.observer import Observer
 from model.observer.subject import Subject
-from model.config import ConfigManager
+from config.config import ConfigManager
 from model.detection import Detection
-from model.result import Result
 
 logger = logging.getLogger(__name__)
 

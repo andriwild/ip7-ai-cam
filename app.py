@@ -4,15 +4,9 @@ import yaml
 from queue import Queue
 from pprint import pprint
 
-from model.configServer import ConfigServer
-from model.config import ConfigManager
-from step.impl.bridge import Bridge
+from config.configServer import ConfigServer
+from config.config import ConfigManager
 from pipeline.pipeline import Pipeline
-from sink.impl.console import Console
-from sink.interface.sink import Sink
-from source.impl.opencv import OpenCVCamera
-from source.interface.source import Source
-from step.interface.operation import Operation
 
 logging.basicConfig(
     level=logging.INFO,

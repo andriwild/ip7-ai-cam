@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 from source.interface.source import Source
-from model.frame import Frame
+from model.model import Frame
 from step.interface.operation import Operation
 from model.singleton import SingletonMeta
 from model.detection import Box, Detection
