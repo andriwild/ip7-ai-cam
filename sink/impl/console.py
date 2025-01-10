@@ -24,3 +24,6 @@ class Console(Sink):
 
     def release(self):
         logger.info("Console released")
+
+    def init(self):
+        logger.info("Console initialized")

@@ -14,5 +14,9 @@ class Source(ABC):
     def release(self):
         pass
 
+    @abstractmethod
+    def init(self):
+        pass
+
     def get_name(self) -> str:
         return self._name
