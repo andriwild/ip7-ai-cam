@@ -59,33 +59,13 @@
 
     <main class="container mb-4">
 
-        <div class="d-flex justify-content-center mb-4">
-            <div class="image-container" id="imgContainer">
-                <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
-                <div id="roiOverlay"></div>
-            </div>
-        </div>
+-        <div class="d-flex justify-content-center mb-4">
+-            <div class="image-container" id="imgContainer">
+-                <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+-                <div id="roiOverlay"></div>
+-            </div>
+-        </div>
 
-        <fieldset class="border p-3 rounded mb-4">
-            <legend class="fw-bold">Video Frame Settings</legend>
-            <div class="mb-3">
-                <label for="sourceSelect" class="form-label">Choose Source:</label>
-                <div class="input-group">
-                    <select class="form-select" id="sourceSelect" name="source"></select>
-                    <button class="btn btn-primary" id="sourceSelectBtn">Ok</button>
-                </div>
-            </div>
-
-
-            <div class="mb-3">
-                <label for="sinkSelect" class="form-label">Choose Sink:</label>
-                <div class="input-group">
-                    <select class="form-select" id="sinkSelect" name="sink" multiple> </select>
-                    <button class="btn btn-primary" id="sinkSelectBtn">Ok</button>
-                </div>
-            </div>
-
-        </fieldset>
     </main>
 
     <footer class="bg-body-tertiary py-3 mt-auto">
@@ -104,7 +84,6 @@
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" 
         crossorigin="anonymous">
     </script>
-    <script type="module" src="/static/script.js"></script>
     <script>
         const themeSwitch = document.getElementById('themeSwitch');
         const htmlEl = document.documentElement;
