@@ -5,12 +5,10 @@ from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
 from step.interface.operation import Operation
-from model.detection import Box
-from model.detection import Detection
+from model.detection import Box, Detection
 from utilities.labelLoader import load_lables_from_file
 
 logger = logging.getLogger(__name__)
-
 
 
 
