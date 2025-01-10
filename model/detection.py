@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from torch._prims_common import Tensor
 import numpy as np
 import cv2
+import torch
 from typing import List
 
 
@@ -42,12 +43,14 @@ class Box(Detection):
 class Mask(Detection):
     masks: np.ndarray
 
-    @staticmethod
-    def draw(frame: np.ndarray, data: List['Mask']) -> np.ndarray:
+    def draw(self, frame: np.ndarray) -> np.ndarray:
+
+        masks = self.masks
+        mask_data = masks.data.cpu().numpy() if isinstance(masks.data, torch.Tensor) else masks.data
 
         # Draw each mask on the frame with transparency
         overlay = frame.copy()
-        for mask in data:
+        for mask in mask_data:
             color = (0, 255, 0)
             mask_binary = (mask > 0.5).astype(np.uint8) * 255
             contours, _ = cv2.findContours(mask_binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -70,13 +73,15 @@ class Mask(Detection):
 class Keypoint(Detection):
     keypoints: np.ndarray 
 
-    @staticmethod
-    def draw(frame: np.ndarray, data: List['Keypoint']) -> np.ndarray:
+    def draw(self, frame: np.ndarray) -> np.ndarray:
 
-        for keypoint in data:
+        for keypoint in self.keypoints.data:
             for x, y, conf in keypoint:
                 if conf > 0.5:  # Draw only if confidence is sufficient
                     cv2.circle(frame, (int(x), int(y)), 3, (0, 0, 255), -1)  # Red keypoints
+        return frame
+        
+
 
     def __str__(self):
         return f"Keypoint: {self.keypoints}"
