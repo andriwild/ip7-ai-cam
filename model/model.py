@@ -26,7 +26,7 @@ class Frame:
 @dataclass
 class Result:
     frame: Frame
-    predictions: list[Detection] = field(default_factory=list) 
+    detections: list[Detection] = field(default_factory=list) 
 
     def add_detection(self, detection: list[Detection]):
-        self.predictions.extend(detection)
+        self.detections.extend(detection)

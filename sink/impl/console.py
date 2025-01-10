@@ -1,6 +1,5 @@
 from sink.interface.sink import Sink
 from model.model import Result
-from model.detection import Box
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,14 +13,12 @@ class Console(Sink):
     def put(self, result: Result) -> None:
         logger.info(f"Frame {result.frame.frame_id} processed")
         output_str = ""
-        for prediction in result.predictions:
-            output_str += f"\nPrediction: {prediction.model_name}\n"
-            if len(prediction.infer_data) == 0:
-                output_str += "  No data\n"
+        if result.detections:
+            for det in result.detections:
+                output_str += f"{det}"
+        else:
+            output_str = "No detections"
 
-            for data in prediction.infer_data:
-                if isinstance(data,Box):
-                    output_str += f"  {data.label} - confidence={data.conf}\n"
         logger.info(output_str)
 
 

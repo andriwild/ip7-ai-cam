@@ -1,4 +1,3 @@
-from torch._prims_common import Tensor
 from step.interface.operation import Operation
 from model.detection import Detection
 from model.detection import Box
@@ -10,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class Dummy(Operation):
 
-    def __init__(self, name: str, params):
+    def __init__(self, name: str, params = {}):
         super().__init__(name)
         logging.info(f"Initializing Dummy inference with name {name}")
 

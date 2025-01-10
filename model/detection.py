@@ -34,6 +34,9 @@ class Box(Detection):
         cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 1)
         return frame
 
+    def __str__(self):
+        return f"Box: {self.xywhn}, {self.conf}, {self.label}"
+
 
 @dataclass
 class Mask(Detection):
@@ -59,6 +62,9 @@ class Mask(Detection):
         cv2.addWeighted(overlay, 0.7, frame, 0.3, 0, frame)
         return frame
 
+    def __str__(self):
+        return f"Mask: {self.masks}"
+
 
 @dataclass
 class Keypoint(Detection):
@@ -72,4 +78,5 @@ class Keypoint(Detection):
                 if conf > 0.5:  # Draw only if confidence is sufficient
                     cv2.circle(frame, (int(x), int(y)), 3, (0, 0, 255), -1)  # Red keypoints
 
-        return frame
+    def __str__(self):
+        return f"Keypoint: {self.keypoints}"

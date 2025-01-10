@@ -48,11 +48,10 @@ class VideoFeedServer(Sink):
                 continue
 
             image = result.frame.frame
-            for p in result.predictions:
-                if p.annotate:
-                    for data in p.infer_data:
-                        image = data.draw(image)
+            for d in result.detections:
+                image = d.draw(image)
             success, encoded_image = cv2.imencode(".jpg", image)
+
             if success:
                 yield (
                     b"--frame\r\n"
