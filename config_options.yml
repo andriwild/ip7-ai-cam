@@ -37,27 +37,27 @@ sources:
 pipes:
   - name: draw center rectangle
     class_name: Dummy
-    file_path: ./step/impl/dummy.py
+    file_path: ./pipe/impl/dummy.py
     parameters:
       annotate: True
 
   - name: onnx inference yolov8n 
     class_name: ONNXInference
-    file_path: ./step/impl/onnx.py
+    file_path: ./pipe/impl/onnx.py
     parameters:
       model_path: ./resources/ml_models/yolov8n.onnx
       label_path: ./resources/labels/coco.yaml
 
   - name: hailo yolo detection
     class_name: HailoObjectDetection
-    file_path: ./step/impl/hailoObjectDetection.py
+    file_path: ./pipe/impl/hailoObjectDetection.py
     parameters:
       confidence: 0.5
       label_path: ./resources/labels/coco.yaml
 
   - name: detect coco objects
     class_name: UlDetect
-    file_path: ./step/impl/ulDetect.py
+    file_path: ./pipe/impl/ulDetect.py
     parameters:
       model_path: ./resources/ml_models/yolo11n.onnx
       lable_path: ./resources/labels/coco.txt
@@ -74,7 +74,7 @@ pipes:
 
   - name: detect flower objects
     class_name: Yolov5onnx
-    file_path: ./step/impl/yolov5onnx.py
+    file_path: ./pipe/impl/yolov5onnx.py
     parameters:
       input_id: raw_image
       lable_path: ./resources/labels/flower.txt
@@ -86,7 +86,7 @@ pipes:
 
   - name: detect pollinator objects
     class_name: Yolov5onnx
-    file_path: ./step/impl/yolov5onnx.py
+    file_path: ./pipe/impl/yolov5onnx.py
     parameters:
       lable_path: ./resources/labels/pollinator.txt
       model_path: ./resources/ml_models/pollinator_simplified.onnx
@@ -98,7 +98,7 @@ pipes:
 
   - name: detect person objects
     class_name: PersonObjectDetection
-    file_path: ./step/impl/personObjectDetection.py
+    file_path: ./pipe/impl/personObjectDetection.py
     input_id: car_detections
     output_id: person_detections
     parameters:
@@ -107,7 +107,7 @@ pipes:
 
   - name: detect person keypoints
     class_name: UlPose
-    file_path: ./step/impl/ulPose.py
+    file_path: ./pipe/impl/ulPose.py
     parameters:
       model_path: ./resources/ml_models/yolo11n-pose.onnx
       confidence_threshold: 0.8

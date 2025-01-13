@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from model.model import Frame
-from step.interface.operation import Operation
+from pipe.interface.operation import Operation
 from model.detection import Box
 from utilities.formatConverter import letterbox
 from utilities.labelLoader import load_lables_from_file

@@ -6,7 +6,7 @@ import torch
 from typing import List
 from model.detection import Box
 from model.model import Frame
-from step.interface.operation import Operation
+from pipe.interface.operation import Operation
 import yaml
 import logging
 

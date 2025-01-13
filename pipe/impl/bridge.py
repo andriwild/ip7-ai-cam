@@ -1,4 +1,4 @@
-from step.interface.operation import Operation
+from pipe.interface.operation import Operation
 from model.detection import Detection
 from model.model import Frame
 

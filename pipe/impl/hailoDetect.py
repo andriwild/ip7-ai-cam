@@ -1,4 +1,4 @@
-from step.interface.operation import Operation
+from pipe.interface.operation import Operation
 from model.model import Frame
 from model.detection import Detection, Box
 from picamera2.devices import Hailo

@@ -5,7 +5,7 @@ import logging
 
 from sink.interface.sink import Sink
 from source.interface.source import Source
-from step.interface.operation import Operation
+from pipe.interface.operation import Operation
 from model.model import Frame, Result
 from model.detection import Detection
 
@@ -43,7 +43,7 @@ class Pipeline:
             det: list[Detection] = []
 
             if self._pipe:
-                det = self._pipe.process(frame.frame)
+                det = self._pipe.process(frame)
             result = Result(frame)
             result.add_detection(det)
 
