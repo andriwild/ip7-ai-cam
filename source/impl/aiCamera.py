@@ -90,8 +90,7 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
     def process(self, frame) -> list[Detection]:
         detection = self._last_detections.get(frame.timestamp)
         if detection is not None:
-            result = self._last_detection
-            boxes, scores, classes = result[0][0], result[1][0], result[2][0]
+            boxes, scores, classes = detection[0][0], detection[1][0], detection[2][0]
 
             valid_indices = np.where(scores >= 0.5)[0]
             boxes   = boxes[valid_indices]
