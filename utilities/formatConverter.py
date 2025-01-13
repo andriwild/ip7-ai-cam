@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from model.detection import Box
 
 def yxyx_to_xywhn(bbox, image_width, image_height):
     """
@@ -64,71 +65,26 @@ def letterbox(img: np.ndarray, new_shape=(640, 640), color=(114, 114, 114)):
     left, right = dw // 2, dw - dw // 2
     return cv2.copyMakeBorder(resized, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color), r, (left, top)
 
-    # def _preprocess(self, boxes: list[Box], frame: np.ndarray) -> list[np.ndarray]:
-    #     cropped_images = []
 
-    #     for item in boxes: 
-    #         height, width = frame.shape[:2]
-    #         x_center, y_center, w, h = item.xywhn
+def crop(box: Box, frame: np.ndarray) -> np.ndarray:
 
-    #         # Convert normalized coordinates to pixel coordinates
-    #         x1 = int((x_center - w / 2) * width)
-    #         y1 = int((y_center - h / 2) * height)
-    #         x2 = int((x_center + w / 2) * width)
-    #         y2 = int((y_center + h / 2) * height)
+    height, width = frame.shape[:2]
+    x_center, y_center, w, h = box.xywhn
 
-    #         # Clip coordinates to image boundaries
-    #         x1, y1 = max(0, x1), max(0, y1)
-    #         x2, y2 = min(width, x2), min(height, y2)
+    # Convert normalized coordinates to pixel coordinates
+    x1 = int((x_center - w / 2) * width)
+    y1 = int((y_center - h / 2) * height)
+    x2 = int((x_center + w / 2) * width)
+    y2 = int((y_center + h / 2) * height)
 
-    #         # Crop the image region
-    #         cropped_image = frame[y1:y2, x1:x2]
-    #         cropped_images.append(cropped_image)
-        
-    #     return cropped_images
+    # Clip coordinates to image boundaries
+    x1, y1 = max(0, x1), max(0, y1)
+    x2, y2 = min(width, x2), min(height, y2)
+
+    # Crop the image region
+    cropped_image = frame[y1:y2, x1:x2]
+
+    return cropped_image
 
 
 
-    # def _predict_from_original_frame(self, input, step) -> Prediction:
-    #     detections = step.operation.process(input)
-    #     p = Prediction(
-    #         infer_data=detections, 
-    #         model_name=step.name, 
-    #         annotate=step.annotate)
-    #     return p
-
-    # def _predict_from_previous_prediction(self, frame: np.ndarray, step: Step, prediction) -> Prediction:
-    #     results = []
-    #     height, width = frame.shape[:2]
-    #     boxes = prediction.infer_data
-    #     cropped_images = self._preprocess(boxes, frame)
-
-    #     for i, crop in enumerate(cropped_images):
-    #         crop_h, crop_w = crop.shape[:2]
-    #         detections: list[Box] = step.operation.process(crop)
-    #         x1_item = (boxes[i].xywhn[0] - boxes[i].xywhn[2] / 2) * width
-    #         y1_item = (boxes[i].xywhn[1] - boxes[i].xywhn[3] / 2) * height
-
-    #         for det in detections:
-    #             cx_crop = det.xywhn[0] * crop_w
-    #             cy_crop = det.xywhn[1] * crop_h
-    #             w_crop = det.xywhn[2] * crop_w
-    #             h_crop = det.xywhn[3] * crop_h
-
-    #             cx_orig = x1_item + cx_crop# + w_crop / 2
-    #             cy_orig = y1_item + cy_crop# + h_crop / 2
-    #             w_orig = w_crop
-    #             h_orig = h_crop
-
-    #             cx_norm = cx_orig / width
-    #             cy_norm = cy_orig / height
-    #             w_norm = w_orig / width
-    #             h_norm = h_orig / height
-
-    #             results.append(
-    #                 Box(
-    #                     xywhn=(cx_norm, cy_norm, w_norm, h_norm),
-    #                     conf=det.conf,
-    #                     label=str(det.label)
-    #                 )
-    #             )

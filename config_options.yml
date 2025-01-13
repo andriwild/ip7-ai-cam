@@ -38,8 +38,6 @@ pipes:
   - name: draw center rectangle
     class_name: Dummy
     file_path: ./pipe/impl/dummy.py
-    parameters:
-      annotate: True
 
   - name: onnx inference yolov8n 
     class_name: ONNXInference
@@ -60,10 +58,9 @@ pipes:
     file_path: ./pipe/impl/ulDetect.py
     parameters:
       model_path: ./resources/ml_models/yolo11n.onnx
-      lable_path: ./resources/labels/coco.txt
+      label_path: ./resources/labels/coco.txt
       confidence_threshold: 0.5
       nms_threshold: 0.3
-      annotate: True
 
   - name: ai camera
     class_name: AiCamera
@@ -77,24 +74,22 @@ pipes:
     file_path: ./pipe/impl/yolov5onnx.py
     parameters:
       input_id: raw_image
-      lable_path: ./resources/labels/flower.txt
+      label_path: ./resources/labels/flower.txt
       model_path: ./resources/ml_models/flower_n.onnx
       output_id: flower_detections
       confidence_threshold: 0.8
       nms_threshold: 0.4
-      annotate: False
 
   - name: detect pollinator objects
     class_name: Yolov5onnx
     file_path: ./pipe/impl/yolov5onnx.py
     parameters:
-      lable_path: ./resources/labels/pollinator.txt
+      label_path: ./resources/labels/pollinator.txt
       model_path: ./resources/ml_models/pollinator_simplified.onnx
       input_id: flower_detections
       output_id: pollinator_detections
       confidence_threshold: 0.3
       nms_threshold: 0.4
-      annotate: True
 
   - name: detect person objects
     class_name: PersonObjectDetection
@@ -111,6 +106,17 @@ pipes:
     parameters:
       model_path: ./resources/ml_models/yolo11n-pose.onnx
       confidence_threshold: 0.8
+
+  - name: mitwelten
+    class_name: Mitwelten
+    file_path: ./pipe/impl/mitwelten.py
+    parameters:
+      flower_confidence: 0.6
+      flower_model_path: ./resources/ml_models/flower_n.onnx 
+      flower_label_path: ./resources/labels/flower.txt
+      pollinator_confidence: 0.6
+      pollinator_model_path: ./resources/ml_models/pollinator_simplified.onnx
+      pollinator_label_path: ./resources/labels/pollinator.txt
 
 
 sinks:
