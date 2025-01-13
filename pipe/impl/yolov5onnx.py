@@ -21,7 +21,7 @@ class Yolov5onnx(Operation):
 
 
     def process(self, frame: Frame) -> list[Box]:
-        h_img, w_img = frame.frame.shape[:2]
+        h_img, w_img = frame.image.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame, self.input_size)
         blob = cv2.dnn.blobFromImage(lb_img, 1/255.0, self.input_size, (0, 0, 0), swapRB=True, crop=False)
         self.net.setInput(blob)

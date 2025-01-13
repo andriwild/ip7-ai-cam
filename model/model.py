@@ -19,7 +19,7 @@ class Step:
 class Frame:
     frame_id: str
     source_id: str
-    frame: np.ndarray
+    image: np.ndarray
     timestamp: datetime = field(default_factory=datetime.now)
 
 

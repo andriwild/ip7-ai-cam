@@ -46,7 +46,7 @@ class PiCamera(Source):
         return Frame(
             frame_id=f"{self._name}_{timestamp}",
             source_id=self._name,
-            frame=frame,
+            image=frame,
             timestamp=timestamp)
 
 

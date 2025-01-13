@@ -56,7 +56,7 @@ class ONNXInference(Operation):
 
 
     def process(self, frame: Frame) -> List[Box]:
-         height, width, _ = frame.frame.shape
+         height, width, _ = frame.image.shape
          length = max(height, width)
 
          # Create square padded image

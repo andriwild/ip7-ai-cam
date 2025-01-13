@@ -82,7 +82,7 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         return Frame(
             frame_id=f"{self._name}_{timestamp}",
             source_id=self._name,
-            frame=frame_data_annotated,
+            image=frame_data_annotated,
             timestamp=timestamp
         )
 

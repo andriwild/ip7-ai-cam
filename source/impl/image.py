@@ -69,7 +69,7 @@ class ImageGenerator(Source):
         return Frame(
             frame_id=frame_id,
             source_id=self._name,
-            frame=frame,
+            image=frame,
             timestamp=timestamp
         )
 

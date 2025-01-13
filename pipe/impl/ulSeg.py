@@ -15,7 +15,7 @@ class UlSeg(Operation):
         self._confidence = params.get("confidence_threshold", 0.5)
 
     def process(self, frame: Frame) -> list[Detection]:
-        results = self._model(frame.frame, verbose=False, conf=self._confidence)
+        results = self._model(frame.image, verbose=False, conf=self._confidence)
         mask = results[0].masks
         if mask is None:
             mask = []

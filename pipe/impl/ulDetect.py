@@ -27,7 +27,7 @@ class UlDetect(Operation):
 
 
     def process(self, frame: Frame) -> list[Detection]:
-        results: list[Results] = self._model(frame.frame, verbose=False, conf=self._confidence)
+        results: list[Results] = self._model(frame.image, verbose=False, conf=self._confidence)
         return self._extract_boxes(results)
 
 

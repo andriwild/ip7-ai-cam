@@ -22,7 +22,7 @@ class HailoObjectDetection(Operation):
 
 
     def process(self, frame: Frame) -> list[Detection]:
-        frame_r = cv2.resize(frame.frame, (640, 640))
+        frame_r = cv2.resize(frame.image, (640, 640))
         results = self._model.run(frame_r)
         detections = extract_detections(results, self._labels, self._confidence)
         return detections
