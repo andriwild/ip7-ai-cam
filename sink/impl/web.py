@@ -47,7 +47,7 @@ class VideoFeedServer(Sink):
             if result is None:
                 continue
 
-            image = result.frame.frame
+            image = result.frame.image
             for d in result.detections:
                 image = d.draw(image)
             success, encoded_image = cv2.imencode(".jpg", image)

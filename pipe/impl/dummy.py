@@ -12,7 +12,7 @@ class Dummy(Operation):
 
     def __init__(self, name: str, params = {}):
         super().__init__(name)
-        logging.info(f"Initializing Dummy inference with name {name}")
+        logging.info(f"Initialized Dummy inference with name {name}")
 
     def process(self, frame: Frame) -> list[Detection]:
         boxes = []

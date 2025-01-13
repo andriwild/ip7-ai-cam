@@ -1,4 +1,4 @@
-def load_lables_from_file(path: str):
+def load_labels(path: str):
     classes=[]
     file= open(path,'r')
 

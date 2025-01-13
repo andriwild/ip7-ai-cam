@@ -7,7 +7,7 @@ from ultralytics.engine.results import Results
 from model.model import Frame
 from pipe.interface.operation import Operation
 from model.detection import Box, Detection
-from utilities.labelLoader import load_lables_from_file
+from utilities.labelLoader import load_labels
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ class UlDetect(Operation):
         self._model_path = params.get("model_path", "./resources/ml_models/yolo11n.onnx")
         self._confidence = params.get("confidence_threshold", 0.5)
         self._model = YOLO(self._model_path)
-        self._label_path= params.get("lable_path", "./resources/ml_models/coco.txt")
-        self._labels = load_lables_from_file(self._label_path)
+        self._label_path= params.get("label_path", "./resources/labels/coco.txt")
+        self._labels = load_labels(self._label_path)
         logger.info(f"Loaded model from {self._model_path} with confidence {self._confidence}")
 
 

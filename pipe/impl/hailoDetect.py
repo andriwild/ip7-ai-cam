@@ -5,7 +5,7 @@ from picamera2.devices import Hailo
 import cv2
 import logging
 import numpy as np
-from utilities.labelLoader import load_lables_from_file
+from utilities.labelLoader import load_labels
 from utilities.formatConverter import yxyxn_to_xywhn
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class HailoObjectDetection(Operation):
         self._model = Hailo("/usr/share/hailo-models/yolov8s_h8l.hef")
         self._confidence = params.get("confidence", 0.5)
         label_path= params.get("label_path")
-        self._labels = load_lables_from_file(label_path)
+        self._labels = load_labels(label_path)
 
 
     def process(self, frame: Frame) -> list[Detection]:
