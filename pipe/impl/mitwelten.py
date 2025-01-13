@@ -41,6 +41,7 @@ class Mitwelten(Operation):
     def process(self, frame: Frame) -> list[Detection]:
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)
+        result_boxes.extend(flower_detections)
     
         # Originalbildabmessungen
         orig_height, orig_width = frame.image.shape[:2]

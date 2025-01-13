@@ -5,6 +5,8 @@ from pipe.interface.operation import Operation
 from model.detection import Box
 from utilities.formatConverter import letterbox
 from utilities.labelLoader import load_labels
+import multiprocessing
+
 
 
 class Yolov5onnx(Operation):
@@ -15,7 +17,10 @@ class Yolov5onnx(Operation):
         self.nms_threshold=params.get('nms_threshold', 0.5)
         self.model= params.get("model_path")
         self.classes_file= params.get("label_path")
+        cores = multiprocessing.cpu_count()
+        cv2.setNumThreads(cores)
         self.net = cv2.dnn.readNetFromONNX(self.model)
+        self.net.setPreferableBackend(cv2.dnn.DNN_TARGET_CPU)
         self.classes = load_labels(self.classes_file)
         self.input_size= (640, 640)
 
