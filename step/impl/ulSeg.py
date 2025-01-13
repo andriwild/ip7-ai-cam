@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 
+from model.model import Frame
 from step.interface.operation import Operation
 import numpy as np
 from model.detection import Mask, Detection
@@ -13,8 +14,8 @@ class UlSeg(Operation):
         self._model = YOLO(self._model_path)
         self._confidence = params.get("confidence_threshold", 0.5)
 
-    def process(self, frame: np.ndarray) -> list[Detection]:
-        results = self._model(frame, verbose=False, conf=self._confidence)
+    def process(self, frame: Frame) -> list[Detection]:
+        results = self._model(frame.frame, verbose=False, conf=self._confidence)
         mask = results[0].masks
         if mask is None:
             mask = []

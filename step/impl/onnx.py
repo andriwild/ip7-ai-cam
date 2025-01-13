@@ -5,6 +5,7 @@ import numpy as np
 import torch
 from typing import List
 from model.detection import Box
+from model.model import Frame
 from step.interface.operation import Operation
 import yaml
 import logging
@@ -54,8 +55,8 @@ class ONNXInference(Operation):
         return (x_center_norm, y_center_norm, width_norm, height_norm)
 
 
-    def process(self, frame: np.ndarray) -> List[Box]:
-         height, width, _ = frame.shape
+    def process(self, frame: Frame) -> List[Box]:
+         height, width, _ = frame.frame.shape
          length = max(height, width)
 
          # Create square padded image

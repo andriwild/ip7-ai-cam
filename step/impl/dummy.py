@@ -1,8 +1,9 @@
 from step.interface.operation import Operation
-from model.detection import Detection
-from model.detection import Box
+from model.detection import Detection, Box
+from model.model import Frame
 
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ class Dummy(Operation):
         super().__init__(name)
         logging.info(f"Initializing Dummy inference with name {name}")
 
-    def process(self, frame) -> list[Detection]:
+    def process(self, frame: Frame) -> list[Detection]:
         boxes = []
         boxes.append(Box(xywhn=(0.5, 0.5, 0.5, 0.5), conf=1.0, label="dummy"))
         return boxes

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from model.model import Frame
 from step.interface.operation import Operation
 from model.detection import Box
 from utilities.formatConverter import letterbox
@@ -19,8 +20,8 @@ class Yolov5onnx(Operation):
         self.input_size= (640, 640)
 
 
-    def process(self, frame: np.ndarray) -> list[Box]:
-        h_img, w_img = frame.shape[:2]
+    def process(self, frame: Frame) -> list[Box]:
+        h_img, w_img = frame.frame.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame, self.input_size)
         blob = cv2.dnn.blobFromImage(lb_img, 1/255.0, self.input_size, (0, 0, 0), swapRB=True, crop=False)
         self.net.setInput(blob)

@@ -4,6 +4,7 @@ import numpy as np
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
+from model.model import Frame
 from step.interface.operation import Operation
 from model.detection import Box, Detection
 from utilities.labelLoader import load_lables_from_file
@@ -25,8 +26,8 @@ class UlDetect(Operation):
         logger.info(f"Loaded model from {self._model_path} with confidence {self._confidence}")
 
 
-    def process(self, frame: np.ndarray) -> list[Detection]:
-        results: list[Results] = self._model(frame, verbose=False, conf=self._confidence)
+    def process(self, frame: Frame) -> list[Detection]:
+        results: list[Results] = self._model(frame.frame, verbose=False, conf=self._confidence)
         return self._extract_boxes(results)
 
 

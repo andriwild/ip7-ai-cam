@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 
+from model.model import Frame
 from step.interface.operation import Operation
 import numpy as np
 from model.detection import Detection, Keypoint
@@ -13,8 +14,8 @@ class UlPose(Operation):
         self._model = YOLO(self._model_path)
         self._confidence = params.get("confidence_threshold", 0.5)
 
-    def process(self, frame: np.ndarray) -> list[Detection]:
-        result = self._model(frame, verbose=False, conf=self._confidence)
+    def process(self, frame: Frame) -> list[Detection]:
+        result = self._model(frame.frame, verbose=False, conf=self._confidence)
         keypoints = result[0].keypoints
         if keypoints is None:
             keypoints = []

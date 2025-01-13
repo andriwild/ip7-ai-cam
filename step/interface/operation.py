@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from model.detection import Detection
-import numpy as np
+from model.model import Frame
 
 
 class Operation(ABC):
@@ -9,7 +9,7 @@ class Operation(ABC):
         self._name = name
 
     @abstractmethod
-    def process(self, frame: np.ndarray) -> list[Detection]:
+    def process(self, frame: Frame) -> list[Detection]:
         pass
 
     def get_name(self) -> str:
