@@ -1,10 +1,7 @@
 import argparse
 import logging
 import yaml
-from collections import defaultdict
 from queue import Queue
-from pprint import pprint
-from typing import Any
 
 from config.configServer import PipelineConfigurator
 from pipeline.pipeline import Pipeline
@@ -16,31 +13,18 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-def instances_from_config(config):
-    categories = config.keys()
-
-    instances = defaultdict(dict)
-
-    for category in categories:
-        class_configs = config.get(category, [])
-        for class_config in class_configs:
-            instance = ClassLoader.instantiate_class(class_config)
-            instances[category][class_config["name"]] = instance
-
-    return instances
-
     
 def main(config_file: str, host: str, port: int)-> None:
-    logger.info(f"Start Edge ML Pipeline")
+    logger.info(f"Initialize Pipeline with config {config_file}")
+
     config = yaml.safe_load(open(config_file))
-    instances = instances_from_config(config)
+    instances = ClassLoader.instances_from_config(config)
 
     queue  = Queue(maxsize=1)
     pipeline = Pipeline(queue, instances)
     PipelineConfigurator(pipeline, config, host, port)
 
+    logger.info("Start pipline")
     pipeline.run_forever() # doesn't return
 
 
