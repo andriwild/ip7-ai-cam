@@ -1,4 +1,4 @@
-from pipe.interface.operation import Operation
+from pipe.base.operation import Operation
 from model.detection import Detection, Box
 from model.model import Frame
 

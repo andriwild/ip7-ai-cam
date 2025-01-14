@@ -5,9 +5,9 @@ from datetime import datetime
 import cv2
 import numpy as np
 
-from source.interface.source import Source
+from source.base.source import Source
 from model.model import Frame
-from pipe.interface.operation import Operation
+from pipe.base.operation import Operation
 from model.singleton import SingletonMeta
 from model.detection import Box, Detection
 

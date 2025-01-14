@@ -2,7 +2,7 @@ import time
 import logging
 from datetime import datetime
 
-from source.interface.source import Source
+from source.base.source import Source
 from model.model import Frame
 from picamera2 import Picamera2
 

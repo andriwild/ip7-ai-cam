@@ -1,9 +1,10 @@
 import argparse
 import logging
-import yaml
 from queue import Queue
 
-from config.configServer import PipelineConfigurator
+import yaml
+
+from pipeline.configServer import PipelineConfigurator
 from pipeline.pipeline import Pipeline
 from utilities.classLoader import ClassLoader
 
@@ -28,11 +29,10 @@ def main(config_file: str, host: str, port: int)-> None:
     pipeline.run_forever() # doesn't return
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", type=str, default="config.yml", help="config file to load configuration")
     parser.add_argument("-p", "--port", type=int, default=8001, help="port of the config server")
-    parser.add_argument("--host", type=str, default="0.0.0.0", help="host of the config server")
+    parser.add_argument("-o", "--host", type=str, default="0.0.0.0", help="host of the config server")
     args = vars(parser.parse_args())
     main(args["config"], args["host"], args["port"])

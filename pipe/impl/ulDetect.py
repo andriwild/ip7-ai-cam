@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
 from model.model import Frame
-from pipe.interface.operation import Operation
+from pipe.base.operation import Operation
 from model.detection import Box, Detection
 from utilities.labelLoader import load_labels
 

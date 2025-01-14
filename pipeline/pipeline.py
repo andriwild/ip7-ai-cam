@@ -3,9 +3,9 @@ import threading
 import time
 import logging
 
-from sink.interface.sink import Sink
-from source.interface.source import Source
-from pipe.interface.operation import Operation
+from sink.base.sink import Sink
+from source.base.source import Source
+from pipe.base.operation import Operation
 from model.model import Frame, Result
 from model.detection import Detection
 

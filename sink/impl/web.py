@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
-from sink.interface.sink import Sink
+from sink.base.sink import Sink
 from fastapi.staticfiles import StaticFiles
 import cv2
 

@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 from model.model import Frame
-from pipe.interface.operation import Operation
+from pipe.base.operation import Operation
 import numpy as np
 from model.detection import Detection, Keypoint
 

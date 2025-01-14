@@ -1,4 +1,4 @@
-from sink.interface.sink import Sink
+from sink.base.sink import Sink
 from model.model import Result
 import logging
 

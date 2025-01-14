@@ -5,7 +5,7 @@ from datetime import datetime
 
 import cv2
 
-from source.interface.source import Source
+from source.base.source import Source
 from model.model import Frame
 
 logger = logging.getLogger(__name__)
