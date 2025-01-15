@@ -2,3 +2,9 @@
 __pycache__
 .idea
 *config.yml
+
+resources/doc/.$architecture_V2.drawio.bkp
+resources/doc/architecture_V1.drawio
+resources/doc/architecture_V2.drawio
+resources/ml_models/pollinators_ds_v6_480_yolov5s_hyps_v0.pt
+resources/ml_models/yolov5nu.onnx
