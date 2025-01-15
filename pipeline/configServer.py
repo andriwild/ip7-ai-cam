@@ -11,7 +11,11 @@ from pipeline.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
+
 class PipelineConfigurator:
+    """
+    API to set pipeline settings.
+    """
     def __init__(self, pipeline: Pipeline, all_settings, host: str, port: int):
         self._all_settings = all_settings.copy()
         self._pipeline = pipeline
@@ -44,6 +48,7 @@ class PipelineConfigurator:
     def get_config(self):
         return JSONResponse(content=self._all_settings)
 
+
     def set_source(self, data: dict = Body(...)):
         new_source = data.get("source")
         success = self._pipeline.set_source(new_source)
@@ -67,6 +72,7 @@ class PipelineConfigurator:
             content={"status": "error", "message": "No sinks provided"}, status_code=400
         )
 
+
     def set_pipe(self, data: dict = Body(...)):
         new_pipe = data.get("pipe")
         success = self._pipeline.set_pipe(new_pipe)
@@ -78,6 +84,7 @@ class PipelineConfigurator:
             content={"status": "error", "message": "No pipe provided"}, 
             status_code=400
         )
+
 
     def index(self, request: Request):
         return self._templates.TemplateResponse("index.html", {"request": request})

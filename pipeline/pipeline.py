@@ -13,14 +13,18 @@ logger = logging.getLogger(__name__)
 
 
 class Pipeline:
+    """
+    Pipeline class to manage the flow of frames through the pipeline and 
+    executes the operations on the frames. The pipeline is started by calling
+    the `run_forever` method. The pipeline can be stopped by calling the `stop`
+    method. After processing the frames, the results are sent to the sinks.
+    """
     def __init__(self, queue: Queue, instances):
-
         self._queue = queue
         self._source: Source|None = None 
         self._pipe: Operation|None = None 
         self._sinks: list[Sink] = []
         self._instances = instances
-
         self._stop_event = threading.Event()
         self._source_thread = None
         self._running = False
@@ -89,8 +93,8 @@ class Pipeline:
         if self._source:
             self._source.release()
         
-        sources = self._instances.get("sources")
-        instance = sources.get(source_name)
+        available_sources = self._instances.get("sources")
+        instance = available_sources.get(source_name)
 
         if instance is not None:
             self._source = instance
@@ -108,8 +112,8 @@ class Pipeline:
             logger.info(f"Update pipe to {pipe_name}: nothing to change")
             return True
 
-        pipes = self._instances.get("pipes")
-        new_pipe = pipes.get(pipe_name)
+        available_pipes = self._instances.get("pipes")
+        new_pipe = available_pipes.get(pipe_name)
         if new_pipe is not None:
             self._pipe = new_pipe
             logger.info(f"Update pipe to {pipe_name}")
@@ -133,8 +137,8 @@ class Pipeline:
         # add new sinks
         for sink_name in sink_names:
             if sink_name not in current_sink_names:
-                sinks = self._instances.get("sinks")
-                instance = sinks.get(sink_name)
+                available_sinks = self._instances.get("sinks")
+                instance = available_sinks.get(sink_name)
                 if instance is not None:
                     logger.info(f"add sink: {sink_name}")
                     instance.init()
