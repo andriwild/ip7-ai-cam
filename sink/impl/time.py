@@ -9,10 +9,14 @@ class TimeMeasurement(Sink):
     def __init__(self, name: str, parameters: dict = {}):
         super().__init__(name)
         self._parameters = parameters
+        self._last_frame_time = None
         logger.info("TimeMeasurement initialized")
 
     def put(self, result: Result) -> None:
-        logger.info(datetime.now() -  result.frame.timestamp)
+        if self._last_frame_time is not None:
+            logger.info(datetime.now() -  self._last_frame_time)
+
+        self._last_frame_time = datetime.now()
 
 
     def release(self):
