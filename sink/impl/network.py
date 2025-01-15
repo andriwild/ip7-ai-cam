@@ -30,9 +30,10 @@ def send_post_request(url, data):
 
 
 class Network(Sink):
-    def __init__(self, name: str, parameters: dict = {}):
+    def __init__(self, name: str, params: dict = {}):
         super().__init__(name)
-        self._parameters = parameters
+        self._parameters = params
+        self._url = params.get("url", URL)
         logger.info("Network initialized")
 
 

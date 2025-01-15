@@ -131,6 +131,8 @@ sinks:
   - name: network 
     class_name: Network 
     file_path: ./sink/impl/network.py
+    parameters:
+      url: http://localhost:5000/api
 
   - name: webserver
     class_name: WebServer
