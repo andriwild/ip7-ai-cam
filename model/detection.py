@@ -13,6 +13,10 @@ class Detection(ABC):
     def draw(frame: np.ndarray) -> np.ndarray:
         pass
 
+    @abstractmethod
+    def to_json(self) -> dict:
+        pass
+
 
 @dataclass
 class Box(Detection):
@@ -37,6 +41,13 @@ class Box(Detection):
 
     def __str__(self):
         return f"Box: {self.xywhn}, {self.conf}, {self.label}"
+
+    def to_json(self)-> str:
+        return {
+            "xywhn": [self.xywhn[0].item(), self.xywhn[1].item(), self.xywhn[2].item(), self.xywhn[3].item()],
+            "conf": self.conf,
+            "label": self.label
+        }
 
 
 @dataclass
@@ -68,6 +79,11 @@ class Mask(Detection):
     def __str__(self):
         return f"Mask: {self.masks}"
 
+    def to_json(self):
+        return {
+            "masks": self.masks
+        }
+
 
 @dataclass
 class Keypoint(Detection):
@@ -85,3 +101,8 @@ class Keypoint(Detection):
 
     def __str__(self):
         return f"Keypoint: {self.keypoints}"
+
+    def to_json(self):
+        return {
+            "keypoints": self.keypoints
+        }
