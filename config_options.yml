@@ -124,6 +124,14 @@ sinks:
     class_name: Console
     file_path: ./sink/impl/console.py
 
+  - name: time 
+    class_name: TimeMeasurement 
+    file_path: ./sink/impl/time.py
+
+  - name: network 
+    class_name: Network 
+    file_path: ./sink/impl/network.py
+
   - name: webserver
     class_name: WebServer
     file_path: ./api/server.py
