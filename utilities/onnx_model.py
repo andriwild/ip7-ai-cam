@@ -18,3 +18,5 @@ model.export(format='onnx',
 #            simplify=True, 
 #            #imgsz=640, 
 #            dynamic=True)
+
+# to ncnn: pip instal pnnx && pnnx models/flower_n_sim.onnx
