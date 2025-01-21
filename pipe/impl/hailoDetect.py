@@ -35,9 +35,7 @@ class HailoObjectDetection(Operation):
         h_img, w_img = frame.image.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame.image, self.input_size)
 
-        blob = cv2.dnn.blobFromImage(lb_img, 1/255.0, self.input_size, (0, 0, 0), swapRB=True, crop=False)
-
-        out = self._model.run(blob)
+        out = self._model.run(lb_img)
 
 
         bboxes, confidences, class_ids = [], [], []
