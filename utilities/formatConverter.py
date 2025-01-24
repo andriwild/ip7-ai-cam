@@ -23,10 +23,10 @@ def yxyx_to_xywhn(bbox, image_width, image_height):
     h = y2 - y1
 
     # Normalize to [0, 1]
-    cx /= image_width
-    cy /= image_height
-    w /= image_width
-    h /= image_height
+    #cx /= image_width
+    #cy /= image_height
+    #w /= image_width
+    #h /= image_height
 
     return (cx, cy, w, h)
 

@@ -28,10 +28,10 @@ class HailoObjectDetection(Operation):
     def process(self, frame: Frame) -> list[Detection]:
         h_img, w_img = frame.image.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame.image, self.input_size)
-
-        inference_results = self._model.run(lb_img) # returns a list of inference results (multiple images)
+    
+        inference_results = self._model.run(lb_img)  # returns a list of inference results (multiple images)
         result = []
-
+    
         # Example inference data:
         # [
         #        [   
@@ -40,19 +40,46 @@ class HailoObjectDetection(Operation):
         #            array([[    0.38995,     0.85229,     0.53108,      1.0039,     0.31765], [    0.20061,     0.73043,     0.31478,     0.83216,      0.3098]], dtype=float32)
         #        ]
         # ] 
-
+    
         for inference in inference_results:
            for idx, class_detections in enumerate(inference):
                for detection in class_detections:
-                   if len(detection) >= 5: # detection present
+                   if len(detection) >= 5:  # detection present
                        if detection[4] > self.conf_threshold:
-                            result.append(
-                                    Box(
-                                        xywhn=yxyx_to_xywhn(detection[:4], w_img, h_img), 
-                                        conf=detection[4], 
-                                        label=self._labels[idx])
-                                    )
-
+                           # Extract normalized yxyx coordinates
+                           y1_norm, x1_norm, y2_norm, x2_norm = detection[:4]
+    
+                           # Denormalize to letterboxed image dimensions
+                           y1 = y1_norm * self.input_size[1]
+                           x1 = x1_norm * self.input_size[0]
+                           y2 = y2_norm * self.input_size[1]
+                           x2 = x2_norm * self.input_size[0]
+    
+                           # Remove padding and scale back to original image size
+                           x1 = (x1 - pad_left) / ratio
+                           x2 = (x2 - pad_left) / ratio
+                           y1 = (y1 - pad_top) / ratio
+                           y2 = (y2 - pad_top) / ratio
+    
+                           # Convert yxyx to xywhn format in the original image dimensions
+                           x_center = (x1 + x2) / 2
+                           y_center = (y1 + y2) / 2
+                           width = x2 - x1
+                           height = y2 - y1
+    
+                           # Normalize to original image dimensions
+                           result.append(
+                               Box(
+                                   xywhn=(
+                                       x_center / w_img,  # Normalize to original width
+                                       y_center / h_img,  # Normalize to original height
+                                       width / w_img,     # Normalize to original width
+                                       height / h_img     # Normalize to original height
+                                   ),
+                                   conf=detection[4],
+                                   label=self._labels[idx]
+                               )
+                           )
+    
         print("Result", result)
         return result
-
