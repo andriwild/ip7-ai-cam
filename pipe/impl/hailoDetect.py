@@ -1,15 +1,47 @@
 from pipe.base.operation import Operation
+from pprint import pprint
 from model.model import Frame
 from model.detection import Detection, Box
-from picamera2.devices import Hailo
-import cv2
 import logging
-import numpy as np
+from utilities.formatConverter import letterbox
 from utilities.labelLoader import load_labels
-from utilities.formatConverter import yxyxn_to_xywhn, letterbox
+from pathlib import Path
+from termcolor import cprint
+from utilities.hailo.object_detection import infer
+from utilities.hailo.utils import load_input_images, validate_images
 
+from pathlib import Path
+from PIL import Image
+import numpy as np
+from hailo_platform import HEF, VDevice, FormatType, HailoSchedulingAlgorithm
 
 logger = logging.getLogger(__name__)
+
+
+
+def extract_detections(raw_output, confidence_threshold=0.5):
+    detections = []
+    raw_data = raw_output['yolov8s/yolov8_nms_postprocess']
+    num_detections = int(raw_data[0])  # First value is the number of detections
+
+    for i in range(num_detections):
+        offset = 1 + i * 7  # Each detection is 7 values: class, score, bbox (x1, y1, x2, y2)
+        class_id = int(raw_data[offset])
+        score = raw_data[offset + 1]
+        bbox = raw_data[offset + 2:offset + 6]
+
+        if score >= confidence_threshold:
+            detections.append({
+                "class_id": class_id,
+                "bbox": {
+                    "x1": float(bbox[0]),
+                    "y1": float(bbox[1]),
+                    "x2": float(bbox[2]),
+                    "y2": float(bbox[3]),
+                }
+            })
+
+    return detections
 
 class HailoObjectDetection(Operation):
 
@@ -19,74 +51,50 @@ class HailoObjectDetection(Operation):
         model= params.get("model_path", "./resources/ml_models/flower_n_hailo8l.hef")
         label_path= params.get("label_path")
         self._labels = load_labels(label_path)
-        self._model = Hailo(model)
         self._confidence = params.get("confidence", 0.7)
         self.conf_threshold = params.get('confidence_threshold', 0.5)
         self.score_threshold = params.get('score_threshold', 0.25)
         self.nms_threshold = params.get('nms_threshold', 0.5)
         self.input_size = (640, 640)
 
+        self.hef = HEF(model)
+        params = VDevice.create_params()
+        params.scheduling_algorithm = HailoSchedulingAlgorithm.ROUND_ROBIN
+        self.target = VDevice(params)
+
+        self.infer_model = self.target.create_infer_model(model)
+        self.input_shape = self.hef.get_input_vstream_infos()[0].shape
+        self.output_buffers = self._prepare_output_buffers()
+
+    def _prepare_output_buffers(self):
+        output_info = self.hef.get_output_vstream_infos()
+        return {
+            output.name: np.empty(
+                self.infer_model.output(output.name).shape,
+                dtype=np.float32
+            )
+            for output in output_info
+        }
+
 
     def process(self, frame: Frame) -> list[Detection]:
-        #frame_r = cv2.resize(frame.image, (640, 640))
-        #results = self._model.run(frame_r)
-        #detections = extract_detections(results, self._labels, self._confidence)
-        #return detections
-        h_img, w_img = frame.image.shape[:2]
-        lb_img, ratio, (pad_left, pad_top) = letterbox(frame.image, self.input_size)
+        preprocessed_image = letterbox(frame.image)
 
-        out = self._model.run(lb_img)
+        configured_model = self.infer_model.configure()
 
 
-        bboxes, confidences, class_ids = [], [], []
-        n_detections = out.shape[1]
-        for i in range(n_detections):
-            det = out[0][i]
-            conf = det[4]
-            if conf >= self.conf_threshold:
-                scores = det[5:]
-                cls_id = np.argmax(scores)
-                if scores[cls_id] >= self.score_threshold:
-                    cx, cy, w, h = det[0], det[1], det[2], det[3]
-                    x = cx - (w / 2)
-                    y = cy - (h / 2)
-                    bboxes.append([x, y, w, h])
-                    confidences.append(float(conf))
-                    class_ids.append(cls_id)
+        bindings = configured_model.create_bindings(
+            output_buffers=self.output_buffers
+        )
+        # 2) Input-Bild setzen
+        bindings.input().set_buffer(preprocessed_image)
+        # 3) Infer durchführen
+        configured_model.run([bindings], timeout=1000)
+        # 4) Kopie der Ergebnisse anfertigen und zurückgeben
+        r = {
+            name: np.copy(buffer)
+            for name, buffer in self.output_buffers.items()
+        }
+        pprint(extract_detections(r, self.conf_threshold))
+        return []
 
-        indices = cv2.dnn.NMSBoxes(bboxes, confidences, self.conf_threshold, self.nms_threshold)
-        detections = []
-        if len(indices) > 0:
-            for idx in indices.flatten():
-                x, y, w, h = bboxes[idx]
-                c = confidences[idx]
-                cid = class_ids[idx]
-                # Undo letterbox
-                x_ol = (x - pad_left) / ratio
-                y_ol = (y - pad_top) / ratio
-                w_ol = w / ratio
-                h_ol = h / ratio
-                # Convert to center and normalize
-                cx_ol = x_ol + w_ol / 2
-                cy_ol = y_ol + h_ol / 2
-                cx_n = cx_ol / w_img
-                cy_n = cy_ol / h_img
-                w_n = w_ol / w_img
-                h_n = h_ol / h_img
-                detections.append(Box((cx_n, cy_n, w_n, h_n), c, self.classes[cid]))
-
-        return detections
-
-
-        
-
-# def extract_detections(hailo_output, labels, threshold=0.5):
-#     boxes = []
-#     for class_id, detections in enumerate(hailo_output):
-#         for detection in detections:
-#             score = detection[4]
-#             if score >= threshold:
-#                 y0, x0, y1, x1 = detection[:4]
-#                 xywhn = yxyxn_to_xywhn(y0, x0, y1, x1)
-#                 boxes.append(Box(xywhn=xywhn, conf=score, label=labels[class_id]))
-#     return boxes
