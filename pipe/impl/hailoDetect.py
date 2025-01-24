@@ -5,15 +5,9 @@ from model.detection import Detection, Box
 import logging
 from utilities.formatConverter import letterbox
 from utilities.labelLoader import load_labels
-from pathlib import Path
-from termcolor import cprint
-from utilities.hailo.object_detection import infer
-from utilities.hailo.utils import load_input_images, validate_images
 
-from pathlib import Path
-from PIL import Image
 import numpy as np
-from hailo_platform import HEF, VDevice, FormatType, HailoSchedulingAlgorithm
+from hailo_platform import HEF, VDevice, HailoSchedulingAlgorithm
 
 logger = logging.getLogger(__name__)
 
