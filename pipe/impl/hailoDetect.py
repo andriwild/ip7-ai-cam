@@ -2,12 +2,9 @@ from pipe.base.operation import Operation
 from model.model import Frame
 from model.detection import Detection, Box
 from picamera2.devices import Hailo
-import cv2
-from pprint import pprint
 import logging
-import numpy as np
 from utilities.labelLoader import load_labels
-from utilities.formatConverter import yxyxn_to_xywhn, letterbox
+from utilities.formatConverter import letterbox, yxyx_to_xywhn
 
 
 logger = logging.getLogger(__name__)
@@ -29,10 +26,6 @@ class HailoObjectDetection(Operation):
 
 
     def process(self, frame: Frame) -> list[Detection]:
-        #frame_r = cv2.resize(frame.image, (640, 640))
-        #results = self._model.run(frame_r)
-        #detections = extract_detections(results, self._labels, self._confidence)
-        #return detections
         h_img, w_img = frame.image.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame.image, self.input_size)
 
@@ -40,79 +33,26 @@ class HailoObjectDetection(Operation):
         result = []
 
         # Example inference data:
-        #[
+        # [
         #        [   
         #            array([[    0.38879,     0.85377,     0.53032,      1.0008,      0.2549]], dtype=float32), 
         #            array([], shape=(0, 5), dtype=float64), 
         #            array([[    0.38995,     0.85229,     0.53108,      1.0039,     0.31765], [    0.20061,     0.73043,     0.31478,     0.83216,      0.3098]], dtype=float32)
         #        ]
-        #] 
+        # ] 
 
-       for inference in inference_results:
-
+        for inference in inference_results:
            for idx, class_detections in enumerate(inference):
-
                for detection in class_detections:
-
                    if len(detection) >= 5: # detection present
                        if detection[4] > self.conf_threshold:
-                            result.append(Box(xywhn=yxyxn_to_xywhn(detection[:4], w_img, h_img), conf=detection[4], label=self._labels[class_idx]))
-
-
+                            result.append(
+                                    Box(
+                                        xywhn=yxyx_to_xywhn(detection[:4], w_img, h_img), 
+                                        conf=detection[4], 
+                                        label=self._labels[idx])
+                                    )
 
         print("Result", result)
         return result
 
-
-        # bboxes, confidences, class_ids = [], [], []
-        # n_detections = out.shape[1]
-        # for i in range(n_detections):
-        #     det = out[0][i]
-        #     conf = det[4]
-        #     if conf >= self.conf_threshold:
-        #         scores = det[5:]
-        #         cls_id = np.argmax(scores)
-        #         if scores[cls_id] >= self.score_threshold:
-        #             cx, cy, w, h = det[0], det[1], det[2], det[3]
-        #             x = cx - (w / 2)
-        #             y = cy - (h / 2)
-        #             bboxes.append([x, y, w, h])
-        #             confidences.append(float(conf))
-        #             class_ids.append(cls_id)
-
-        # indices = cv2.dnn.NMSBoxes(bboxes, confidences, self.conf_threshold, self.nms_threshold)
-        # detections = []
-        # if len(indices) > 0:
-        #     for idx in indices.flatten():
-        #         x, y, w, h = bboxes[idx]
-        #         c = confidences[idx]
-        #         cid = class_ids[idx]
-        #         # Undo letterbox
-        #         x_ol = (x - pad_left) / ratio
-        #         y_ol = (y - pad_top) / ratio
-        #         w_ol = w / ratio
-        #         h_ol = h / ratio
-        #         # Convert to center and normalize
-        #         cx_ol = x_ol + w_ol / 2
-        #         cy_ol = y_ol + h_ol / 2
-        #         cx_n = cx_ol / w_img
-        #         cy_n = cy_ol / h_img
-        #         w_n = w_ol / w_img
-        #         h_n = h_ol / h_img
-        #         detections.append(Box((cx_n, cy_n, w_n, h_n), c, self.classes[cid]))
-
-        # return detections
-
-
-        
-
-# def extract_detections(hailo_output, labels, threshold=0.5):
-#     boxes = []
-#     for class_id, detections in enumerate(hailo_output):
-#         for detection in detections:
-#             score = detection[4]
-#             if score >= threshold:
-#                 y0, x0, y1, x1 = detection[:4]
-#                 xywhn = yxyxn_to_xywhn(y0, x0, y1, x1)
-#                 boxes.append(Box(xywhn=xywhn, conf=score, label=labels[class_id]))
-#     return boxes

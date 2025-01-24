@@ -31,12 +31,6 @@ def yxyx_to_xywhn(bbox, image_width, image_height):
     return (cx, cy, w, h)
 
 
-def yxyxn_to_xywhn(y0, x0, y1, x1):
-    width = x1 - x0
-    height = y1 - y0
-    cx = x0 + width / 2
-    cy = y0 + height / 2
-    return (cx, cy, width, height)
 
 def convert_xywh_to_xywhn(xywh, frame_width, frame_height):
     x_left, y_top, width, height = xywh
