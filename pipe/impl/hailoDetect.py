@@ -3,6 +3,7 @@ from model.model import Frame
 from model.detection import Detection, Box
 from picamera2.devices import Hailo
 import cv2
+from pprint import pprint
 import logging
 import numpy as np
 from utilities.labelLoader import load_labels
@@ -35,8 +36,32 @@ class HailoObjectDetection(Operation):
         h_img, w_img = frame.image.shape[:2]
         lb_img, ratio, (pad_left, pad_top) = letterbox(frame.image, self.input_size)
 
-        out = self._model.run(lb_img)
-        print(out)
+        inference_results = self._model.run(lb_img) # returns a list of inference results (multiple images)
+        result = []
+
+        # Example inference data:
+        #[
+        #        [   
+        #            array([[    0.38879,     0.85377,     0.53032,      1.0008,      0.2549]], dtype=float32), 
+        #            array([], shape=(0, 5), dtype=float64), 
+        #            array([[    0.38995,     0.85229,     0.53108,      1.0039,     0.31765], [    0.20061,     0.73043,     0.31478,     0.83216,      0.3098]], dtype=float32)
+        #        ]
+        #] 
+
+       for inference in inference_results:
+
+           for idx, class_detections in enumerate(inference):
+
+               for detection in class_detections:
+
+                   if len(detection) >= 5: # detection present
+                       if detection[4] > self.conf_threshold:
+                            result.append(Box(xywhn=yxyxn_to_xywhn(detection[:4], w_img, h_img), conf=detection[4], label=self._labels[class_idx]))
+
+
+
+        print("Result", result)
+        return result
 
 
         # bboxes, confidences, class_ids = [], [], []
