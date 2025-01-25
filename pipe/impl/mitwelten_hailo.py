@@ -70,13 +70,7 @@ class Mitwelten(Operation):
             resized = cv2.resize(cropped_image, (nw, nh), interpolation=cv2.INTER_LINEAR)
             letterboxed_img[pad_top:pad_top+nh, pad_left:pad_left+nw] = resized
 
-            tmp_frame = Frame(
-                image=letterboxed_img,
-                timestamp=frame.timestamp,
-                frame_id=frame.frame_id,
-                source_id=frame.source_id
-            )
-            cropped_flowers.append(tmp_frame)
+            cropped_flowers.append(letterboxed_img)
 
             letterbox_data.append({
                 'ratio': r,
