@@ -4,6 +4,8 @@ from model.detection import Detection, Box
 from model.model import Frame
 from pipe.impl.hailoDetect import HailoObjectDetection
 from utilities.labelLoader import load_labels
+import numpy as np
+import cv2
 import logging
 
 logger = logging.getLogger(__name__)
