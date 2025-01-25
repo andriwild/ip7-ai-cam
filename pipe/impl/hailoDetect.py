@@ -4,7 +4,7 @@ from model.detection import Detection, Box
 from picamera2.devices import Hailo
 import logging
 from utilities.labelLoader import load_labels
-from utilities.formatConverter import letterbox, yxyx_to_xywhn
+from utilities.formatConverter import letterbox
 
 
 logger = logging.getLogger(__name__)
@@ -18,10 +18,7 @@ class HailoObjectDetection(Operation):
         label_path= params.get("label_path")
         self._labels = load_labels(label_path)
         self._model = Hailo(model)
-        self._confidence = params.get("confidence", 0.7)
         self.conf_threshold = params.get('confidence_threshold', 0.5)
-        self.score_threshold = params.get('score_threshold', 0.25)
-        self.nms_threshold = params.get('nms_threshold', 0.5)
         self.input_size = (640, 640)
 
 
@@ -81,5 +78,4 @@ class HailoObjectDetection(Operation):
                                )
                            )
     
-        print("Result", result)
         return result

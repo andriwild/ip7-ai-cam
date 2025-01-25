@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# TODO: Remove duplicated code (mitwelten onnx)
 class Mitwelten(Operation):
     def __init__(self, name: str, params = {}):
         logger.info(f"Initializing Mitwelten inference with name {name}")

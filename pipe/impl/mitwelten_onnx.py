@@ -7,6 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# TODO: Remove duplicated code (mitwelten ncnn)
 class Mitwelten(Operation):
     def __init__(self, name: str, params = {}):
         logger.info(f"Initializing Mitwelten inference with name {name}")
@@ -22,7 +23,6 @@ class Mitwelten(Operation):
         flower_detections: list[Box] = self.flower_model.process(frame)
         result_boxes.extend(flower_detections)
     
-        # Originalbildabmessungen
         orig_height, orig_width = frame.image.shape[:2]
     
         for flower_detection in flower_detections:
