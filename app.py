@@ -1,6 +1,7 @@
 import argparse
 import logging
 from queue import Queue
+import importlib
 
 import yaml
 
@@ -14,6 +15,14 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+
+def is_library_available(library_name):
+    try:
+        importlib.import_module(library_name)
+        return True
+    except ImportError:
+        return False
     
 def main(config_file: str, host: str, port: int)-> None:
     logger.info(f"Initialize Pipeline with config {config_file}")
@@ -31,7 +40,12 @@ def main(config_file: str, host: str, port: int)-> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config", type=str, default="config.yml", help="config file to load configuration")
+    default_config = "config.yml"
+
+    if is_library_available("picamera2"):
+        default_config = "pi_config.yml"
+
+    parser.add_argument("-c", "--config", type=str, default=default_config, help="config file to load configuration")
     parser.add_argument("-p", "--port", type=int, default=8001, help="port of the config server")
     parser.add_argument("-o", "--host", type=str, default="0.0.0.0", help="host of the config server")
     args = vars(parser.parse_args())

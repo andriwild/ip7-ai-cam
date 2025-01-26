@@ -1,7 +1,6 @@
 .venv
 __pycache__
 .idea
-*config.yml
 
 resources/doc/.$architecture_V2.drawio.bkp
 resources/doc/architecture_V1.drawio

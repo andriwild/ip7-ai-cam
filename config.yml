@@ -1,0 +1,159 @@
+sources:
+  - name: webcam
+    file_path: ./source/impl/webcam.py
+    class_name: Webcam 
+    parameters:
+      device: "/dev/video0"
+      width: 640
+      height: 640 
+
+  - name: all pollinators images (max 60FPS)
+    class_name: ImageGenerator 
+    file_path: ./source/impl/image.py
+    parameters:
+      image_path: /home/andri/repos/datasets/pollinator_dataset_v6_yolo/images/test
+      fps: 1
+
+  - name: all flower images (max 60FPS)
+    class_name: ImageGenerator 
+    file_path: ./source/impl/image.py
+    parameters:
+      image_path: /home/andri/repos/datasets/flower_dataset_v4_yolo/flower_dataset_v4_yolo/images/test
+      fps: 1
+
+  - name: test image (mitwelten)
+    class_name: ImageGenerator 
+    file_path: ./source/impl/image.py
+    parameters:
+      image_path: ./resources/images/test_image.jpg
+      fps: 1
+
+pipes:
+  #  - name: Yolo11n (COCO)
+  #    class_name: UlDetect
+  #    file_path: ./pipe/impl/ulDetect.py
+  #    parameters:
+  #      model_path: ./resources/ml_models/yolo11n.onnx
+  #      label_path: ./resources/labels/coco.txt
+  #      confidence_threshold: 0.5
+  #      nms_threshold: 0.3
+
+  - name: Center Rectangle
+    class_name: Dummy
+    file_path: ./pipe/impl/dummy.py
+
+  - name: Bridge
+    file_path: ./pipe/impl/bridge.py
+    class_name: Bridge 
+
+  - name: Flower (ONNX)
+    class_name: Yolov5onnx
+    file_path: ./pipe/impl/yolov5onnx.py
+    parameters:
+      label_path: ./resources/labels/flower.txt
+      model_path: ./resources/ml_models/flower_n.onnx
+      confidence_threshold: 0.5
+      nms_threshold: 0.4
+
+  - name: Pollinator(ONNX)
+    class_name: Yolov5onnx
+    file_path: ./pipe/impl/yolov5onnx.py
+    parameters:
+      label_path: ./resources/labels/pollinator.txt
+      model_path: ./resources/ml_models/pollinator_simplified.onnx
+      confidence_threshold: 0.5
+      nms_threshold: 0.4
+
+  - name: Flower (NCNN)
+    class_name: Yolov5ncnn
+    file_path: ./pipe/impl/yolov5ncnn.py
+    parameters:
+      label_path: ./resources/labels/flower.txt
+      param_file:  ./resources/ml_models/flower_n_sim.ncnn.param
+      bin_file:  ./resources/ml_models/flower_n_sim.ncnn.bin
+      confidence_threshold: 0.5
+      nms_threshold: 0.5
+      use_gpu: False
+      num_threads: 4
+
+  - name: Pollinator (NCNN)
+    class_name: UlDetect
+    file_path: ./pipe/impl/ulDetect.py
+    parameters:
+      model_path: ./resources/ml_models/yolov8n_pollinator_ep50_v1_ncnn_model
+      label_path: ./resources/labels/pollinator.txt
+      confidence_threshold: 0.4
+
+
+  - name: Pose (Yolo11n ONNX)
+    class_name: UlPose
+    file_path: ./pipe/impl/ulPose.py
+    parameters:
+      model_path: ./resources/ml_models/yolo11n-pose.onnx
+      confidence_threshold: 0.8
+
+  - name: Segmentation (Yolo11n ONNX)
+    class_name: UlSeg
+    file_path: ./pipe/impl/ulSeg.py
+    parameters:
+      model_path: ./resources/ml_models/yolo11n-seg.onnx
+      confidence_threshold: 0.7
+
+  - name: Mitwelten Pipeline (ONNX)
+    class_name: Mitwelten
+    file_path: ./pipe/impl/mitwelten_onnx.py
+    parameters:
+      flower_params:
+        confidence_threshold: 0.6
+        model_path: ./resources/ml_models/flower_n.onnx 
+        label_path: ./resources/labels/flower.txt
+      pollinator_params:
+        confidence_threshold: 0.6
+        model_path: ./resources/ml_models/pollinator_simplified.onnx
+        label_path: ./resources/labels/pollinator.txt
+
+  - name: Mitwelten Pipeline (NCNN)
+    class_name: Mitwelten
+    file_path: ./pipe/impl/mitwelten_ncnn.py
+    parameters:
+      flower_params:
+        confidence_threshold: 0.6
+        label_path: ./resources/labels/flower.txt
+        param_file:  ./resources/ml_models/flower_n_sim.ncnn.param
+        bin_file:  ./resources/ml_models/flower_n_sim.ncnn.bin
+        use_gpu: False
+        num_threads: 4
+      pollinator_params:
+        model_path: ./resources/ml_models/yolov8n_pollinator_ep50_v1_ncnn_model
+        label_path: ./resources/labels/pollinator.txt
+        confidence_threshold: 0.2
+
+sinks:
+  - name: console
+    class_name: Console
+    file_path: ./sink/impl/console.py
+
+  - name: FPS
+    class_name: FPSConsole 
+    file_path: ./sink/impl/fps.py
+
+  - name: network 
+    class_name: Network 
+    file_path: ./sink/impl/network.py
+    parameters:
+      url: http://localhost:5000/api
+
+  - name: webserver
+    class_name: VideoFeedServer
+    file_path: ./sink/impl/web.py
+    parameters:
+      host: 0.0.0.0
+      port: 8000
+
+
+
+
+
+
+
+
