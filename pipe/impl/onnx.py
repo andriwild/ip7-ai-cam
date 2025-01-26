@@ -24,7 +24,6 @@ class ONNXInference(Operation):
         """
         super().__init__(name)
         self.model_path = params.get("model_path")
-        print("model path: ", self.model_path)
         self.input_size = 640
         self.conf_threshold = params.get("confidence", 0.5)
         self.nms_threshold = 0.5

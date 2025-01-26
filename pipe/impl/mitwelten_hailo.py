@@ -69,9 +69,6 @@ class Mitwelten(Operation):
                 'orig_y1': y1,
             })
 
-        for i, d in enumerate(letterbox_data):
-
-
         result = []
         for i in range(0, len(cropped_flowers), self.pollinator_batch_size):
             sub_batch_frames = cropped_flowers[i : i + self.pollinator_batch_size]

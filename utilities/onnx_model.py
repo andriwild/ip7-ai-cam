@@ -7,7 +7,7 @@ def ultralytics_export(model = 'yolo11n.pt'):
     model = YOLO(MODEL_PATH + model)
     
     # Export the model
-    model.export(format='onnx', 
+    model.export(format='imx500', 
                 batch=1, 
                 device='cpu', 
                 simplify=True, 
