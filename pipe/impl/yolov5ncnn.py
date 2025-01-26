@@ -4,7 +4,6 @@ import numpy as np
 from model.detection import Box
 from model.model import Frame
 from utilities.labelLoader import load_labels
-import multiprocessing
 from pipe.base.operation import Operation
 import logging
 
@@ -18,8 +17,8 @@ class Yolov5ncnn(Operation):
         self.conf_threshold = params.get('confidence_threshold', 0.5)
         self.nms_threshold=params.get('nms_threshold', 0.5)
         self.classes_file= params.get("label_path")
-        self.input_size= (640, 640)
-        self.nms_threshold = 0.5
+        size = params.get("input_size", 640)
+        self.input_size= (size, size)
         self.classes = load_labels(self.classes_file)
 
         self._net = ncnn.Net()
@@ -43,7 +42,7 @@ class Yolov5ncnn(Operation):
         padded_image = np.zeros((length, length, 3), dtype=np.uint8)
         padded_image[:height, :width] = frame.image
     
-        target_size = 640
+        target_size = self.input_size[0]
         scale = length / float(target_size)
     
         mat_in = ncnn.Mat.from_pixels_resize(

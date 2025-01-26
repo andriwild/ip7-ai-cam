@@ -17,12 +17,16 @@ class UlDetect(Operation):
 
     def __init__(self, name: str, params):
         logger.info(f"Initializing UlObjectDetection with name {name}")
+        print(params)
         super().__init__(name)
         self._model_path = params.get("model_path", "./resources/ml_models/yolo11n.onnx")
         self._confidence = params.get("confidence_threshold", 0.5)
         self._model = YOLO(self._model_path)
         self._label_path= params.get("label_path", "./resources/labels/coco.txt")
+        print(">>>",params.get("label_path"))
+        print("<<<", self._label_path)
         self._labels = load_labels(self._label_path)
+        print("<<<", self._labels)
         logger.info(f"Loaded model from {self._model_path} with confidence {self._confidence}")
 
 

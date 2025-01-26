@@ -2,6 +2,7 @@ from pipe.impl.yolov5onnx import Yolov5onnx
 from pipe.impl.yolov5ncnn import Yolov5ncnn
 from pipe.base.operation import Operation
 from model.detection import Detection, Box
+from pipe.impl.ulDetect import UlDetect
 from model.model import Frame
 import logging
 
@@ -14,8 +15,9 @@ class Mitwelten(Operation):
         logger.info(f"Initializing Mitwelten inference with name {name}")
         super().__init__(name)
 
+        print(params.get("pollinator_params", {}))
         self.flower_model     = Yolov5ncnn('flower_inference',     params.get("flower_params", {}))
-        self.pollinator_model = Yolov5ncnn('pollinator_inference', params.get("pollinator_params", {}))
+        self.pollinator_model = UlDetect('pollinator_inference', params.get("pollinator_params", {}))
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
@@ -52,6 +54,7 @@ class Mitwelten(Operation):
             )
 
             pollinator_detections = self.pollinator_model.process(tmp_frame)
+            print(pollinator_detections)
     
             cropped_h, cropped_w = cropped_image.shape[:2]
     
