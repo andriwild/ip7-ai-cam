@@ -1,0 +1,18 @@
+description: Ultralytics YOLOv8n_pollinator_ep50_v1 model trained on pollinator_train.yml
+author: Ultralytics
+date: '2025-01-26T11:42:26.083292'
+version: 8.3.40
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: honigbiene
+  1: wildbiene
+  2: hummel
+  3: schwebefliege
+  4: fliege
