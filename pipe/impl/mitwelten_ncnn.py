@@ -1,9 +1,10 @@
-from pipe.impl.yolov5onnx import Yolov5onnx
+import time
 from pipe.impl.yolov5ncnn import Yolov5ncnn
 from pipe.base.operation import Operation
 from model.detection import Detection, Box
 from pipe.impl.ulDetect import UlDetect
 from model.model import Frame
+from utilities.decorator import Log_time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class Mitwelten(Operation):
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
+    @Log_time("Mitwelten NCNN Inference") 
     def process(self, frame: Frame) -> list[Detection]:
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)

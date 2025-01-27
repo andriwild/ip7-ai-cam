@@ -24,7 +24,7 @@ def is_library_available(library_name):
         return False
 
     
-def main(config_file: str, host: str, port: int)-> None:
+def main(config_file: str, host: str, port: int, queue_size: int)-> None:
     logger.info(f"Initialize Pipeline with config {config_file}")
 
     config = yaml.safe_load(open(config_file))
@@ -33,8 +33,11 @@ def main(config_file: str, host: str, port: int)-> None:
     initial_sinks  = list(instances["sinks"].values())[0]
     initial_pipe   = list(instances["pipes"].values())[0]
     initial_source = list(instances["sources"].values())[0]
+    logger.debug("Initialize Pipeline with: ", initial_source, initial_pipe, initial_sinks)
 
-    queue  = Queue(maxsize=1)
+    queue  = Queue(maxsize=queue_size)
+    logger.debug(f"Initialized Queue with size {queue_size}")
+
     pipeline = Pipeline(queue, instances, initial_source, initial_pipe, [initial_sinks])
     PipelineConfigurator(pipeline, config, host, port)
 
@@ -51,6 +54,13 @@ if __name__ == '__main__':
 
     parser.add_argument("-c", "--config", type=str, default=default_config, help="config file to load configuration")
     parser.add_argument("-p", "--port", type=int, default=8001, help="port of the config server")
+    parser.add_argument("-q", "--queue_size", type=int, default=1, help="the size of the frame queue")
     parser.add_argument("-o", "--host", type=str, default="0.0.0.0", help="host of the config server")
+    parser.add_argument('-v', '--verbose', action='store_true', help='make me talkative!')
     args = vars(parser.parse_args())
-    main(args["config"], args["host"], args["port"])
+
+    if args["verbose"]:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Verbose mode on")
+
+    main(args["config"], args["host"], args["port"], args["queue_size"])

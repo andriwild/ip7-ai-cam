@@ -4,6 +4,8 @@ from model.detection import Detection, Box
 from model.model import Frame
 import logging
 
+from utilities.decorator import Log_time
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,6 +20,7 @@ class Mitwelten(Operation):
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
+    @Log_time("Mitwelten ONNX Inference") 
     def process(self, frame: Frame) -> list[Detection]:
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)

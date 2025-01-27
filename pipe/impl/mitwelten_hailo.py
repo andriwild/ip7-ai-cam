@@ -3,6 +3,7 @@ from picamera2.devices import Hailo
 from model.detection import Detection, Box
 from model.model import Frame
 from pipe.impl.hailoDetect import HailoObjectDetection
+from utilities.decorator import Log_time
 from utilities.labelLoader import load_labels
 from utilities.formatConverter import letterbox
 import numpy as np
@@ -31,6 +32,7 @@ class Mitwelten(Operation):
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
+    @Log_time("Mitwelten Hailo Infernce")
     def process(self, frame: Frame) -> list[Detection]:
         result_boxes: list[Box] = []
         flower_detections: list[Box] = self.flower_hailo_model.process(frame)
