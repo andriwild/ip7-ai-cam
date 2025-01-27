@@ -1,0 +1,29 @@
+sources:
+  - name: webcam
+    file_path: ./source/impl/webcam.py
+    class_name: Webcam 
+    parameters:
+      device: "/dev/video0"
+      width: 640
+      height: 640 
+pipes:
+  - name: Mitwelten Pipeline (NCNN)
+    class_name: Mitwelten
+    file_path: ./pipe/impl/mitwelten_ncnn.py
+    parameters:
+      flower_params:
+        confidence_threshold: 0.6
+        label_path: ./resources/labels/flower.txt
+        param_file:  ./resources/ml_models/flower_n_sim.ncnn.param
+        bin_file:  ./resources/ml_models/flower_n_sim.ncnn.bin
+        use_gpu: False
+        num_threads: 4
+      pollinator_params:
+        model_path: ./resources/ml_models/yolov8n_pollinator_ep50_v1_ncnn_model
+        label_path: ./resources/labels/pollinator.txt
+        confidence_threshold: 0.2
+sinks:
+  - name: console
+    class_name: Console
+    file_path: ./sink/impl/console.py
+

@@ -2,7 +2,6 @@ import argparse
 import logging
 from queue import Queue
 import importlib
-
 import yaml
 
 from pipeline.configServer import PipelineConfigurator
@@ -23,6 +22,7 @@ def is_library_available(library_name):
         return True
     except ImportError:
         return False
+
     
 def main(config_file: str, host: str, port: int)-> None:
     logger.info(f"Initialize Pipeline with config {config_file}")
@@ -30,8 +30,12 @@ def main(config_file: str, host: str, port: int)-> None:
     config = yaml.safe_load(open(config_file))
     instances = ClassLoader.instances_from_config(config)
 
+    initial_sinks  = list(instances["sinks"].values())[0]
+    initial_pipe   = list(instances["pipes"].values())[0]
+    initial_source = list(instances["sources"].values())[0]
+
     queue  = Queue(maxsize=1)
-    pipeline = Pipeline(queue, instances)
+    pipeline = Pipeline(queue, instances, initial_source, initial_pipe, [initial_sinks])
     PipelineConfigurator(pipeline, config, host, port)
 
     logger.info("Start pipline")

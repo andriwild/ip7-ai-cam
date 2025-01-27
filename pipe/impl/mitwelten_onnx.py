@@ -66,8 +66,8 @@ class Mitwelten(Operation):
     
                 cx_norm = poll_x_center_orig / orig_width
                 cy_norm = poll_y_center_orig / orig_height
-                w_norm  = poll_w_pixels       / orig_width
-                h_norm  = poll_h_pixels       / orig_height
+                w_norm  = poll_w_pixels      / orig_width
+                h_norm  = poll_h_pixels      / orig_height
     
                 detection_on_orig_frame = [cx_norm, cy_norm, w_norm, h_norm]
     

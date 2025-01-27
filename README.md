@@ -1,7 +1,7 @@
 
-# IP7 AI Cam
+# IP7 ML Cam
 
-IP7 AI Cam is a modular and extensible application designed for processing video streams using artificial intelligence. The application allows integration of various video sources, application of processing pipelines, and output of results to different sinks.
+IP7 ML Cam is a modular and extensible application designed for processing video streams using machine learning. The application allows integration of various video sources, application of processing pipelines, and output of results to different sinks.
 
 ## Table of Contents
 
@@ -105,4 +105,4 @@ In this configuration, parameters are passed to the respective classes. Adjust t
 
 ## Web-Based Configuration Interface
 
-The application offers a web-based configuration interface, which runs by default on port `8001`. You can access it by navigating to http://localhost:8001 in your browser. Ensure that the port is open in your firewall and that no other services are using this port.
+The application offers a web-based configuration interface, which runs by default on port `8001`. You can access it by navigating to `http://localhost:8001` in your browser. Ensure that the port is open in your firewall and that no other services are using this port.

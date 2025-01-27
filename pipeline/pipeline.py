@@ -19,11 +19,11 @@ class Pipeline:
     the `run_forever` method. The pipeline can be stopped by calling the `stop`
     method. After processing the frames, the results are sent to the sinks.
     """
-    def __init__(self, queue: Queue, instances):
+    def __init__(self, queue: Queue, instances, source: Source|None = None, pipe: Operation|None = None, sinks: list[Sink] = []):
         self._queue = queue
-        self._source: Source|None = None 
-        self._pipe: Operation|None = None 
-        self._sinks: list[Sink] = []
+        self._source: Source|None = source
+        self._pipe: Operation|None = pipe
+        self._sinks: list[Sink] = sinks
         self._instances = instances
         self._stop_event = threading.Event()
         self._source_thread = None

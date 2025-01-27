@@ -1,0 +1,18 @@
+sources:
+  - name: aicamera 
+    file_path: ./source/impl/aiCamera.py
+    class_name: AiCamera
+    parameters:
+      width: 640
+      height: 640 
+
+pipes:
+  - name: AI-Camera 
+    file_path: ./source/impl/aiCamera.py
+    class_name: AiCamera
+
+sinks:
+  - name: console
+    class_name: Console
+    file_path: ./sink/impl/console.py
+
