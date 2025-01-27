@@ -1,7 +1,22 @@
 from ultralytics import YOLO
 import torch
+import onnx
+from onnxsim import simplify
+
 MODEL_PATH = 'resources/ml_models/'
 
+
+def simplify():
+    # load your predefined ONNX model
+    model = onnx.load("./pollinators_ds_v6_480_yolov5s_hyps_v0.onnx")
+    
+    # convert model
+    model_simp, check = simplify(model)
+    
+    assert check, "Simplified ONNX model could not be validated"
+
+
+# use model_simp as a standard ONNX model object
 
 def ultralytics_export(model = 'yolo11n.pt'):
     model = YOLO(MODEL_PATH + model)
