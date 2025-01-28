@@ -13,7 +13,7 @@ def Log_time(name=None):
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 log_name = name if name else func.__name__
-                logging.debug(f"Execution time of '{log_name}' took {elapsed_time} ms")
+                logging.debug(f"Execution time of '{log_name}' took {elapsed_time * 1000} ms")
                 return result
             else:
                 return func(*args, **kwargs)
