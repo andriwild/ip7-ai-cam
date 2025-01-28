@@ -23,9 +23,9 @@ class Mitwelten(Operation):
 
     @Log_time("Mitwelten NCNN Inference") 
     def process(self, frame: Frame) -> list[Detection]:
+        start = time.time()
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)
-        print(f"{self._name},{len(flower_detections)}")
         result_boxes.extend(flower_detections)
     
         # Originalbildabmessungen
@@ -84,5 +84,6 @@ class Mitwelten(Operation):
                 )
                 result_boxes.append(mapped_box)
     
+        print(f"{self._name},{len(flower_detections)},{time.time() - start}")
         return result_boxes
 

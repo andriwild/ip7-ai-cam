@@ -3,6 +3,7 @@ from pipe.base.operation import Operation
 from model.detection import Detection, Box
 from model.model import Frame
 import logging
+import time
 
 from utilities.decorator import Log_time
 
@@ -22,9 +23,9 @@ class Mitwelten(Operation):
 
     @Log_time("Mitwelten ONNX Inference") 
     def process(self, frame: Frame) -> list[Detection]:
+        start = time.time()
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)
-        print(f"{self._name},{len(flower_detections)}")
         result_boxes.extend(flower_detections)
     
         orig_height, orig_width = frame.image.shape[:2]
@@ -82,5 +83,6 @@ class Mitwelten(Operation):
                 )
                 result_boxes.append(mapped_box)
     
+        print(f"{self._name},{len(flower_detections)},{time.time() - start}")
         return result_boxes
 
