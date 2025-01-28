@@ -21,7 +21,7 @@ class Mitwelten(Operation):
         pollinator_model      = pollinator_params.get("pollinator_model", "./resources/ml_models/yolov8n_pollinator_ep50_v1.hef")
         pollinator_label_path = pollinator_params.get("label_path")
         self._pollinator_input_size = pollinator_params.get("input_size", 640)
-        self.pollinator_batch_size = pollinator_params.get("batch_size", 4)
+        self.pollinator_batch_size = pollinator_params.get("batch_size", 8)
 
         self.conf_threshold = pollinator_params.get('confidence_threshold', 0.5)
         self.input_size = (640, 640)
