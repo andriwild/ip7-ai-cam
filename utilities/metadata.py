@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 
 def get_cpu_usage():
     return os.getloadavg()
@@ -27,3 +28,13 @@ def get_storage_usage():
     except:
         storage_available = None
     return storage_available
+
+
+def main():
+    print("cpu,temp,mem")
+    while True:
+        print(f"{get_cpu_usage()};{get_temperature()};{get_storage_usage()}")
+        time.sleep(5)
+
+if __name__ == "__main__":
+    main()
