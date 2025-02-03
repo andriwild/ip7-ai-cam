@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class PipelineConfigurator:
     """
-    API to set pipeline settings.
+    Webserver to set pipeline settings.
     """
     def __init__(self, pipeline: Pipeline, all_settings, host: str, port: int):
         self._all_settings = all_settings.copy()
@@ -46,10 +46,16 @@ class PipelineConfigurator:
         self.run()
 
     def get_config(self):
+        """
+        Get the current pipeline configuration.
+        """
         return JSONResponse(content=self._all_settings)
 
 
     def set_source(self, data: dict = Body(...)):
+        """
+        Set the source for the pipeline.
+        """
         new_source = data.get("source")
         success = self._pipeline.set_source(new_source)
 
@@ -62,6 +68,9 @@ class PipelineConfigurator:
         )
 
     def set_sinks(self, data: dict = Body(...)):
+        """
+        Set the sinks for the pipeline. Multiple sinks can be provided.
+        """
         new_sinks  = data.get("sinks")
 
         success = self._pipeline.set_sinks(new_sinks)
@@ -74,6 +83,9 @@ class PipelineConfigurator:
 
 
     def set_pipe(self, data: dict = Body(...)):
+        """
+        Set the pipe for the pipeline.
+        """
         new_pipe = data.get("pipe")
         success = self._pipeline.set_pipe(new_pipe)
 
@@ -87,10 +99,16 @@ class PipelineConfigurator:
 
 
     def index(self, request: Request):
+        """
+        Render the index page.
+        """
         return self._templates.TemplateResponse("index.html", {"request": request})
 
 
     def _run_server(self):
+        """
+        Run the Uvicorn server.
+        """
         logger.info("Starting Uvicorn server...")
         self._running = True
 
@@ -107,6 +125,9 @@ class PipelineConfigurator:
 
 
     def run(self):
+        """
+        Start the server in an own thread.
+        """
         logger.info("Starting server (FastAPI + Uvicorn)...")
         if self._server_thread.is_alive():
             logger.info("Server is already running.")

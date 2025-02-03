@@ -19,10 +19,16 @@ class Pipeline:
     the `run_forever` method. The pipeline can be stopped by calling the `stop`
     method. After processing the frames, the results are sent to the sinks.
     """
-    def __init__(self, queue: Queue, instances, source: Source|None = None, pipe: Operation|None = None, sinks: list[Sink] = []):
+    def __init__(
+            self, 
+            queue: Queue, 
+            instances: dict[str, object],
+            source: Source, 
+            pipe: Operation, 
+            sinks: list[Sink] = []):
         self._queue = queue
-        self._source: Source|None = source
-        self._pipe: Operation|None = pipe
+        self._source: Source = source
+        self._pipe: Operation = pipe
         self._sinks: list[Sink] = sinks
         self._instances = instances
         self._stop_event = threading.Event()
@@ -31,8 +37,12 @@ class Pipeline:
         
         logger.info("Pipeline initialized")
 
-
-    def _run_source(self):
+    
+    
+    def _start_source_loop(self):
+        """"
+        Start the source loop to get frames from the source and put them into the queue.
+        """
         while not self._stop_event.is_set():
             if self._source:
                 frame: Frame = self._source.get_frame()
@@ -41,7 +51,11 @@ class Pipeline:
                 time.sleep(0.2) # save CPU cycles
 
 
-    def _run_pipeline(self):
+    def _start_pipeline(self):
+        """
+        Run the pipeline by getting frames from the queue and processing them
+        with the pipe. The results are sent to the sinks.
+        """
         while self._running:
             frame: Frame = self._queue.get()
             det: list[Detection] = []
@@ -57,6 +71,9 @@ class Pipeline:
 
 
     def run_forever(self):
+        """
+        Start the pipeline thread and run the pipeline.
+        """
         if self._source_thread and self._source_thread.is_alive():
             logger.info("Pipeline thread is already running")
             return
@@ -64,26 +81,33 @@ class Pipeline:
         logger.info("Starting Pipeline thread")
         self._stop_event.clear()
         self._running = True
-        self._source_thread = threading.Thread(target=self._run_source)
+        self._source_thread = threading.Thread(target=self._start_source_loop)
         self._source_thread.start()
-        self._run_pipeline()
+        self._start_pipeline()
 
 
     def stop(self):
+        """
+        Stop the source thread.
+        """
         logger.info("Stopping Pipeline threads")
         self._stop_event.set()
         if self._source_thread:
             self._source_thread.join()
+            self._running = False
 
 
     def _restart_source_thread(self):
             self._stop_event.clear()
-            self._source_thread = threading.Thread(target=self._run_source)
+            self._source_thread = threading.Thread(target=self._start_source_loop)
             self._source_thread.start()
 
 
     def set_source(self, source_name: str) -> bool:
-
+        """
+        Set the source for the pipeline. 
+        If the source is already set, it will be replaced.
+        """
         if self._source is not None and self._source.get_name() == source_name:
             logger.info(f"Update source for {source_name}: nothing to change")
             return True
@@ -108,6 +132,10 @@ class Pipeline:
 
 
     def set_pipe(self, pipe_name: str) -> bool:
+        """
+        Set the pipe for the pipeline. 
+        If the pipe is already set, it will be replaced.
+        """
         if self._pipe is not None and self._pipe.get_name() == pipe_name:
             logger.info(f"Update pipe to {pipe_name}: nothing to change")
             return True
@@ -124,6 +152,10 @@ class Pipeline:
 
 
     def set_sinks(self, sink_names: list[str]) -> bool:
+        """
+        Set the sinks for the pipeline.
+        Multiple sinks can be set at once.
+        """
         current_sink_names = [sink.get_name() for sink in self._sinks] if self._sinks else []
 
         # remove sinks
