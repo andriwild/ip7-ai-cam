@@ -4,7 +4,6 @@ from torch._prims_common import Tensor
 import numpy as np
 import cv2
 import torch
-from typing import List
 
 
 class Detection(ABC):

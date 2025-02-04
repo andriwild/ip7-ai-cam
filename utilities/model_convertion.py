@@ -22,19 +22,19 @@ def ultralytics_export(model = 'yolo11n.pt'):
     model = YOLO(MODEL_PATH + model)
     
     # Export the model
-    model.export(format='imx500', 
-                batch=1, 
-                device='cpu', 
-                simplify=True, 
-                #imgsz=640, 
-                dynamic=False)
-    
     #model.export(format='imx500', 
     #            batch=1, 
     #            device='cpu', 
     #            simplify=True, 
     #            #imgsz=640, 
-    #            dynamic=True)
+    #            dynamic=False)
+    
+    model.export(format='onnx', 
+                batch=1, 
+                device='cpu', 
+                simplify=True, 
+                #imgsz=640, 
+                dynamic=True)
     
     # to ncnn: pip instal pnnx && pnnx models/flower_n_sim.onnx
 
@@ -73,7 +73,7 @@ def imx500():
 
 
 if __name__ == '__main__':
-    ultralytics_export("yolov8s_flower.pt")
+    ultralytics_export()
     #onnx_export()
     #imx500()
     print("Done")

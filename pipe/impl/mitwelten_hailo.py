@@ -33,7 +33,7 @@ class Mitwelten(Operation):
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
-    @Log_time("Mitwelten Hailo Infernce")
+    @Log_time("Mitwelten Hailo Inference")
     def process(self, frame: Frame) -> list[Detection]:
         start = time.time()
         result_boxes: list[Box] = []
