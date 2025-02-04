@@ -34,7 +34,7 @@ class ClassLoader:
     @staticmethod
     def instances_from_config(loaded_config):
         logger.info("Load classes from config ...")
-        # top level configuration names (e.g. source, pipe, sink)
+        # top level configuration names (e.g. source, operation, sink)
         categories: list[str] = loaded_config.keys()
     
         # mapping: name -> instance of the corresponding class

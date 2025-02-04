@@ -6,7 +6,7 @@ import numpy as np
 
 from source.base.source import Source
 from model.model import Frame
-from pipe.base.operation import Operation
+from operation.base.operation import Operation
 from model.singleton import SingletonMeta
 from model.detection import Box, Detection
 

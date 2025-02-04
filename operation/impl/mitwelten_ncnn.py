@@ -1,33 +1,34 @@
-from pipe.impl.yolov5onnx import Yolov5onnx
-from pipe.base.operation import Operation
-from model.detection import Detection, Box
-from model.model import Frame
-import logging
 import time
-
+from operation.impl.yolov5ncnn import Yolov5ncnn
+from operation.base.operation import Operation
+from model.detection import Detection, Box
+from operation.impl.ulDetect import UlDetect
+from model.model import Frame
 from utilities.decorator import Log_time
+import logging
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: Remove duplicated code (mitwelten ncnn)
+# TODO: Remove duplicated code (mitwelten onnx)
 class Mitwelten(Operation):
     def __init__(self, name: str, params = {}):
         logger.info(f"Initializing Mitwelten inference with name {name}")
         super().__init__(name)
 
-        self.flower_model     = Yolov5onnx('flower_inference',     params.get("flower_params", {}))
-        self.pollinator_model = Yolov5onnx('pollinator_inference', params.get("pollinator_params", {}))
+        self.flower_model     = Yolov5ncnn('flower_inference',     params.get("flower_params", {}))
+        self.pollinator_model = UlDetect('pollinator_inference', params.get("pollinator_params", {}))
         logger.info(f"Initialized Mitwelten inference with name {name}")
         
 
-    @Log_time("Mitwelten ONNX Inference") 
+    @Log_time("Mitwelten NCNN Inference") 
     def process(self, frame: Frame) -> list[Detection]:
         start = time.time()
         result_boxes : list[Box] = []
         flower_detections: list[Box] = self.flower_model.process(frame)
         result_boxes.extend(flower_detections)
     
+        # Originalbildabmessungen
         orig_height, orig_width = frame.image.shape[:2]
     
         for flower_detection in flower_detections:
@@ -71,8 +72,8 @@ class Mitwelten(Operation):
     
                 cx_norm = poll_x_center_orig / orig_width
                 cy_norm = poll_y_center_orig / orig_height
-                w_norm  = poll_w_pixels      / orig_width
-                h_norm  = poll_h_pixels      / orig_height
+                w_norm  = poll_w_pixels       / orig_width
+                h_norm  = poll_h_pixels       / orig_height
     
                 detection_on_orig_frame = [cx_norm, cy_norm, w_norm, h_norm]
     

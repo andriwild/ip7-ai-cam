@@ -1,43 +1,39 @@
-from pipe.base.operation import Operation
+from operation.base.operation import Operation
 from picamera2.devices import Hailo
 from model.detection import Detection, Box
-from model.model import Frame
-from pipe.impl.hailoDetect import HailoObjectDetection
-from utilities.decorator import Log_time
-from utilities.labelLoader import load_labels
 from utilities.formatConverter import letterbox
-import numpy as np
-import cv2
+from utilities.labelLoader import load_labels
+from model.model import Frame
+from source.impl.aiCamera import AiCamera
 import logging
-import time
+
 
 logger = logging.getLogger(__name__)
 
-class Mitwelten(Operation):
+
+class HailoAICam(Operation):
+
     def __init__(self, name: str, params = {}):
-        logger.info(f"Initializing Mitwelten inference with name {name}")
         super().__init__(name)
+        self._aicam = AiCamera("AiCamera", params.get("flower_params", {}))
 
         pollinator_params     = params.get("pollinator_params", {})
         pollinator_model      = pollinator_params.get("pollinator_model", "./resources/ml_models/yolov8n_pollinator_ep50_v1.hef")
         pollinator_label_path = pollinator_params.get("label_path")
-        self._pollinator_input_size = pollinator_params.get("input_size", 640)
-        self.pollinator_batch_size = pollinator_params.get("batch_size", 8)
 
+        self._pollinator_input_size = pollinator_params.get("input_size", 640)
+        self.pollinator_batch_size = pollinator_params.get("batch_size", 4)
         self.conf_threshold = pollinator_params.get('confidence_threshold', 0.5)
         self.input_size = (640, 640)
         self._pollinator_labels = load_labels(pollinator_label_path)
 
-        self.flower_hailo_model     = HailoObjectDetection('flower_inference', params.get("flower_params", {}))
         self.pollinator_hailo_model = Hailo(pollinator_model, batch_size=self.pollinator_batch_size)
-        logger.info(f"Initialized Mitwelten inference with name {name}")
-        
+        logging.info(f"Ai Hailo Combination initialized with name {name}")
 
-    @Log_time("Mitwelten Hailo Inference")
+
     def process(self, frame: Frame) -> list[Detection]:
-        start = time.time()
         result_boxes: list[Box] = []
-        flower_detections: list[Box] = self.flower_hailo_model.process(frame)
+        flower_detections : list[Box] = self._aicam.process(frame)
         result_boxes.extend(flower_detections)
 
         orig_height, orig_width = frame.image.shape[:2]
@@ -134,7 +130,5 @@ class Mitwelten(Operation):
                                 )
 
         result_boxes.extend(result)
-
-        print(f"{self._name},{len(flower_detections)},{time.time() - start}")
-
         return result_boxes
+

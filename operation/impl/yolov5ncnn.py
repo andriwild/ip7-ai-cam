@@ -4,7 +4,7 @@ import numpy as np
 from model.detection import Box
 from model.model import Frame
 from utilities.labelLoader import load_labels
-from pipe.base.operation import Operation
+from operation.base.operation import Operation
 import logging
 
 logger = logging.getLogger(__name__)

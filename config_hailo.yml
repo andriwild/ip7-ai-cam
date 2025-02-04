@@ -10,7 +10,7 @@ sources:
 pipes:
   - name: Mitwelten Pipeline (Hailo)
     class_name: Mitwelten
-    file_path: ./pipe/impl/mitwelten_hailo.py
+    file_path: ./operation/impl/mitwelten_hailo.py
     parameters:
       flower_params:
         confidence_threshold: 0.6

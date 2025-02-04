@@ -54,7 +54,7 @@ def main(config_file: str, host: str, port: int, queue_size: int)-> None:
     queue  = Queue(maxsize=queue_size)
     logger.debug(f"Initialized Queue with size {queue_size}")
 
-    # The pipeline handles how data is moved and processed between the source, processing pipe, and sinks.
+    # The pipeline handles how data is moved and processed between the source, processing operation, and sinks.
     pipeline = Pipeline(queue, instances, initial_source, initial_pipe, [initial_sinks])
     
     # Configure the pipeline further by using the configuration server.

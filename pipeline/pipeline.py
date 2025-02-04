@@ -5,7 +5,7 @@ import logging
 
 from sink.base.sink import Sink
 from source.base.source import Source
-from pipe.base.operation import Operation
+from operation.base.operation import Operation
 from model.model import Frame, Result
 from model.detection import Detection
 
@@ -54,7 +54,7 @@ class Pipeline:
     def _start_pipeline(self):
         """
         Run the pipeline by getting frames from the queue and processing them
-        with the pipe. The results are sent to the sinks.
+        with the operation. The results are sent to the sinks.
         """
         while self._running:
             frame: Frame = self._queue.get()
@@ -133,21 +133,21 @@ class Pipeline:
 
     def set_pipe(self, pipe_name: str) -> bool:
         """
-        Set the pipe for the pipeline. 
-        If the pipe is already set, it will be replaced.
+        Set the operation for the pipeline.
+        If the operation is already set, it will be replaced.
         """
         if self._pipe is not None and self._pipe.get_name() == pipe_name:
-            logger.info(f"Update pipe to {pipe_name}: nothing to change")
+            logger.info(f"Update operation to {pipe_name}: nothing to change")
             return True
 
         available_pipes = self._instances.get("pipes")
         new_pipe = available_pipes.get(pipe_name)
         if new_pipe is not None:
             self._pipe = new_pipe
-            logger.info(f"Update pipe to {pipe_name}")
+            logger.info(f"Update operation to {pipe_name}")
             return True
 
-        logger.warning(f"Could not update pipe to {pipe_name}")
+        logger.warning(f"Could not update operation to {pipe_name}")
         return False
 
 
