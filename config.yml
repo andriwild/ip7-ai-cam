@@ -28,7 +28,7 @@ sources:
       image_path: ./resources/images/test_image.jpg
       fps: 1
 
-pipes:
+operations:
   #  - name: Yolo11n (COCO)
   #    class_name: UlDetect
   #    file_path: ./operation/impl/ulDetect.py

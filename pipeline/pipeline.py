@@ -24,11 +24,11 @@ class Pipeline:
             queue: Queue, 
             instances: dict[str, object],
             source: Source, 
-            pipe: Operation, 
+            operation: Operation,
             sinks: list[Sink] = []):
         self._queue = queue
         self._source: Source = source
-        self._pipe: Operation = pipe
+        self._operation: Operation = operation
         self._sinks: list[Sink] = sinks
         self._instances = instances
         self._stop_event = threading.Event()
@@ -60,8 +60,8 @@ class Pipeline:
             frame: Frame = self._queue.get()
             det: list[Detection] = []
 
-            if self._pipe:
-                det = self._pipe.process(frame)
+            if self._operation:
+                det = self._operation.process(frame)
             result = Result(frame)
             result.add_detection(det)
 
@@ -131,23 +131,23 @@ class Pipeline:
         return False
 
 
-    def set_pipe(self, pipe_name: str) -> bool:
+    def set_operations(self, operation_name: str) -> bool:
         """
         Set the operation for the pipeline.
         If the operation is already set, it will be replaced.
         """
-        if self._pipe is not None and self._pipe.get_name() == pipe_name:
-            logger.info(f"Update operation to {pipe_name}: nothing to change")
+        if self._operation is not None and self._operation.get_name() == operation_name:
+            logger.info(f"Update operation to {operation_name}: nothing to change")
             return True
 
-        available_pipes = self._instances.get("pipes")
-        new_pipe = available_pipes.get(pipe_name)
-        if new_pipe is not None:
-            self._pipe = new_pipe
-            logger.info(f"Update operation to {pipe_name}")
+        available_operations = self._instances.get("operations")
+        new_operations = available_operations.get(operation_name)
+        if new_operations is not None:
+            self._operation = new_operations
+            logger.info(f"Update operation to {operation_name}")
             return True
 
-        logger.warning(f"Could not update operation to {pipe_name}")
+        logger.warning(f"Could not update operation to {operation_name}")
         return False
 
 

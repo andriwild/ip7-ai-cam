@@ -6,7 +6,7 @@ sources:
       width: 640
       height: 640 
 
-pipes:
+operations:
   - name: AI-Camera 
     file_path: ./source/impl/aiCamera.py
     class_name: AiCamera

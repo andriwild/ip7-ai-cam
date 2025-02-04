@@ -38,7 +38,7 @@ class PipelineConfigurator:
         self._app.get("/config")(self.get_config)
         self._app.post("/source")(self.set_source)
         self._app.post("/sinks")(self.set_sinks)
-        self._app.post("/operation")(self.set_pipe)
+        self._app.post("/operation")(self.set_operation)
         self._app.get("/")(self.index)
         self._server_thread = threading.Thread(target=self._run_server)
         self._running = False
@@ -82,12 +82,12 @@ class PipelineConfigurator:
         )
 
 
-    def set_pipe(self, data: dict = Body(...)):
+    def set_operation(self, data: dict = Body(...)):
         """
         Set the operation for the pipeline.
         """
-        new_pipe = data.get("operation")
-        success = self._pipeline.set_pipe(new_pipe)
+        new_operation = data.get("operation")
+        success = self._pipeline.set_operations(new_operation)
 
         if success:
             return JSONResponse(content={"status": "ok"})

@@ -43,7 +43,7 @@ sources:
       #image_path: /home/homie/ip7-ml-model-eval/images/root/
       fps: 1
 
-pipes:
+operations:
   - name: Yolo11n (COCO)
     class_name: UlDetect
     file_path: ./operation/impl/ulDetect.py

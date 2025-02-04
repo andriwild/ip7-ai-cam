@@ -6,7 +6,7 @@ sources:
       device: "/dev/video0"
       width: 640
       height: 640 
-pipes:
+operations:
   - name: Mitwelten Pipeline (NCNN)
     class_name: Mitwelten
     file_path: ./operation/impl/mitwelten_ncnn.py

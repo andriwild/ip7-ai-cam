@@ -6,7 +6,7 @@ sources:
       width: 640
       height: 640 
 
-pipes:
+operations:
   - name: Mitwelten Pipeline (Hailo)
     class_name: Mitwelten
     file_path: ./operation/impl/mitwelten_hailo.py

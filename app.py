@@ -40,14 +40,14 @@ def main(config_file: str, host: str, port: int, queue_size: int)-> None:
     config = yaml.safe_load(open(config_file))
 
     # Dynamically instantiate classes for different pipeline components using the configuration.
-    # 'instances' is expected to be a dictionary with keys such as 'sources', 'pipes', and 'sinks'.
+    # 'instances' is expected to be a dictionary with keys such as 'sources', 'operations', and 'sinks'.
     instances = ClassLoader.instances_from_config(config)
 
     # Select the first available instance from each category.
-    initial_sinks  = list(instances["sinks"].values())[0]
-    initial_pipe   = list(instances["pipes"].values())[0]
-    initial_source = list(instances["sources"].values())[0]
-    logger.debug("Initialize Pipeline with: ", initial_source, initial_pipe, initial_sinks)
+    initial_sinks     = list(instances["sinks"].values())[0]
+    initial_operation = list(instances["operations"].values())[0]
+    initial_source    = list(instances["sources"].values())[0]
+    logger.debug("Initialize Pipeline with: ", initial_source, initial_operation, initial_sinks)
 
     # Create a queue to manage the flow of images.
     # Exchange the queue for own purposes (e.g. Hard Disk).
@@ -55,7 +55,7 @@ def main(config_file: str, host: str, port: int, queue_size: int)-> None:
     logger.debug(f"Initialized Queue with size {queue_size}")
 
     # The pipeline handles how data is moved and processed between the source, processing operation, and sinks.
-    pipeline = Pipeline(queue, instances, initial_source, initial_pipe, [initial_sinks])
+    pipeline = Pipeline(queue, instances, initial_source, initial_operation, [initial_sinks])
     
     # Configure the pipeline further by using the configuration server.
     PipelineConfigurator(pipeline, config, host, port)

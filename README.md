@@ -43,7 +43,7 @@ Directory Structure
 The application is modular and follows a clear directory structure:
 
 source: Contains the base class for sources and implementations for various video sources.
-pipe: Contains the base class for processing pipelines and specific implementations.
+operation: Contains the base class for processing operations and specific implementations.
 sink: Contains the base class for sinks and various output implementations.
 resources: Contains models, images, and other resources.
 Ensure that the configuration file is set up correctly, then start the application with the following command:
@@ -56,7 +56,7 @@ python3 app.py -config config.yml
 The application is modular and follows a clear directory structure:
 
 - **source**: Contains the base class for sources and implementations for various video sources.
-- **pipe**: Contains the base class for processing pipelines and specific implementations.
+- **operation**: Contains the base class for processing operation and specific implementations.
 - **sink**: Contains the base class for sinks and various output implementations.
 - **resources**: Contains models, images, and other resources.
 
@@ -79,7 +79,7 @@ sources:
       width: 640
       height: 640
 
-pipes:
+operations:
   - name: Mitwelten Pipeline (NCNN)
     class_name: Mitwelten
     file_path: ./operation/impl/mitwelten_ncnn.py
