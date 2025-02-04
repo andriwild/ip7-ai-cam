@@ -32,8 +32,10 @@ class PipelineConfigurator:
             allow_headers=["*"],
         )
 
-        self._app.mount("/static", StaticFiles(directory="resources/static"), name="static")
-        self._templates = Jinja2Templates(directory="./resources/static/templates/config/")
+        #self._app.mount("/static", StaticFiles(directory="resources/static"), name="static")
+        #self._templates = Jinja2Templates(directory="./resources/static/templates/config/")
+        self._app.mount("/static", StaticFiles(directory="static"), name="static")
+        self._templates = Jinja2Templates(directory="./static/templates/config/")
 
         self._app.get("/config")(self.get_config)
         self._app.post("/source")(self.set_source)
@@ -56,6 +58,7 @@ class PipelineConfigurator:
         """
         Set the source for the pipeline.
         """
+        print("KJDFKJDFJKDFJJ")
         new_source = data.get("source")
         success = self._pipeline.set_source(new_source)
 

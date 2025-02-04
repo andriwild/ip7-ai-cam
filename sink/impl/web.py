@@ -28,7 +28,7 @@ class VideoFeedServer(Sink):
             allow_headers=["*"],
         )
 
-        self._templates = Jinja2Templates(directory="./resources/static/templates/stream/")
+        self._templates = Jinja2Templates(directory="./static/templates/stream/")
 
         self._app.get("/video_feed")(self.video_feed)
         self._app.get("/")(self.index)

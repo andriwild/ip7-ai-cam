@@ -74,7 +74,7 @@
                 <label for="operationSelect" class="form-label">Choose Pipe:</label>
                 <div class="input-group">
                     <select class="form-select" id="operationSelect" name="operation"></select>
-                    <button class="btn btn-primary" id="operationSlectBtn">Ok</button>
+                    <button class="btn btn-primary" id="operationSelectBtn">Ok</button>
                 </div>
             </div>
 
@@ -95,13 +95,12 @@
             <p class="m-0 text-center">© 2024 FHNW</p>
         </div>
     </footer>
-        <script src="../../js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/bootstrap.bundle.min.js"></script>
     <script type="module" src="/static/script.js"></script>
     <script>
         const themeSwitch = document.getElementById('themeSwitch');
         const htmlEl = document.documentElement;
         htmlEl.setAttribute('data-bs-theme', 'dark');
-
 
         themeSwitch.addEventListener('change', () => {
             if (themeSwitch.checked) {
@@ -110,9 +109,6 @@
                 htmlEl.setAttribute('data-bs-theme', 'light');
             }
         });
-
-
-
     </script>
 </body>
 </html>
