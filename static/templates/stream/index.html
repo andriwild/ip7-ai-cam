@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edge Device Control Panel</title>
+    <title>Live Feed</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
     <script src="/static/js/bootstrap.min.js"></script>
@@ -37,7 +38,7 @@
     <header class="mb-4">
         <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light border-bottom">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Edge Device Control Panel</a>
+                <a class="navbar-brand" href="#">Edge ML Camera Live Feed</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Menü umschalten">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -57,18 +58,17 @@
 
     <main class="container mb-4">
 
--        <div class="d-flex justify-content-center mb-4">
--            <div class="image-container" id="imgContainer">
--                <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
--                <div id="roiOverlay"></div>
--            </div>
--        </div>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="image-container" id="imgContainer">
+                <img class="img-fluid border" id="theImage" src="{{ url_for('video_feed') }}" alt="Video Feed" />
+            </div>
+        </div>
 
     </main>
 
     <footer class="bg-body-tertiary py-3 mt-auto">
         <div class="container">
-            <p class="m-0 text-center">© 2024 FHNW</p>
+            <p class="m-0 text-center">© 2025 FHNW</p>
         </div>
     </footer>
 

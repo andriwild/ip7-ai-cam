@@ -4,7 +4,7 @@ from model.model import Frame
 from operation.base.operation import Operation
 from model.detection import Box
 from utilities.formatConverter import letterbox
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 import multiprocessing
 
 

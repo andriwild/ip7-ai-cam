@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from model.detection import Box
 from model.model import Frame
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 from operation.base.operation import Operation
 import logging
 

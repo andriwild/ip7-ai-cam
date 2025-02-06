@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edge Device Control Panel</title>
+    <title>Control Panel</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
     <script src="/static/js/bootstrap.min.js"></script>
@@ -37,7 +38,7 @@
     <header class="mb-4">
         <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light border-bottom">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Edge Device Control Panel</a>
+                <a class="navbar-brand" href="#">Edge ML Camera Control Panel</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Menü umschalten">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -61,7 +62,7 @@
             <legend class="fw-bold">Pipeline Settings</legend>
 
             <div class="mb-3">
-                <label for="sourceSelect" class="form-label">Choose Source:</label>
+                <label for="sourceSelect" class="form-label">Source:</label>
                 <div class="input-group">
                     <select class="form-select" id="sourceSelect" name="source"></select>
                     <button class="btn btn-primary" id="sourceSelectBtn">Ok</button>
@@ -69,7 +70,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="operationSelect" class="form-label">Choose Pipe:</label>
+                <label for="operationSelect" class="form-label">Pipe:</label>
                 <div class="input-group">
                     <select class="form-select" id="operationSelect" name="operation"></select>
                     <button class="btn btn-primary" id="operationSelectBtn">Ok</button>
@@ -78,7 +79,7 @@
 
 
             <div class="mb-3">
-                <label for="sinkSelect" class="form-label">Choose Sink:</label>
+                <label for="sinkSelect" class="form-label">Sink:</label>
                 <div class="input-group">
                     <select class="form-select" id="sinkSelect" name="sink" multiple> </select>
                     <button class="btn btn-primary" id="sinkSelectBtn">Ok</button>
@@ -90,7 +91,7 @@
 
     <footer class="bg-body-tertiary py-3 mt-auto">
         <div class="container">
-            <p class="m-0 text-center">© 2024 FHNW</p>
+            <p class="m-0 text-center">© 2025 FHNW</p>
         </div>
     </footer>
     <script>

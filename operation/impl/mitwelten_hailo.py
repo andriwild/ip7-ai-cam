@@ -4,7 +4,7 @@ from model.detection import Detection, Box
 from model.model import Frame
 from operation.impl.hailoDetect import HailoObjectDetection
 from utilities.decorator import Log_time
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 from utilities.formatConverter import letterbox
 import numpy as np
 import cv2

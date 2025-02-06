@@ -59,6 +59,7 @@ The application is modular and follows a clear directory structure:
 - **operation**: Contains the base class for processing operation and specific implementations.
 - **sink**: Contains the base class for sinks and various output implementations.
 - **resources**: Contains models, images, and other resources.
+- **static**: Contains files for the servers (html, css, js).
 
 
 

@@ -3,7 +3,7 @@ from model.model import Frame
 from model.detection import Detection, Box
 from picamera2.devices import Hailo
 import logging
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 from utilities.formatConverter import letterbox
 
 

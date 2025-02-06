@@ -1,7 +1,6 @@
 import cv2
 import glob
 import time
-import os
 available_cameras = []
 
 # find cameras

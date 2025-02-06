@@ -7,7 +7,7 @@ from ultralytics.engine.results import Results
 from model.model import Frame
 from operation.base.operation import Operation
 from model.detection import Box, Detection
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 
 logger = logging.getLogger(__name__)
 

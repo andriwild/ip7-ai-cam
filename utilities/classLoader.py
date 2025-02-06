@@ -31,6 +31,8 @@ class ClassLoader:
             logger.error(f"Error loading class '{class_name}' from file '{file_path}': {e}")
             return None
 
+
+
     @staticmethod
     def instances_from_config(loaded_config):
         logger.info("Load classes from config ...")
@@ -53,6 +55,8 @@ class ClassLoader:
                     params = class_config.get("parameters", {})
                     instance = loaded_class(name, params)
                     instances[category][class_config["name"]] = instance
+
+
     
         logger.info(f"Loaded {len(instances.keys())} classes from config")
         return instances

@@ -2,7 +2,7 @@ from operation.base.operation import Operation
 from picamera2.devices import Hailo
 from model.detection import Detection, Box
 from utilities.formatConverter import letterbox
-from utilities.labelLoader import load_labels
+from utilities.helper import load_labels
 from model.model import Frame
 from source.impl.aiCamera import AiCamera
 import logging
