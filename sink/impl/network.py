@@ -1,10 +1,7 @@
-from datetime import datetime
 from sink.base.sink import Sink
 from model.model import Result
 import logging
 import requests
-import json
-from pprint import pprint
 
 logger = logging.getLogger(__name__)
 

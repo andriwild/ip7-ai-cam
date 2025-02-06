@@ -1,3 +1,8 @@
+# Author: Andri Wild
+# Created: 07.02.2025
+# Copyright (c) by Andri Wild, FHNW
+# Licence: AGPL-3.0
+
 from queue import Queue
 import threading
 import time
@@ -57,12 +62,16 @@ class Pipeline:
         with the operation. The results are sent to the sinks.
         """
         while self._running:
+            logger.debug("Get new Frame from Queue")
             frame: Frame = self._queue.get(block=True)
+            logger.debug("Recieved new Frame from Queue")
 
             valid_frame = frame.image is None or frame.image.size == 0
 
             if self._operation and not valid_frame:
+                logger.debug("Frame is valid")
                 det = self._operation.process(frame)
+                logger.debug("Frame from operation processed")
 
                 result = Result(frame)
                 result.add_detection(det)

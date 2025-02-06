@@ -17,7 +17,5 @@ class UlSeg(Operation):
     def process(self, frame: Frame) -> list[Detection]:
         results = self._model(frame.image, verbose=False, conf=self._confidence)
         mask = results[0].masks
-        if mask is None:
-            mask = []
         return [Mask(masks=mask)]
 

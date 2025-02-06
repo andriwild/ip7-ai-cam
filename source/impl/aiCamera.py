@@ -9,6 +9,7 @@ from model.model import Frame
 from operation.base.operation import Operation
 from model.singleton import SingletonMeta
 from model.detection import Box, Detection
+from utilities.helper import load_labels
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,9 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
         model_path_str: str = "/usr/share/imx500-models/imx500_network_ssd_mobilenetv2_fpnlite_320x320_pp.rpk"
         self._model_path = model_path_str
         self._threshold = parameters.get("confidence", 0.5)
+
+        label_path= parameters.get("label_path", "resources/labels/coco.yaml")
+        self._labels = load_labels(label_path)
         self._iou = 0.5
         self._last_detections = {}
         self._camera = None
@@ -107,7 +111,7 @@ class AiCamera(Source, Operation, metaclass=SingletonMeta):
                 box_list.append(
                     Box(
                         xywhn=(x_center, y_center, w, h),
-                        label=int(label_id),
+                        label=self._labels(int(label_id)),
                         conf=float(conf)
                     )
                 )

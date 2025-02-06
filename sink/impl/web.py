@@ -1,6 +1,5 @@
 import logging
 import threading
-import os
 from queue import Queue, Empty
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse

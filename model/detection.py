@@ -32,7 +32,7 @@ class Box(Detection):
         x2 = int((x_center + w / 2) * width)
         y2 = int((y_center + h / 2) * height)
 
-        label_text = f"Class {self.label}: {self.conf:.2f}"
+        label_text = f"{self.label}: {self.conf:.2f}"
 
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 4)
         cv2.putText(frame, label_text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 1)
@@ -56,23 +56,24 @@ class Mask(Detection):
     def draw(self, frame: np.ndarray) -> np.ndarray:
 
         masks = self.masks
-        mask_data = masks.data.cpu().numpy() if isinstance(masks.data, torch.Tensor) else masks.data
+        if masks:
+            mask_data = masks.data.cpu().numpy() if isinstance(masks.data, torch.Tensor) else masks.data
 
-        # Draw each mask on the frame with transparency
-        overlay = frame.copy()
-        for mask in mask_data:
-            color = (0, 255, 0)
-            mask_binary = (mask > 0.5).astype(np.uint8) * 255
-            contours, _ = cv2.findContours(mask_binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            # Draw each mask on the frame with transparency
+            overlay = frame.copy()
+            for mask in mask_data:
+                color = (0, 255, 0)
+                mask_binary = (mask > 0.5).astype(np.uint8) * 255
+                contours, _ = cv2.findContours(mask_binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            # Apply the mask area with transparency
-            mask_indices = mask > 0.5
-            overlay[mask_indices] = (0.3 * np.array(color) + 0.7 * overlay[mask_indices]).astype(np.uint8)
-            for contour in contours:
-                cv2.drawContours(overlay, [contour], -1, color, 2)
+                # Apply the mask area with transparency
+                mask_indices = mask > 0.5
+                overlay[mask_indices] = (0.3 * np.array(color) + 0.7 * overlay[mask_indices]).astype(np.uint8)
+                for contour in contours:
+                    cv2.drawContours(overlay, [contour], -1, color, 2)
 
-        # Blend the overlay with the original frame
-        cv2.addWeighted(overlay, 0.7, frame, 0.3, 0, frame)
+            # Blend the overlay with the original frame
+            cv2.addWeighted(overlay, 0.7, frame, 0.3, 0, frame)
         return frame
 
     def __str__(self):
