@@ -13,7 +13,7 @@ operations:
     file_path: ./operation/impl/mitwelten_hailo.py
     parameters:
       flower_params:
-        confidence_threshold: 0.6
+        confidence_threshold: 0.5
         model_path: ./resources/ml_models/yolov8n_flower_ep50_v1.hef
         label_path: ./resources/labels/flower.txt
       pollinator_params:

@@ -1,5 +1,6 @@
 import logging
 import threading
+import os
 from queue import Queue, Empty
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
@@ -28,6 +29,9 @@ class VideoFeedServer(Sink):
             allow_headers=["*"],
         )
 
+        #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        #assets_path = os.path.join(BASE_DIR, "static/assets")
+        self._app.mount("/static", StaticFiles(directory="static/assets"), name="static")
         self._templates = Jinja2Templates(directory="./static/templates/stream/")
 
         self._app.get("/video_feed")(self.video_feed)

@@ -1,6 +1,7 @@
 import logging
 import uvicorn
 import threading
+import os
 from fastapi import FastAPI, Body, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,9 +33,9 @@ class PipelineConfigurator:
             allow_headers=["*"],
         )
 
-        #self._app.mount("/static", StaticFiles(directory="resources/static"), name="static")
-        #self._templates = Jinja2Templates(directory="./resources/static/templates/config/")
-        self._app.mount("/static", StaticFiles(directory="static"), name="static")
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        assets_path = os.path.join(BASE_DIR, "static/assets")
+        self._app.mount("/static", StaticFiles(directory=assets_path), name="static")
         self._templates = Jinja2Templates(directory="./static/templates/config/")
 
         self._app.get("/config")(self.get_config)

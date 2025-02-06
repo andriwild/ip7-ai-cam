@@ -57,17 +57,19 @@ class Pipeline:
         with the operation. The results are sent to the sinks.
         """
         while self._running:
-            frame: Frame = self._queue.get()
-            det: list[Detection] = []
+            frame: Frame = self._queue.get(block=True)
 
-            if self._operation:
+            valid_frame = frame.image is None or frame.image.size == 0
+
+            if self._operation and not valid_frame:
                 det = self._operation.process(frame)
-            result = Result(frame)
-            result.add_detection(det)
 
-            if self._sinks:
-                for sink in self._sinks:
-                    sink.put(result)
+                result = Result(frame)
+                result.add_detection(det)
+
+                if self._sinks:
+                    for sink in self._sinks:
+                        sink.put(result)
 
 
     def run_forever(self):
