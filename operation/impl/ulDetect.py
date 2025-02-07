@@ -12,7 +12,6 @@ from utilities.helper import load_labels
 logger = logging.getLogger(__name__)
 
 
-
 class UlDetect(Operation):
 
     def __init__(self, name: str, params):

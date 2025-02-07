@@ -11,11 +11,12 @@ class Console(Sink):
         logger.info("Console initialized")
 
     def put(self, result: Result) -> None:
+        print("n: ", len(result.detections))
         logger.info(f"Frame {result.frame.frame_id} processed")
         output_str = ""
         if result.detections:
             for det in result.detections:
-                output_str += f"{det}"
+                output_str += f"{det}, "
         else:
             output_str = "No detections"
 

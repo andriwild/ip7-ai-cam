@@ -59,7 +59,6 @@ class PipelineConfigurator:
         """
         Set the source for the pipeline.
         """
-        print("KJDFKJDFJKDFJJ")
         new_source = data.get("source")
         success = self._pipeline.set_source(new_source)
 

@@ -1,10 +1,10 @@
 numpy~=1.26.4
 opencv-python~=4.10.0.84
 imutils~=0.5.4
-
 fastapi
 uvicorn
 ultralytics~=8.3.40
 torch~=2.5.1
 PyYAML~=6.0.2
 ncnn==1.0.20241226
+onnx==1.17.0

@@ -7,7 +7,6 @@ import numpy as np
 from source.base.source import Source
 from model.model import Frame
 from operation.base.operation import Operation
-from model.singleton import SingletonMeta
 from model.detection import Box, Detection
 from utilities.helper import load_labels
 
@@ -19,7 +18,7 @@ class AiCamDetection:
         self.category = category
         self.conf = conf
 
-class AiCamera(Source, Operation, metaclass=SingletonMeta):
+class AiCamera(Source, Operation):
 
     def __init__( self, name: str, parameters):
 

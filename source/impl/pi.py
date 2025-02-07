@@ -20,7 +20,6 @@ class PiCamera(Source):
 
     def init(self):
         self._camera = Picamera2()
-        # TODO: check configuration
         self._camera.configure(
             self._camera.create_preview_configuration(
                 main={"size": (self._width, self._height), "format": "RGB888"}

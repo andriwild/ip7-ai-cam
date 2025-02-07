@@ -19,7 +19,7 @@ def send_post_request(url, data):
     """
     try:
         response = requests.post(url, json=data)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        response.raise_for_status()
         return response
     except requests.exceptions.RequestException as e:
         logger.error(f"An error occurred: {e}")
