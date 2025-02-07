@@ -129,7 +129,6 @@ $ tree -L 2 -d -I __pycache__
 │   └── impl
 ├── pipeline
 ├── resources
-│   ├── doc
 │   ├── images
 │   ├── labels
 │   └── ml_models
